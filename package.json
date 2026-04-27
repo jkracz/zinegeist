@@ -52,7 +52,10 @@
 		"vite": "^8.0.10"
 	},
 	"dependencies": {
-		"convex": "^1.36.1",
-		"convex-svelte": "^0.0.12"
+		"@convex-dev/better-auth": "^0.12.0",
+		"@mmailaender/convex-better-auth-svelte": "^0.7.3",
+		"@mmailaender/convex-svelte": "^0.18.0",
+		"better-auth": "1.5.3",
+		"convex": "^1.36.1"
 	}
 }
