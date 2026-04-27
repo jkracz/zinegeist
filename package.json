@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "concurrently -n web,convex -c blue,magenta \"vite dev --port 5296\" \"bunx convex dev\"",
 		"dev:web": "vite dev --port 5296",
-		"build:vercel": "bunx convex deploy --cmd 'bun run build' --cmd-url-env-var-name VITE_CONVEX_URL",
+		"build:vercel": "bunx convex deploy --cmd 'bun run build' --cmd-url-env-var-name PUBLIC_CONVEX_URL",
 		"build": "vite build",
 		"preview": "vite preview --port 5296",
 		"prepare": "svelte-kit sync || echo ''",
