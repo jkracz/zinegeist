@@ -10,15 +10,8 @@
 
 <Header />
 
-<main>
+<main class="relative min-w-0">
 	{@render children()}
 </main>
 
 <PaperGrain />
-
-<style>
-	main {
-		min-width: 0;
-		position: relative;
-	}
-</style>

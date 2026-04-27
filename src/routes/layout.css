@@ -177,14 +177,7 @@
 }
 
 @layer components {
-	/* Editorial typography helpers */
-	.serif {
-		font-family: var(--font-serif);
-		font-optical-sizing: auto;
-	}
-	.mono {
-		font-family: var(--font-mono);
-	}
+	/* Editorial eyebrow — small uppercase mono label used across the app */
 	.eyebrow {
 		font-family: var(--font-mono);
 		font-size: 11px;
@@ -326,28 +319,6 @@
 		color: var(--paper-warm-1);
 	}
 
-	/* Reader page typography (used in publication detail editorial copy) */
-	.dropcap::first-letter {
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 5em;
-		line-height: 0.85;
-		float: left;
-		padding-right: 10px;
-		padding-top: 6px;
-		color: var(--primary);
-	}
-	.pull {
-		font-style: italic;
-		font-size: 22px;
-		line-height: 1.4;
-		color: var(--ink);
-		padding: 12px 0;
-		border-top: 1px solid var(--border);
-		border-bottom: 1px solid var(--border);
-		margin: 16px 0;
-	}
-
 	/* Divider with center mark */
 	.divider-tape {
 		height: 1px;
@@ -379,20 +350,6 @@
 		font-size: 10px;
 		background: var(--card);
 		letter-spacing: 0.04em;
-	}
-
-	/* Tag chip */
-	.tag-chip {
-		display: inline-flex;
-		gap: 6px;
-		align-items: center;
-		padding: 4px 10px;
-		border-radius: 999px;
-		background: var(--accent);
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.06em;
-		color: var(--ink);
 	}
 
 	/* Scroll hint animation */

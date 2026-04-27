@@ -12,32 +12,40 @@
 	{/snippet}
 </SectionBar>
 
-<div class="page">
+<div class="px-12 pb-24">
 	<!-- HERO -->
-	<section class="hero">
+	<section
+		class="hero relative grid min-h-[calc(100vh-130px)] grid-cols-[1.15fr_1fr] items-center gap-16 pt-16 pb-20"
+	>
 		<div>
-			<div class="eyebrow hero-eyebrow">A small press, on the open web</div>
-			<h1>
+			<div class="eyebrow mb-[22px]">A small press, on the open web</div>
+			<h1
+				class="font-serif text-[clamp(48px,6.2vw,96px)] leading-[0.98] font-normal tracking-[-0.025em] text-ink"
+			>
 				A quiet home for<br />
-				<em>independent</em> writing.
+				<em class="font-light text-primary italic">independent</em> writing.
 			</h1>
-			<p class="lede">
+			<p class="my-7 mb-9 max-w-[44ch] font-serif text-[19px] leading-[1.55] text-foreground">
 				Zinegeist is for writers who still believe a paragraph deserves breathing room. Publish a
 				zine, build a small shelf, and let readers find you the way they used to find a thin yellow
 				book in the back of a shop.
 			</p>
-			<div class="hero-cta">
+			<div class="flex flex-wrap items-center gap-3">
 				<a class="zg-btn zg-btn-primary" href="#discovery">
 					Discover this season's zines
 					<span aria-hidden="true">↓</span>
 				</a>
-				<a class="zg-btn zg-btn-outline" href={CREATE}> Publish your own </a>
-				<span class="meta">No feed · No follows · No metrics</span>
+				<a class="zg-btn zg-btn-outline" href={CREATE}>Publish your own</a>
+				<span class="ml-1 font-mono text-[11px] text-muted-foreground">
+					No feed · No follows · No metrics
+				</span>
 			</div>
 		</div>
 		<HeroStage />
 
-		<div class="scroll-hint">
+		<div
+			class="absolute bottom-7 left-0 flex items-center gap-3 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase"
+		>
 			<span class="scroll-line"></span>
 			<span>Scroll to read</span>
 		</div>
@@ -45,12 +53,16 @@
 
 	<!-- DISCOVERY -->
 	<section id="discovery">
-		<div class="section-head">
+		<div class="mb-9 flex items-end justify-between border-b border-border pt-14 pb-7">
 			<div>
-				<div class="eyebrow" style="margin-bottom: 12px;">Recently published · 8 zines</div>
-				<h2>This season's <em>shelf</em></h2>
+				<div class="eyebrow mb-3">Recently published · 8 zines</div>
+				<h2 class="font-serif text-[44px] font-normal tracking-[-0.015em] text-ink">
+					This season's <em class="text-primary italic">shelf</em>
+				</h2>
 			</div>
-			<div class="section-meta">
+			<div
+				class="flex items-center gap-[18px] font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
+			>
 				<span>Layout</span>
 				<div class="layout-switch" role="tablist">
 					<button class="active" type="button">Editorial</button>
@@ -63,99 +75,3 @@
 		<EditorialGrid zines={ZINES} />
 	</section>
 </div>
-
-<style>
-	.page {
-		padding: 0 48px 96px;
-	}
-
-	.hero {
-		min-height: calc(100vh - 130px);
-		display: grid;
-		grid-template-columns: 1.15fr 1fr;
-		gap: 64px;
-		align-items: center;
-		padding: 64px 0 80px;
-		position: relative;
-	}
-	.hero-eyebrow {
-		margin-bottom: 22px;
-	}
-	.hero h1 {
-		font-family: var(--font-serif);
-		font-size: clamp(48px, 6.2vw, 96px);
-		line-height: 0.98;
-		letter-spacing: -0.025em;
-		font-weight: 400;
-		color: var(--ink);
-	}
-	.hero h1 :global(em) {
-		font-style: italic;
-		font-weight: 300;
-		color: var(--primary);
-	}
-	.hero p.lede {
-		font-family: var(--font-serif);
-		font-size: 19px;
-		line-height: 1.55;
-		color: var(--foreground);
-		max-width: 44ch;
-		margin: 28px 0 36px;
-	}
-	.hero-cta {
-		display: flex;
-		gap: 12px;
-		align-items: center;
-		flex-wrap: wrap;
-	}
-	.hero-cta .meta {
-		margin-left: 4px;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		color: var(--muted-foreground);
-	}
-
-	.scroll-hint {
-		position: absolute;
-		left: 0;
-		bottom: 28px;
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		color: var(--muted-foreground);
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-	}
-
-	.section-head {
-		display: flex;
-		align-items: end;
-		justify-content: space-between;
-		padding: 56px 0 28px;
-		border-bottom: 1px solid var(--border);
-		margin-bottom: 36px;
-	}
-	.section-head h2 {
-		font-family: var(--font-serif);
-		font-size: 44px;
-		font-weight: 400;
-		letter-spacing: -0.015em;
-		color: var(--ink);
-	}
-	.section-head h2 :global(em) {
-		font-style: italic;
-		color: var(--primary);
-	}
-	.section-meta {
-		display: flex;
-		align-items: center;
-		gap: 18px;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		color: var(--muted-foreground);
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-</style>

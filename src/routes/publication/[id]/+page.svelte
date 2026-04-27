@@ -19,25 +19,38 @@
 	{/snippet}
 </SectionBar>
 
-<div class="page">
-	<div class="pub-detail">
-		<div class="pub-cover-wrap">
-			<div class="pub-cover">
+<div class="px-12 pb-24">
+	<div class="grid grid-cols-[1fr_1.4fr] gap-[72px] pt-14 pb-6">
+		<div class="sticky top-24 self-start">
+			<div class="relative aspect-[3/4] w-full overflow-hidden rounded-[2px] shadow-page">
 				<ZineCover coverId={zine.coverId} big />
 				<div class="cover-edge"></div>
 			</div>
-			<div class="cover-caption mono">cover · auto-extracted from PDF p.1</div>
+			<div
+				class="mt-3.5 text-center font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase"
+			>
+				cover · auto-extracted from PDF p.1
+			</div>
 		</div>
 
-		<div class="pub-meta">
-			<div class="eyebrow">{zine.issue} · {zine.tags.join(' · ')}</div>
-			<h1 class="pub-title">{zine.title}</h1>
-			<div class="pub-byline">
-				by <a href={PROFILE}>{writer.name}</a>
+		<div>
+			<div class="eyebrow mb-4">{zine.issue} · {zine.tags.join(' · ')}</div>
+			<h1 class="font-serif text-[60px] leading-[1.02] font-normal tracking-[-0.025em] text-ink">
+				{zine.title}
+			</h1>
+			<div class="mt-3 font-serif text-lg text-muted-foreground italic">
+				by
+				<a class="text-primary underline decoration-1 underline-offset-[3px]" href={PROFILE}>
+					{writer.name}
+				</a>
 			</div>
-			<p class="pub-desc">{zine.desc}</p>
+			<p class="my-7 max-w-[58ch] font-serif text-lg leading-[1.65]">
+				{zine.desc}
+			</p>
 
-			<div class="pub-facts">
+			<div
+				class="mb-7 grid grid-cols-2 gap-x-8 gap-y-[18px] border-y border-border py-[22px] font-mono text-[11px] tracking-[0.1em] text-muted-foreground uppercase"
+			>
 				<div>
 					<div>Pages</div>
 					<div class="fact-value">{zine.pages} pp</div>
@@ -56,7 +69,7 @@
 				</div>
 			</div>
 
-			<div class="pub-actions">
+			<div class="flex flex-wrap gap-3">
 				<button class="zg-btn zg-btn-primary" type="button">Begin reading →</button>
 				<button class="zg-btn zg-btn-outline" type="button">Save for later</button>
 				<button class="zg-btn zg-btn-ghost" type="button">Download PDF</button>
@@ -64,8 +77,8 @@
 
 			<div class="divider-tape"></div>
 
-			<div class="eyebrow" style="margin-bottom: 14px;">From the editor's note</div>
-			<p class="editor-note serif">
+			<div class="eyebrow mb-3.5">From the editor's note</div>
+			<p class="max-w-[56ch] font-serif text-[17px] leading-[1.7] text-foreground italic">
 				“Six essays for the slow reader — meant to be opened on a Sunday morning, not a Tuesday
 				inbox. Read one. Put it down. Come back.”
 			</p>
@@ -74,81 +87,6 @@
 </div>
 
 <style>
-	.page {
-		padding: 0 48px 96px;
-	}
-	.pub-detail {
-		display: grid;
-		grid-template-columns: 1fr 1.4fr;
-		gap: 72px;
-		padding: 56px 0 24px;
-	}
-	.pub-cover-wrap {
-		position: sticky;
-		top: 96px;
-		align-self: start;
-	}
-	.pub-cover {
-		width: 100%;
-		aspect-ratio: 3 / 4;
-		border-radius: 2px;
-		box-shadow: var(--shadow-page);
-		position: relative;
-		overflow: hidden;
-	}
-	.cover-caption {
-		font-size: 10px;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		color: var(--muted-foreground);
-		text-align: center;
-		margin-top: 14px;
-	}
-	.pub-meta .eyebrow {
-		margin-bottom: 16px;
-	}
-	.pub-title {
-		font-family: var(--font-serif);
-		font-size: 60px;
-		font-weight: 400;
-		letter-spacing: -0.025em;
-		line-height: 1.02;
-		color: var(--ink);
-	}
-	.pub-byline {
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 18px;
-		margin-top: 12px;
-		color: var(--muted-foreground);
-	}
-	.pub-byline a {
-		color: var(--primary);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		text-decoration-thickness: 1px;
-	}
-	.pub-desc {
-		font-family: var(--font-serif);
-		font-size: 18px;
-		line-height: 1.65;
-		margin: 28px 0;
-		max-width: 58ch;
-	}
-	.pub-facts {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 18px 32px;
-		padding: 22px 0;
-		border-top: 1px solid var(--border);
-		border-bottom: 1px solid var(--border);
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--muted-foreground);
-		margin-bottom: 28px;
-	}
 	.fact-value {
 		font-family: var(--font-serif);
 		text-transform: none;
@@ -156,17 +94,5 @@
 		font-size: 15px;
 		color: var(--ink);
 		margin-top: 4px;
-	}
-	.pub-actions {
-		display: flex;
-		gap: 12px;
-		flex-wrap: wrap;
-	}
-	.editor-note {
-		font-size: 17px;
-		line-height: 1.7;
-		font-style: italic;
-		color: var(--foreground);
-		max-width: 56ch;
 	}
 </style>

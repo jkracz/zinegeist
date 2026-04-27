@@ -14,81 +14,43 @@
 </script>
 
 <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-<a class="zcard" {href}>
-	<div class="cover-wrap">
-		<div class="cover">
+<a class="zcard flex min-w-0 cursor-pointer flex-col gap-3.5 text-inherit no-underline" {href}>
+	<div class="relative">
+		<div
+			class="cover relative aspect-[3/4] w-full overflow-hidden rounded-[2px] bg-muted shadow-page"
+		>
 			<ZineCover coverId={zine.coverId} {mini} />
 			<div class="cover-edge"></div>
 		</div>
 	</div>
-	<div class="meta-row">
+	<div
+		class="flex items-center justify-between font-mono text-[11px] tracking-[0.06em] text-muted-foreground"
+	>
 		<span>{zine.issue}</span>
 		<span>{zine.pages} pp</span>
 	</div>
-	<h3>{zine.title}</h3>
-	<div class="by">by {writer.name}</div>
+	<h3 class="font-serif text-[22px] leading-[1.15] font-medium tracking-[-0.01em]">
+		{zine.title}
+	</h3>
+	<div class="text-[13px] text-muted-foreground italic">by {writer.name}</div>
 	{#if !mini}
-		<p class="desc">{zine.desc}</p>
+		<p class="desc m-0 overflow-hidden font-serif text-sm leading-[1.5] text-foreground">
+			{zine.desc}
+		</p>
 	{/if}
 </a>
 
 <style>
-	.zcard {
-		display: flex;
-		flex-direction: column;
-		gap: 14px;
-		min-width: 0;
-		color: inherit;
-		text-decoration: none;
-		cursor: pointer;
-	}
-	.cover-wrap {
-		position: relative;
-	}
 	.cover {
-		width: 100%;
-		aspect-ratio: 3 / 4;
-		background: var(--muted);
-		border-radius: 2px;
-		box-shadow: var(--shadow-page);
-		overflow: hidden;
-		position: relative;
 		transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
 	}
 	.zcard:hover .cover {
 		transform: translateY(-4px) rotate(-0.6deg);
 	}
-	.meta-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		color: var(--muted-foreground);
-		letter-spacing: 0.06em;
-	}
-	h3 {
-		font-family: var(--font-serif);
-		font-size: 22px;
-		line-height: 1.15;
-		letter-spacing: -0.01em;
-		font-weight: 500;
-	}
-	.by {
-		font-size: 13px;
-		color: var(--muted-foreground);
-		font-style: italic;
-	}
 	.desc {
-		font-family: var(--font-serif);
-		font-size: 14px;
-		line-height: 1.5;
-		color: var(--foreground);
-		margin: 0;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
 		-webkit-box-orient: vertical;
-		overflow: hidden;
 	}
 </style>

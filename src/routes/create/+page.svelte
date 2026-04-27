@@ -14,36 +14,44 @@
 	{/snippet}
 </SectionBar>
 
-<div class="page">
-	<div class="create-shell">
+<div class="px-12 pb-24">
+	<div class="mx-auto max-w-[920px] pt-14 pb-24">
 		<CreateSteps steps={STEPS} current={0} />
 
-		<h1 class="create-title">Bring us your <em>zine</em>.</h1>
-		<p class="create-sub">
+		<h1 class="mb-3 font-serif text-[44px] leading-[1.05] font-normal tracking-[-0.015em]">
+			Bring us your <em class="text-primary italic">zine</em>.
+		</h1>
+		<p class="mb-9 max-w-[56ch] font-serif text-[17px] text-muted-foreground">
 			Upload a PDF — a single document, any size. We'll quietly pull the first page as a cover
 			image, and you'll have a chance to approve it on the next step.
 		</p>
 
-		<div class="dropzone">
+		<div
+			class="dropzone flex flex-col items-center gap-3.5 rounded-xl border-[1.5px] border-dashed border-border px-6 py-16 text-center"
+		>
 			<div class="icon-pdf"></div>
-			<h3>Drag a PDF here</h3>
-			<p>or</p>
+			<h3 class="font-serif text-2xl font-medium">Drag a PDF here</h3>
+			<p class="m-0 text-sm text-muted-foreground">or</p>
 			<button class="zg-btn zg-btn-outline" type="button">Choose a file</button>
-			<p style="margin-top: 14px; font-size: 12px;">Up to 80 MB · single file · text-friendly</p>
+			<p class="m-0 mt-3.5 text-xs text-muted-foreground">
+				Up to 80 MB · single file · text-friendly
+			</p>
 		</div>
 
-		<div class="cover-note">
+		<div
+			class="cover-note mt-7 flex items-start gap-3 rounded-lg px-[18px] py-3.5 font-mono text-xs leading-[1.6] tracking-[0.04em] text-ink"
+		>
 			<span aria-hidden="true">✦</span>
 			<div>
-				<strong>How covers work.</strong> Zinegeist extracts a JPEG of your PDF's first page automatically.
-				No separate upload, no template required — your zine comes as it is. You can also supply your
-				own image on the next step.
+				<strong class="text-ink">How covers work.</strong> Zinegeist extracts a JPEG of your PDF's first
+				page automatically. No separate upload, no template required — your zine comes as it is. You can
+				also supply your own image on the next step.
 			</div>
 		</div>
 
-		<div class="create-actions">
+		<div class="mt-9 flex items-center justify-between border-t border-border pt-6">
 			<a class="zg-btn zg-btn-ghost" href={HOME}>← Cancel</a>
-			<button class="zg-btn zg-btn-primary" type="button" disabled style="opacity: 0.4;">
+			<button class="zg-btn zg-btn-primary opacity-40" type="button" disabled>
 				Continue to cover
 			</button>
 		</div>
@@ -51,49 +59,13 @@
 </div>
 
 <style>
-	.page {
-		padding: 0 48px 96px;
-	}
-	.create-shell {
-		max-width: 920px;
-		margin: 0 auto;
-		padding: 56px 0 96px;
-	}
-	.create-title {
-		font-family: var(--font-serif);
-		font-size: 44px;
-		font-weight: 400;
-		letter-spacing: -0.015em;
-		line-height: 1.05;
-		margin-bottom: 12px;
-	}
-	.create-title :global(em) {
-		font-style: italic;
-		color: var(--primary);
-	}
-	.create-sub {
-		font-family: var(--font-serif);
-		font-size: 17px;
-		color: var(--muted-foreground);
-		max-width: 56ch;
-		margin-bottom: 36px;
-	}
-
 	.dropzone {
-		border: 1.5px dashed var(--border);
-		border-radius: 12px;
-		padding: 64px 24px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 14px;
-		text-align: center;
 		background: color-mix(in oklch, var(--card) 60%, transparent);
 		transition:
 			border-color 0.2s,
 			background 0.2s;
 	}
-	.dropzone .icon-pdf {
+	.icon-pdf {
 		width: 64px;
 		height: 80px;
 		border: 1.5px solid var(--ink);
@@ -101,7 +73,7 @@
 		position: relative;
 		background: var(--paper-warm-1);
 	}
-	.dropzone .icon-pdf::before {
+	.icon-pdf::before {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -112,7 +84,7 @@
 		border-left: 1.5px solid var(--ink);
 		border-bottom: 1.5px solid var(--ink);
 	}
-	.dropzone .icon-pdf::after {
+	.icon-pdf::after {
 		content: 'PDF';
 		position: absolute;
 		bottom: 14px;
@@ -124,41 +96,7 @@
 		letter-spacing: 0.1em;
 		color: var(--ink);
 	}
-	.dropzone h3 {
-		font-family: var(--font-serif);
-		font-size: 24px;
-		font-weight: 500;
-	}
-	.dropzone p {
-		font-size: 14px;
-		color: var(--muted-foreground);
-		margin: 0;
-	}
-
 	.cover-note {
-		display: flex;
-		gap: 12px;
-		align-items: flex-start;
-		padding: 14px 18px;
-		border-radius: var(--radius);
 		background: color-mix(in oklch, var(--accent) 50%, transparent);
-		margin-top: 28px;
-		font-family: var(--font-mono);
-		font-size: 12px;
-		color: var(--ink);
-		letter-spacing: 0.04em;
-		line-height: 1.6;
-	}
-	.cover-note strong {
-		color: var(--ink);
-	}
-
-	.create-actions {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-top: 36px;
-		padding-top: 24px;
-		border-top: 1px solid var(--border);
 	}
 </style>

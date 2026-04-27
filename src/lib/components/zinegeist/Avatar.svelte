@@ -11,8 +11,8 @@
 	);
 </script>
 
-<div class="avatar">
-	<svg viewBox="0 0 160 160" preserveAspectRatio="xMidYMid slice">
+<div class="relative size-40 overflow-hidden rounded-full border border-border bg-muted shadow-md">
+	<svg class="block h-full w-full" viewBox="0 0 160 160" preserveAspectRatio="xMidYMid slice">
 		<defs>
 			<linearGradient id="avg" x1="0" x2="1" y1="0" y2="1">
 				<stop offset="0%" stop-color="#e8d4b3" />
@@ -34,21 +34,3 @@
 		</text>
 	</svg>
 </div>
-
-<style>
-	.avatar {
-		width: 160px;
-		height: 160px;
-		border-radius: 999px;
-		background: var(--muted);
-		position: relative;
-		overflow: hidden;
-		box-shadow: var(--shadow-md);
-		border: 1px solid var(--border);
-	}
-	svg {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
-</style>

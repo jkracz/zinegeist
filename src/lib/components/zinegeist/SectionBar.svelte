@@ -9,48 +9,18 @@
 	let { crumbs, right }: Props = $props();
 </script>
 
-<div class="section-bar">
-	<div class="crumbs">
+<div class="flex items-center justify-between border-b border-border bg-background px-12 py-3.5">
+	<div class="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
 		{#each crumbs as crumb, i (i)}
-			{#if i > 0}<span class="sep">/</span>{/if}
+			{#if i > 0}<span class="mx-2.5">/</span>{/if}
 			{#if i === crumbs.length - 1}
-				<strong>{crumb}</strong>
+				<strong class="font-medium text-ink">{crumb}</strong>
 			{:else}
 				<span>{crumb}</span>
 			{/if}
 		{/each}
 	</div>
-	<div class="right">
+	<div class="flex items-center gap-3">
 		{#if right}{@render right()}{/if}
 	</div>
 </div>
-
-<style>
-	.section-bar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 14px 48px;
-		border-bottom: 1px solid var(--border);
-		background: var(--background);
-	}
-	.crumbs {
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: var(--muted-foreground);
-	}
-	.crumbs strong {
-		color: var(--ink);
-		font-weight: 500;
-	}
-	.sep {
-		margin: 0 10px;
-	}
-	.right {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-</style>

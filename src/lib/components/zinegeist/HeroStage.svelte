@@ -18,15 +18,15 @@
 	];
 </script>
 
-<div class="hero-stage">
+<div class="hero-stage relative flex h-[540px] items-center justify-center">
 	{#each layers as layer (layer.id)}
 		<div
-			class="hero-zine"
+			class="hero-zine absolute h-[380px] w-[280px] rounded-[2px_4px_4px_2px] shadow-page"
 			style:transform={layer.transform}
 			style:z-index={layer.z}
 			style:opacity={layer.opacity}
 		>
-			<div class="cover">
+			<div class="relative h-full w-full">
 				<ZineCover coverId={layer.id} />
 				<div class="cover-edge"></div>
 			</div>
@@ -36,24 +36,9 @@
 
 <style>
 	.hero-stage {
-		position: relative;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		perspective: 1400px;
-		height: 540px;
 	}
 	.hero-zine {
-		position: absolute;
-		width: 280px;
-		height: 380px;
-		border-radius: 2px 4px 4px 2px;
-		box-shadow: var(--shadow-page);
 		transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
-	}
-	.cover {
-		width: 100%;
-		height: 100%;
-		position: relative;
 	}
 </style>
