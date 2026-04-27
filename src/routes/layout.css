@@ -212,33 +212,6 @@
 		opacity: calc(var(--texture-opacity) * 0.6);
 	}
 
-	/* Brand mark */
-	.brand-mark {
-		width: 28px;
-		height: 28px;
-		border: 1.5px solid var(--ink);
-		border-radius: 2px;
-		position: relative;
-		background: var(--paper-warm-2);
-		flex: 0 0 28px;
-	}
-	.brand-mark::before {
-		content: '';
-		position: absolute;
-		inset: 3px 3px 3px 13px;
-		background: var(--ink);
-		border-radius: 1px;
-	}
-	.brand-mark::after {
-		content: '';
-		position: absolute;
-		left: 12px;
-		top: 0;
-		bottom: 0;
-		width: 1.5px;
-		background: var(--ink);
-	}
-
 	/* Buttons (custom editorial variants) */
 	.zg-btn {
 		display: inline-flex;

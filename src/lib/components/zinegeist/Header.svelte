@@ -18,11 +18,17 @@
 >
 	<div class="flex items-center gap-7">
 		<a
-			class="flex cursor-pointer items-baseline gap-2.5 text-inherit no-underline"
+			class="flex cursor-pointer items-center gap-2.5 text-inherit no-underline"
 			href={HOME}
 			aria-label="Zinegeist home"
 		>
-			<div class="brand-mark" aria-hidden="true"></div>
+			<img
+				src="/zinegeistLogo.png"
+				alt="Zinegeist logo"
+				class="block size-7 shrink-0 object-contain"
+				width="28"
+				height="28"
+			/>
 			<div class="font-serif text-[22px] font-medium tracking-[-0.01em] text-ink">Zinegeist</div>
 		</a>
 	</div>
