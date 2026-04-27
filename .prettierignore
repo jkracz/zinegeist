@@ -7,3 +7,11 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Generated
+/.svelte-kit/
+/src/convex/_generated/
+
+# Third-party / vendored
+/.agents/
+skills-lock.json
