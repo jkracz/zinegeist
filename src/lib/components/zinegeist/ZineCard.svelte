@@ -6,15 +6,13 @@
 	type Props = {
 		zine: Zine;
 		mini?: boolean;
-		href: string;
 	};
 
-	let { zine, mini = false, href }: Props = $props();
+	let { zine, mini = false }: Props = $props();
 	const writer = $derived(WRITERS[zine.writer]);
 </script>
 
-<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-<a class="zcard flex min-w-0 cursor-pointer flex-col gap-3.5 text-inherit no-underline" {href}>
+<div class="zcard flex min-w-0 flex-col gap-3.5 text-inherit">
 	<div class="relative">
 		<div
 			class="cover relative aspect-[3/4] w-full overflow-hidden rounded-[2px] bg-muted shadow-page"
@@ -38,7 +36,7 @@
 			{zine.desc}
 		</p>
 	{/if}
-</a>
+</div>
 
 <style>
 	.cover {

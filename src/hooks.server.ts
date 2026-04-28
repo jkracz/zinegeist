@@ -6,7 +6,7 @@ import { getToken } from '@mmailaender/convex-better-auth-svelte/sveltekit';
 import { withServerConvexToken } from '@mmailaender/convex-svelte/sveltekit/server';
 
 const PUBLIC_EXACT = new Set<string>(['/']);
-const PUBLIC_PREFIXES = ['/api/auth', '/publication/'];
+const PUBLIC_PREFIXES = ['/api/auth'];
 
 const isPublic = (pathname: string): boolean => {
 	if (PUBLIC_EXACT.has(pathname)) return true;

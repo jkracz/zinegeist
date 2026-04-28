@@ -22,7 +22,6 @@
 
 	const HOME = resolve('/');
 	const CREATE = resolve('/create');
-	const READING_ROOM = resolve('/publication/[id]', { id: 'z1' });
 
 	const isActive = (href: string) => {
 		if (href === HOME) return page.url.pathname === HOME;
@@ -71,10 +70,8 @@
 		aria-label="Primary"
 	>
 		<a class:active={isActive(HOME)} href={HOME}>Discover</a>
-		<a class:active={page.url.pathname.startsWith('/publication')} href={READING_ROOM}>
-			Reading room
-		</a>
 		{#if isAuthenticated}
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 			<a class:active={page.url.pathname.startsWith('/profile')} href={profileHref}>My shelf</a>
 		{/if}
 	</nav>

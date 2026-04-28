@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import type { Zine } from '$lib/data/zines';
 	import { WRITERS } from '$lib/data/zines';
 	import ZineCard from './ZineCard.svelte';
@@ -9,19 +8,16 @@
 
 	const featured = $derived(zines[0]);
 	const featuredWriter = $derived(WRITERS[featured.writer]);
-	const featuredHref = $derived(resolve('/publication/[id]', { id: featured.id }));
 	const sideStack = $derived(zines.slice(1, 3));
 	const tail = $derived(zines.slice(3));
 
 	// Editorial pattern of column-spans for the tail row.
 	const SPANS = [6, 3, 3, 4, 4, 4];
-
-	const pubHref = (id: string) => resolve('/publication/[id]', { id });
 </script>
 
 <div class="grid auto-rows-[minmax(140px,auto)] grid-cols-12 gap-x-6 gap-y-8">
 	<!-- Featured wide hero card -->
-	<a class="col-span-7 block text-inherit no-underline" href={featuredHref}>
+	<div class="col-span-7 block text-inherit no-underline">
 		<div class="relative aspect-[5/3] overflow-hidden rounded-[2px] shadow-page">
 			<div
 				class="absolute inset-0 grid grid-cols-[1fr_1.1fr] bg-[linear-gradient(110deg,#e8d4b3_0%,#c89870_55%,#8a5a3c_100%)]"
@@ -48,18 +44,17 @@
 						<span class="font-mono text-[11px] tracking-[0.12em] uppercase opacity-70">
 							{featured.pages} pp · {featured.date}
 						</span>
-						<span class="zg-btn zg-btn-outline !border-[#3a2418] !text-[#3a2418]"> Read → </span>
 					</div>
 				</div>
 			</div>
 			<div class="cover-edge"></div>
 		</div>
-	</a>
+	</div>
 
 	<!-- Side stack of 2 cards -->
 	<div class="col-span-5 grid grid-cols-2 content-start gap-x-6 gap-y-8">
 		{#each sideStack as zine (zine.id)}
-			<ZineCard {zine} mini href={pubHref(zine.id)} />
+			<ZineCard {zine} mini />
 		{/each}
 	</div>
 
@@ -72,7 +67,7 @@
 
 	{#each tail as zine, i (zine.id)}
 		<div class="min-w-0" style:grid-column="span {SPANS[i] ?? 4}">
-			<ZineCard {zine} mini={(SPANS[i] ?? 4) < 5} href={pubHref(zine.id)} />
+			<ZineCard {zine} mini={(SPANS[i] ?? 4) < 5} />
 		</div>
 	{/each}
 </div>

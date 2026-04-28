@@ -3,6 +3,11 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import SquarePenIcon from '@lucide/svelte/icons/square-pen';
+	import CheckIcon from '@lucide/svelte/icons/check';
+	import XIcon from '@lucide/svelte/icons/x';
+	import Loader2Icon from '@lucide/svelte/icons/loader-2';
 	import { useConvexClient } from '@mmailaender/convex-svelte';
 	import { api } from '$convex/_generated/api';
 	import { goto, invalidateAll } from '$app/navigation';
@@ -92,20 +97,50 @@
 <SectionBar crumbs={['Writer', displayName]}>
 	{#snippet right()}
 		{#if data.isOwnProfile}
-			{#if editing}
-				<button class="zg-btn zg-btn-ghost" type="button" onclick={cancelEdit} disabled={saving}
-					>Cancel</button
-				>
-				<button
-					class="zg-btn zg-btn-primary"
-					type="submit"
-					form="profile-edit-form"
-					disabled={saving}>{saving ? 'Saving…' : 'Save'}</button
-				>
-			{:else}
-				<button class="zg-btn zg-btn-outline" type="button" onclick={startEdit}>Edit profile</button
-				>
-			{/if}
+			<Tooltip.Provider delayDuration={150}>
+				{#if editing}
+					<Tooltip.Root>
+						<Tooltip.Trigger
+							type="button"
+							onclick={cancelEdit}
+							disabled={saving}
+							aria-label="Cancel"
+							class="inline-flex items-center justify-center text-muted-foreground transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+						>
+							<XIcon class="size-4" />
+						</Tooltip.Trigger>
+						<Tooltip.Content>Cancel</Tooltip.Content>
+					</Tooltip.Root>
+					<Tooltip.Root>
+						<Tooltip.Trigger
+							type="submit"
+							form="profile-edit-form"
+							disabled={saving}
+							aria-label={saving ? 'Saving' : 'Save'}
+							class="inline-flex items-center justify-center text-muted-foreground transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+						>
+							{#if saving}
+								<Loader2Icon class="size-4 animate-spin" />
+							{:else}
+								<CheckIcon class="size-4" />
+							{/if}
+						</Tooltip.Trigger>
+						<Tooltip.Content>{saving ? 'Saving…' : 'Save'}</Tooltip.Content>
+					</Tooltip.Root>
+				{:else}
+					<Tooltip.Root>
+						<Tooltip.Trigger
+							type="button"
+							onclick={startEdit}
+							aria-label="Edit profile"
+							class="inline-flex items-center justify-center text-muted-foreground transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none"
+						>
+							<SquarePenIcon class="size-4" />
+						</Tooltip.Trigger>
+						<Tooltip.Content>Edit profile</Tooltip.Content>
+					</Tooltip.Root>
+				{/if}
+			</Tooltip.Provider>
 		{/if}
 	{/snippet}
 </SectionBar>
