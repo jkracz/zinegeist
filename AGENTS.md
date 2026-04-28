@@ -10,6 +10,10 @@ Convex agent skills for common tasks can be installed by running `npx convex ai-
 
 Always run lint and typecheck after making code changes, and make sure they pass.
 
+Always use bun as the package manager.
+
+If you need to add UI components, see if any on [Shadcn Svelte](https://www.shadcn-svelte.com/docs/components) fit our needs before writing your own.
+
 ## Source Code Reference
 
 Source code for dependencies is cached at `~/.opensrc/`.
