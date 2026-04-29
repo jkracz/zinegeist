@@ -9,7 +9,7 @@
 	let { crumbs, right }: Props = $props();
 </script>
 
-<div class="flex items-center justify-between border-b border-border bg-background px-12 py-3.5">
+<div class="flex h-12 items-center justify-between border-b border-border bg-background px-12">
 	<div class="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
 		{#each crumbs as crumb, i (i)}
 			{#if i > 0}<span class="mx-2.5">/</span>{/if}

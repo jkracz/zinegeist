@@ -1,16 +1,48 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import SignInDialog from '$lib/components/auth/SignInDialog.svelte';
+	import UserMenu from '$lib/components/auth/UserMenu.svelte';
+
+	type HeaderData = {
+		authState?: { isAuthenticated: boolean };
+		currentUser?: { name?: string | null; image?: string | null } | null;
+		profile?: { handle: string } | null;
+	};
+
+	let { data }: { data?: HeaderData } = $props();
+
+	const isAuthenticated = $derived(data?.authState?.isAuthenticated ?? false);
+	const profileHref = $derived(
+		data?.profile?.handle
+			? resolve('/profile/[handle]', { handle: data.profile.handle })
+			: resolve('/onboarding/handle')
+	);
 
 	const HOME = resolve('/');
-	const PROFILE = resolve('/profile');
 	const CREATE = resolve('/create');
-	const READING_ROOM = resolve('/publication/[id]', { id: 'z1' });
 
 	const isActive = (href: string) => {
 		if (href === HOME) return page.url.pathname === HOME;
 		return page.url.pathname.startsWith(href);
 	};
+
+	let signInDialogOpen = $state(false);
+
+	$effect(() => {
+		if (page.url.searchParams.get('signin') === '1' && !isAuthenticated) {
+			signInDialogOpen = true;
+			const url = new URL(page.url);
+			url.searchParams.delete('signin');
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
+			void goto(url.pathname + url.search + url.hash, {
+				replaceState: true,
+				noScroll: true,
+				keepFocus: true
+			});
+		}
+	});
 </script>
 
 <header
@@ -38,10 +70,10 @@
 		aria-label="Primary"
 	>
 		<a class:active={isActive(HOME)} href={HOME}>Discover</a>
-		<a class:active={page.url.pathname.startsWith('/publication')} href={READING_ROOM}>
-			Reading room
-		</a>
-		<a class:active={isActive(PROFILE)} href={PROFILE}>My shelf</a>
+		{#if isAuthenticated}
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+			<a class:active={page.url.pathname.startsWith('/profile')} href={profileHref}>My shelf</a>
+		{/if}
 	</nav>
 
 	<div class="flex items-center gap-2.5 justify-self-end">
@@ -55,21 +87,22 @@
 			<span class="kbd ml-auto">⌘K</span>
 		</div>
 		<a class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]" href={CREATE}> ＋ Publish </a>
-		<button
-			class="user-chip inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-card py-1 pr-3 pl-1"
-			type="button"
-			aria-label="User menu"
-		>
-			<div
-				class="grid size-7 place-items-center rounded-full bg-gradient-to-br from-[#e8d4b3] to-[#9b7a5e] font-serif text-sm text-[#3a2418] italic"
+
+		{#if isAuthenticated}
+			<UserMenu currentUser={data?.currentUser} />
+		{:else}
+			<button
+				type="button"
+				class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]"
+				onclick={() => (signInDialogOpen = true)}
 			>
-				IC
-			</div>
-			<div class="text-[13px] text-ink">Inés</div>
-			<div class="ml-0.5 text-[9px] opacity-50" aria-hidden="true">▾</div>
-		</button>
+				Sign in
+			</button>
+		{/if}
 	</div>
 </header>
+
+<SignInDialog bind:open={signInDialogOpen} />
 
 <style>
 	.header {
@@ -96,14 +129,12 @@
 		background: var(--ink);
 		color: var(--paper-warm-1);
 	}
-	.header-search,
-	.user-chip {
+	.header-search {
 		transition:
 			border-color 0.15s,
 			background 0.15s;
 	}
-	.header-search:hover,
-	.user-chip:hover {
+	.header-search:hover {
 		border-color: var(--ink);
 	}
 </style>

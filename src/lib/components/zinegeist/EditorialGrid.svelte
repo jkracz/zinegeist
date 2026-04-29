@@ -21,6 +21,7 @@
 
 <div class="grid auto-rows-[minmax(140px,auto)] grid-cols-12 gap-x-6 gap-y-8">
 	<!-- Featured wide hero card -->
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 	<a class="col-span-7 block text-inherit no-underline" href={featuredHref}>
 		<div class="relative aspect-[5/3] overflow-hidden rounded-[2px] shadow-page">
 			<div

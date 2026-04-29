@@ -38,8 +38,11 @@ export default defineConfig(
 		}
 	},
 	{
-		// Override or add rule settings here, such as:
-		// 'svelte/button-has-type': 'error'
-		rules: {}
+		// Profile page renders user-entered external URLs in <a href={link.url}>.
+		// The rule false-positives on dynamic href values that may be external.
+		files: ['**/profile/**/+page.svelte'],
+		rules: {
+			'svelte/no-navigation-without-resolve': 'off'
+		}
 	}
 );
