@@ -37,7 +37,7 @@
 				</a>
 				<a class="zg-btn zg-btn-outline" href={CREATE}>Publish your own</a>
 				<span class="ml-1 font-mono text-[11px] text-muted-foreground">
-					No feed · No follows · No metrics
+					No AI · No doomscrolling · Just stories
 				</span>
 			</div>
 		</div>
