@@ -97,7 +97,7 @@
 		currentStep = 0;
 
 		try {
-			const pdfFileId = await uploadBlob(file, 'application/pdf');
+			const pdfStorageId = await uploadBlob(file, 'application/pdf');
 
 			uploadState = 'extracting-cover';
 			const { renderPdfCover } = await import('$lib/pdf/cover.client');
@@ -107,8 +107,19 @@
 			});
 
 			uploadState = 'uploading-cover';
-			const coverFileId = await uploadBlob(coverFile, 'image/jpeg');
-			const draft = await client.mutation(api.publications.createDraft, { pdfFileId, coverFileId });
+			const coverStorageId = await uploadBlob(coverFile, 'image/jpeg');
+			const draft = await client.mutation(api.publications.createDraft, {
+				pdfFile: {
+					storageId: pdfStorageId,
+					name: file.name,
+					mimeType: file.type || 'application/pdf'
+				},
+				coverFile: {
+					storageId: coverStorageId,
+					name: coverFile.name,
+					mimeType: coverFile.type
+				}
+			});
 
 			publicationId = draft.publicationId;
 			coverPreviewUrl = URL.createObjectURL(coverBlob);

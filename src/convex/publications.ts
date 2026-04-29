@@ -11,8 +11,16 @@ const MAX_TITLE_LENGTH = 140;
 const MAX_DESCRIPTION_LENGTH = 1200;
 const MAX_TAGS = 12;
 const MAX_TAG_LENGTH = 32;
+const MAX_FILE_NAME_LENGTH = 240;
 
 type AuthedCtx = QueryCtx | MutationCtx;
+type FileKind = 'publication_pdf' | 'publication_cover';
+
+type UploadedFileInput = {
+	storageId: Id<'_storage'>;
+	name: string;
+	mimeType: string;
+};
 
 async function findProfileByUserId(ctx: AuthedCtx, userId: string) {
 	return ctx.db
@@ -34,6 +42,14 @@ async function requireAuthorWithProfile(ctx: AuthedCtx) {
 function cleanOptionalText(input: string, maxLength: number): string | undefined {
 	const cleaned = input.trim().replace(/\s+/g, ' ');
 	return cleaned ? cleaned.slice(0, maxLength) : undefined;
+}
+
+function cleanFileName(input: string): string {
+	return cleanOptionalText(input, MAX_FILE_NAME_LENGTH) ?? 'untitled';
+}
+
+function cleanMimeType(input: string | undefined): string {
+	return cleanOptionalText(input ?? '', 120)?.toLowerCase() ?? 'application/octet-stream';
 }
 
 function cleanTags(tags: string[]): string[] | undefined {
@@ -66,9 +82,52 @@ function titleToSlug(title: string): string {
 	return slug || 'publication';
 }
 
-async function assertStorageFileExists(ctx: MutationCtx, fileId: Id<'_storage'>): Promise<void> {
-	const file = await ctx.db.system.get('_storage', fileId);
-	if (!file) throw new Error('Uploaded file not found.');
+function assertExpectedMimeType(kind: FileKind, mimeType: string): void {
+	if (kind === 'publication_pdf' && mimeType !== 'application/pdf') {
+		throw new Error('Publication file must be a PDF.');
+	}
+	if (kind === 'publication_cover' && mimeType !== 'image/jpeg') {
+		throw new Error('Cover file must be a JPEG.');
+	}
+}
+
+async function acquireFileForPublication(
+	ctx: MutationCtx,
+	uploaderId: string,
+	file: UploadedFileInput,
+	kind: FileKind
+): Promise<Id<'files'>> {
+	const metadata = await ctx.db.system.get('_storage', file.storageId);
+	if (!metadata) throw new Error('Uploaded file not found.');
+
+	const mimeType = cleanMimeType(metadata.contentType ?? file.mimeType);
+	assertExpectedMimeType(kind, mimeType);
+
+	const existing = await ctx.db
+		.query('files')
+		.withIndex('by_sha256', (q) => q.eq('sha256', metadata.sha256))
+		.unique();
+
+	if (existing) {
+		await ctx.db.patch(existing._id, {
+			refCount: existing.refCount + 1
+		});
+		if (existing.storageId !== file.storageId) {
+			await ctx.storage.delete(file.storageId);
+		}
+		return existing._id;
+	}
+
+	return await ctx.db.insert('files', {
+		uploaderId,
+		storageId: file.storageId,
+		name: cleanFileName(file.name),
+		mimeType,
+		sha256: metadata.sha256,
+		size: metadata.size,
+		kind,
+		refCount: 1
+	});
 }
 
 async function requireOwnedPublication(
@@ -107,20 +166,38 @@ export const generateUploadUrl = mutation({
 
 export const createDraft = mutation({
 	args: {
-		pdfFileId: v.id('_storage'),
-		coverFileId: v.id('_storage')
+		pdfFile: v.object({
+			storageId: v.id('_storage'),
+			name: v.string(),
+			mimeType: v.string()
+		}),
+		coverFile: v.object({
+			storageId: v.id('_storage'),
+			name: v.string(),
+			mimeType: v.string()
+		})
 	},
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
-		await assertStorageFileExists(ctx, args.pdfFileId);
-		await assertStorageFileExists(ctx, args.coverFileId);
+		const pdfFileId = await acquireFileForPublication(
+			ctx,
+			authUser._id,
+			args.pdfFile,
+			'publication_pdf'
+		);
+		const coverFileId = await acquireFileForPublication(
+			ctx,
+			authUser._id,
+			args.coverFile,
+			'publication_cover'
+		);
 
 		const now = Date.now();
 		const publicationId = await ctx.db.insert('publications', {
 			authorId: authUser._id,
 			updatedAt: now,
-			pdfFileId: args.pdfFileId,
-			coverFileId: args.coverFileId,
+			pdfFileId,
+			coverFileId,
 			status: 'draft'
 		});
 
