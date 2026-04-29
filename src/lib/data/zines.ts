@@ -220,4 +220,37 @@ export const INES_PROFILE = {
 	zines: ['z1', 'z7']
 };
 
+export type SamplePage = {
+	chapter: string;
+	title: string;
+	body: ({ type: 'p'; text: string; drop?: boolean } | { type: 'pull'; text: string })[];
+};
+
+export const SAMPLE_PAGES: SamplePage[] = [
+	{
+		chapter: 'I.',
+		title: 'On Slowness',
+		body: [
+			{
+				type: 'p',
+				drop: true,
+				text: 'There is a particular hour in early spring when the light slows down. It does not soften, exactly, nor warm — it simply takes longer to cross the kitchen floor. I have been trying for some years to learn how to live in that hour for as long as it lasts.'
+			},
+			{
+				type: 'p',
+				text: 'The trouble, of course, is that the hour does not negotiate. It arrives, it crosses the room, and it leaves, indifferent to whether I have opened the right book or set down the right cup. The most one can do, I think, is be in the room when it happens.'
+			},
+			{
+				type: 'pull',
+				text: "A paragraph should be willing to wait for you. Most aren't. Most of what we read now is in a hurry to be elsewhere, already three sentences ahead of itself."
+			},
+			{
+				type: 'p',
+				text: 'And so I have been collecting paragraphs that wait. I keep them in a green notebook and read them in the morning before anything else has had a chance to begin.'
+			}
+		]
+	}
+];
+
 export const findCover = (id: string): Cover => COVERS.find((c) => c.id === id) ?? COVERS[0];
+export const findZine = (id: string): Zine => ZINES.find((z) => z.id === id) ?? ZINES[0];
