@@ -1,44 +1,29 @@
 <script lang="ts">
-	import ZineCover from './ZineCover.svelte';
+	import { base } from '$app/paths';
 
-	const layers = [
-		{
-			id: 'c7',
-			transform: 'rotate(-8deg) translateX(-100px) translateY(20px) rotateY(8deg)',
-			z: 1,
-			opacity: 0.85
-		},
-		{
-			id: 'c4',
-			transform: 'rotate(3deg) translateX(60px) translateY(-10px) rotateY(-6deg)',
-			z: 2,
-			opacity: 0.92
-		},
-		{ id: 'c1', transform: 'rotate(-2deg) translateY(-8px) rotateY(2deg)', z: 3, opacity: 1 }
-	];
+	const heroSrc = `${base}/zinegeistHero.png`;
 </script>
 
-<div class="hero-stage relative flex h-[540px] items-center justify-center">
-	{#each layers as layer (layer.id)}
-		<div
-			class="hero-zine absolute h-[380px] w-[280px] rounded-[2px_4px_4px_2px] shadow-page"
-			style:transform={layer.transform}
-			style:z-index={layer.z}
-			style:opacity={layer.opacity}
-		>
-			<div class="relative h-full w-full">
-				<ZineCover coverId={layer.id} />
-				<div class="cover-edge"></div>
-			</div>
-		</div>
-	{/each}
+<div class="hero-stage relative flex h-full min-h-[600px] w-full items-center justify-center">
+	<img
+		src={heroSrc}
+		alt="A reader's desk — an open notebook, a stack of zines, a coffee mug, and a pen"
+		class="illustration"
+		width="500"
+		height="320"
+		draggable="false"
+	/>
 </div>
 
 <style>
-	.hero-stage {
-		perspective: 1400px;
-	}
-	.hero-zine {
-		transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+	.illustration {
+		width: 100%;
+		max-width: 760px;
+		height: auto;
+		display: block;
+		mix-blend-mode: multiply;
+		filter: contrast(1.05) saturate(0.95);
+		user-select: none;
+		-webkit-user-drag: none;
 	}
 </style>
