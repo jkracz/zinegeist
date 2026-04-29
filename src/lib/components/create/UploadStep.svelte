@@ -56,7 +56,7 @@
 	ondrop={onDrop}
 >
 	<div class="icon-pdf"></div>
-	<h3 class="font-serif text-2xl font-medium">
+	<h3 class="max-w-full font-serif text-2xl font-medium [overflow-wrap:anywhere]">
 		{fileName ?? 'Drag a PDF here'}
 	</h3>
 	<p class="m-0 text-sm text-muted-foreground">{statusLabel ?? 'or'}</p>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { useConvexClient } from '@mmailaender/convex-svelte';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import { CreateDraft } from '$lib/components/create/create-draft.svelte';
@@ -48,7 +50,10 @@
 
 	async function publishDraft(): Promise<void> {
 		if (publishDisabled) return;
-		await draft.publish({ title, description, tags, rightsAccepted });
+		const slug = await draft.publish({ title, description, tags, rightsAccepted });
+		if (slug) {
+			await goto(resolve('/publication/[id]', { id: slug }));
+		}
 	}
 </script>
 
@@ -91,7 +96,6 @@
 				{description}
 				{tags}
 				bind:rightsAccepted
-				publishedSlug={draft.publishedSlug}
 			/>
 		{/if}
 
@@ -106,7 +110,6 @@
 			{detailsReady}
 			{publishDisabled}
 			publishing={draft.publishing}
-			publishedSlug={draft.publishedSlug}
 			onBack={() => (currentStep = Math.max(0, currentStep - 1))}
 			onContinue={() => (currentStep = Math.min(STEPS.length - 1, currentStep + 1))}
 			onReview={reviewDetails}

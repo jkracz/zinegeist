@@ -149,8 +149,8 @@ export class CreateDraft {
 		description: string;
 		tags: string[];
 		rightsAccepted: boolean;
-	}): Promise<boolean> {
-		if (!this.publicationId) return false;
+	}): Promise<string | null> {
+		if (!this.publicationId) return null;
 		this.publishing = true;
 		this.error = null;
 		try {
@@ -165,10 +165,10 @@ export class CreateDraft {
 				rightsAccepted: input.rightsAccepted
 			});
 			this.publishedSlug = result.slug;
-			return true;
+			return result.slug;
 		} catch (e) {
 			this.error = e instanceof Error ? e.message : 'Could not publish this draft.';
-			return false;
+			return null;
 		} finally {
 			this.publishing = false;
 		}

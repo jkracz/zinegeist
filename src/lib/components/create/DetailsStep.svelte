@@ -29,7 +29,7 @@
 	Give the issue a <em class="text-primary italic">name</em>.
 </h1>
 <p class="mb-9 max-w-[56ch] font-serif text-[17px] text-muted-foreground">
-	These details become the metadata attached to the published route.
+	These details become the metadata attached to the published zine.
 </p>
 
 <form

@@ -8,7 +8,6 @@
 		detailsReady: boolean;
 		publishDisabled: boolean;
 		publishing: boolean;
-		publishedSlug: string | null;
 		onBack: () => void;
 		onContinue: () => void;
 		onReview: () => void;
@@ -22,7 +21,6 @@
 		detailsReady,
 		publishDisabled,
 		publishing,
-		publishedSlug,
 		onBack,
 		onContinue,
 		onReview,
@@ -63,10 +61,6 @@
 		>
 			Review publication
 		</button>
-	{:else if publishedSlug}
-		<a class="zg-btn zg-btn-primary" href={resolve('/publication/[id]', { id: publishedSlug })}>
-			View route
-		</a>
 	{:else}
 		<button
 			class="zg-btn zg-btn-primary disabled:cursor-not-allowed disabled:opacity-40"

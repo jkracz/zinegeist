@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-
 	type Props = {
 		coverPreviewUrl: string | null;
 		title: string;
 		description: string;
 		tags: string[];
 		rightsAccepted: boolean;
-		publishedSlug: string | null;
 	};
 
 	let {
@@ -15,8 +12,7 @@
 		title,
 		description,
 		tags,
-		rightsAccepted = $bindable(false),
-		publishedSlug
+		rightsAccepted = $bindable(false)
 	}: Props = $props();
 </script>
 
@@ -24,7 +20,7 @@
 	Review and <em class="text-primary italic">publish</em>.
 </h1>
 <p class="mb-9 max-w-[56ch] font-serif text-[17px] text-muted-foreground">
-	Confirm the publication details before making this route public.
+	Confirm the publication details before publishing this zine.
 </p>
 
 <div class="grid grid-cols-1 items-start gap-9 md:grid-cols-[minmax(220px,340px)_1fr]">
@@ -54,24 +50,8 @@
 			</div>
 		{/if}
 		<label class="mt-7 flex items-start gap-3 text-sm leading-6">
-			<input
-				class="mt-[5px]"
-				type="checkbox"
-				bind:checked={rightsAccepted}
-				disabled={Boolean(publishedSlug)}
-			/>
+			<input class="mt-[5px]" type="checkbox" bind:checked={rightsAccepted} />
 			<span>I own or have permission to publish this PDF on Zinegeist.</span>
 		</label>
-		{#if publishedSlug}
-			<div class="mt-7 border-t border-border pt-[18px]">
-				<p class="eyebrow">Public route</p>
-				<a
-					class="mt-2 inline-block font-mono text-[13px] text-ink underline underline-offset-4"
-					href={resolve('/publication/[id]', { id: publishedSlug })}
-				>
-					{resolve('/publication/[id]', { id: publishedSlug })}
-				</a>
-			</div>
-		{/if}
 	</div>
 </div>
