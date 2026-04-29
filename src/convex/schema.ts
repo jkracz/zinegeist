@@ -16,6 +16,7 @@ export default defineSchema({
 		storageId: v.id('_storage'),
 		name: v.string(),
 		mimeType: v.string(),
+		// Indexed copy of _storage.sha256; Convex remains the source of truth.
 		sha256: v.string(),
 		size: v.number(),
 		kind: v.union(v.literal('publication_pdf'), v.literal('publication_cover')),

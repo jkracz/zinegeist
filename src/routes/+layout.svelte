@@ -5,7 +5,8 @@
 	import { setupConvex } from '@mmailaender/convex-svelte';
 	import { createSvelteAuthClient } from '@mmailaender/convex-better-auth-svelte/svelte';
 	import { authClient } from '$lib/auth-client';
-	import { Header, PaperGrain } from '$lib/components/zinegeist';
+	import Header from '$lib/components/Header.svelte';
+	import PaperGrain from '$lib/components/PaperGrain.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 
 	let { children, data } = $props();

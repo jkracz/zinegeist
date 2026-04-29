@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Avatar, SectionBar } from '$lib/components/zinegeist';
+	import Avatar from '$lib/components/Avatar.svelte';
+	import SectionBar from '$lib/components/SectionBar.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';

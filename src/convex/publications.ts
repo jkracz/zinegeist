@@ -22,6 +22,12 @@ type UploadedFileInput = {
 	mimeType: string;
 };
 
+const uploadedFileValidator = v.object({
+	storageId: v.id('_storage'),
+	name: v.string(),
+	mimeType: v.string()
+});
+
 async function findProfileByUserId(ctx: AuthedCtx, userId: string) {
 	return ctx.db
 		.query('profiles')
@@ -130,6 +136,21 @@ async function acquireFileForPublication(
 	});
 }
 
+async function releaseFileReference(ctx: MutationCtx, fileId: Id<'files'>): Promise<void> {
+	const file = await ctx.db.get(fileId);
+	if (!file) return;
+
+	if (file.refCount <= 1) {
+		await ctx.storage.delete(file.storageId);
+		await ctx.db.delete(file._id);
+		return;
+	}
+
+	await ctx.db.patch(file._id, {
+		refCount: file.refCount - 1
+	});
+}
+
 async function requireOwnedPublication(
 	ctx: MutationCtx,
 	publicationId: Id<'publications'>,
@@ -166,16 +187,8 @@ export const generateUploadUrl = mutation({
 
 export const createDraft = mutation({
 	args: {
-		pdfFile: v.object({
-			storageId: v.id('_storage'),
-			name: v.string(),
-			mimeType: v.string()
-		}),
-		coverFile: v.object({
-			storageId: v.id('_storage'),
-			name: v.string(),
-			mimeType: v.string()
-		})
+		pdfFile: uploadedFileValidator,
+		coverFile: uploadedFileValidator
 	},
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
@@ -202,6 +215,43 @@ export const createDraft = mutation({
 		});
 
 		return { publicationId };
+	}
+});
+
+export const replaceDraftFiles = mutation({
+	args: {
+		publicationId: v.id('publications'),
+		pdfFile: uploadedFileValidator,
+		coverFile: uploadedFileValidator
+	},
+	handler: async (ctx, args) => {
+		const { authUser } = await requireAuthorWithProfile(ctx);
+		const publication = await requireOwnedPublication(ctx, args.publicationId, authUser._id);
+		if (publication.status !== 'draft') throw new Error('Only draft files can be replaced.');
+
+		const pdfFileId = await acquireFileForPublication(
+			ctx,
+			authUser._id,
+			args.pdfFile,
+			'publication_pdf'
+		);
+		const coverFileId = await acquireFileForPublication(
+			ctx,
+			authUser._id,
+			args.coverFile,
+			'publication_cover'
+		);
+
+		await ctx.db.patch(args.publicationId, {
+			pdfFileId,
+			coverFileId,
+			updatedAt: Date.now()
+		});
+
+		await releaseFileReference(ctx, publication.pdfFileId);
+		await releaseFileReference(ctx, publication.coverFileId);
+
+		return { publicationId: args.publicationId };
 	}
 });
 

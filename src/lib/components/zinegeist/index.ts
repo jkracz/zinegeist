@@ -1,9 +1,0 @@
-export { default as Avatar } from './Avatar.svelte';
-export { default as CreateSteps } from './CreateSteps.svelte';
-export { default as EditorialGrid } from './EditorialGrid.svelte';
-export { default as Header } from './Header.svelte';
-export { default as HeroStage } from './HeroStage.svelte';
-export { default as PaperGrain } from './PaperGrain.svelte';
-export { default as SectionBar } from './SectionBar.svelte';
-export { default as ZineCard } from './ZineCard.svelte';
-export { default as ZineCover } from './ZineCover.svelte';
