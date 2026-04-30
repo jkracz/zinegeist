@@ -41,7 +41,7 @@
 {#snippet cardContents()}
 	<div class="relative">
 		<div
-			class="relative aspect-3/4 w-full overflow-hidden rounded-[2px] bg-muted shadow-page transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:-translate-y-1 group-hover:-rotate-[0.6deg]"
+			class="cover-frame relative aspect-3/4 w-full overflow-hidden rounded-[2px] bg-muted shadow-page transition-[transform,box-shadow] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:-translate-y-1.5"
 		>
 			{#if publication.coverUrl}
 				<img
@@ -71,6 +71,9 @@
 			{/if}
 			<div class="cover-edge"></div>
 		</div>
+		<div
+			class="hover-rule pointer-events-none absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-ink/70 transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100"
+		></div>
 	</div>
 
 	{#if showStatus}
@@ -107,3 +110,12 @@
 		{@render cardContents()}
 	</div>
 {/if}
+
+<style>
+	.group:hover .cover-frame {
+		box-shadow:
+			0 1px 0 hsl(20 18% 35% / 0.14),
+			0 16px 28px -10px hsl(20 18% 30% / 0.26),
+			0 36px 60px -22px hsl(20 18% 25% / 0.3);
+	}
+</style>

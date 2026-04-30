@@ -336,28 +336,30 @@
 						href={resolve('/create')}
 						aria-label="Begin a new publication"
 					>
-						<div
-							class="relative aspect-[3/4] w-full transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:-translate-y-1 group-hover:-rotate-[0.6deg]"
-						>
+						<div class="relative">
 							<div
-								class="absolute inset-0 rounded-[2px] bg-paper-warm-2/30 ring-1 ring-border/60 ring-inset"
-							></div>
-							<span class="crop crop-tl"></span>
-							<span class="crop crop-tr"></span>
-							<span class="crop crop-bl"></span>
-							<span class="crop crop-br"></span>
-							<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-								<div
-									class="font-serif text-[64px] leading-none text-ink/55 italic transition-colors duration-500 group-hover:text-ink/85"
-								>
-									+
-								</div>
-								<div
-									class="mt-4 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase"
-								>
-									New
+								class="compose-frame relative aspect-[3/4] w-full rounded-[2px] bg-paper-warm-2/30 shadow-page ring-1 ring-border/60 transition-[transform,box-shadow] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] ring-inset group-hover:-translate-y-1.5"
+							>
+								<span class="crop crop-tl"></span>
+								<span class="crop crop-tr"></span>
+								<span class="crop crop-bl"></span>
+								<span class="crop crop-br"></span>
+								<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+									<div
+										class="font-serif text-[64px] leading-none text-ink/55 italic transition-colors duration-500 group-hover:text-ink/85"
+									>
+										+
+									</div>
+									<div
+										class="mt-4 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase"
+									>
+										New
+									</div>
 								</div>
 							</div>
+							<div
+								class="hover-rule pointer-events-none absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-ink/70 transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100"
+							></div>
 						</div>
 					</a>
 				{/if}
@@ -378,6 +380,12 @@
 </div>
 
 <style>
+	.group:hover .compose-frame {
+		box-shadow:
+			0 1px 0 hsl(20 18% 35% / 0.14),
+			0 16px 28px -10px hsl(20 18% 30% / 0.26),
+			0 36px 60px -22px hsl(20 18% 25% / 0.3);
+	}
 	.crop {
 		position: absolute;
 		width: 16px;
