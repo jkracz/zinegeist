@@ -13,11 +13,15 @@ export const load = (async ({ params, locals }) => {
 	}
 
 	let isOwnProfile = false;
+	let publicationClient = publicClient;
 	if (locals.token) {
 		const authedClient = createConvexHttpClient({ token: locals.token });
 		const me = await authedClient.query(api.profiles.getMyProfile, {});
 		isOwnProfile = me?.authUser?.id === profileView.userId;
+		publicationClient = authedClient;
 	}
 
-	return { profileView, isOwnProfile };
+	const publications = await publicationClient.query(api.publications.listForProfile, { handle });
+
+	return { profileView, isOwnProfile, publications };
 }) satisfies PageServerLoad;

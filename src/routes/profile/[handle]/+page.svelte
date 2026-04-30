@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
+	import ProfilePublicationCard from '$lib/components/ProfilePublicationCard.svelte';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -41,6 +42,19 @@
 
 	const client = useConvexClient();
 	const displayName = $derived(data.profileView.name?.trim() || 'Writer');
+
+	const catalogueDateFmt = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric' });
+	const publicationCount = $derived(data.publications.length);
+	const countLabel = $derived(
+		publicationCount === 0
+			? 'None filed'
+			: `${publicationCount} ${publicationCount === 1 ? 'entry' : 'entries'}`
+	);
+	const latestFiledLabel = $derived.by(() => {
+		if (publicationCount === 0) return null;
+		const t = data.publications.reduce((acc, p) => Math.max(acc, p.publishedAt ?? p.updatedAt), 0);
+		return t > 0 ? catalogueDateFmt.format(new Date(t)) : null;
+	});
 
 	function startEdit() {
 		draft = snapshot();
@@ -293,4 +307,144 @@
 			</div>
 		</div>
 	</form>
+
+	<section class="pt-14">
+		<header class="mb-12 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+			<h2 class="font-serif text-[52px] leading-[0.92] font-normal tracking-[-0.03em] text-ink">
+				Publications
+			</h2>
+			<div
+				class="flex items-center gap-3 pb-2 font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase"
+			>
+				<span>{countLabel}</span>
+				{#if latestFiledLabel}
+					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
+					<span>Last filed <span class="text-ink">{latestFiledLabel}</span></span>
+				{/if}
+			</div>
+		</header>
+
+		{#if publicationCount > 0 || data.isOwnProfile}
+			<div class="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-8 gap-y-14">
+				{#each data.publications as publication (publication.id)}
+					<ProfilePublicationCard {publication} showStatus={data.isOwnProfile} />
+				{/each}
+
+				{#if data.isOwnProfile}
+					<a
+						class="group flex min-w-0 flex-col gap-3.5 text-inherit no-underline"
+						href={resolve('/create')}
+						aria-label="Begin a new publication"
+					>
+						<div
+							class="relative aspect-[3/4] w-full transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:-translate-y-1 group-hover:-rotate-[0.6deg]"
+						>
+							<div
+								class="absolute inset-0 rounded-[2px] bg-paper-warm-2/30 ring-1 ring-border/60 ring-inset"
+							></div>
+							<span class="crop crop-tl"></span>
+							<span class="crop crop-tr"></span>
+							<span class="crop crop-bl"></span>
+							<span class="crop crop-br"></span>
+							<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+								<div
+									class="font-serif text-[64px] leading-none text-ink/55 italic transition-colors duration-500 group-hover:text-ink/85"
+								>
+									+
+								</div>
+								<div
+									class="mt-4 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase"
+								>
+									New
+								</div>
+							</div>
+						</div>
+					</a>
+				{/if}
+			</div>
+		{:else}
+			<div class="grid place-items-center border-y border-border py-20 text-center">
+				<div>
+					<div class="font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
+						Awaiting first issue
+					</div>
+					<p class="mt-3 font-serif text-[28px] leading-tight text-muted-foreground italic">
+						Nothing in print yet.
+					</p>
+				</div>
+			</div>
+		{/if}
+	</section>
 </div>
+
+<style>
+	.crop {
+		position: absolute;
+		width: 16px;
+		height: 16px;
+		pointer-events: none;
+	}
+	.crop::before,
+	.crop::after {
+		content: '';
+		position: absolute;
+		background: var(--muted-foreground);
+		opacity: 0.45;
+	}
+	.crop::before {
+		width: 1px;
+		height: 100%;
+	}
+	.crop::after {
+		width: 100%;
+		height: 1px;
+	}
+	.crop-tl {
+		top: 12px;
+		left: 12px;
+	}
+	.crop-tl::before {
+		left: 0;
+		top: 0;
+	}
+	.crop-tl::after {
+		left: 0;
+		top: 0;
+	}
+	.crop-tr {
+		top: 12px;
+		right: 12px;
+	}
+	.crop-tr::before {
+		right: 0;
+		top: 0;
+	}
+	.crop-tr::after {
+		right: 0;
+		top: 0;
+	}
+	.crop-bl {
+		bottom: 12px;
+		left: 12px;
+	}
+	.crop-bl::before {
+		left: 0;
+		bottom: 0;
+	}
+	.crop-bl::after {
+		left: 0;
+		bottom: 0;
+	}
+	.crop-br {
+		bottom: 12px;
+		right: 12px;
+	}
+	.crop-br::before {
+		right: 0;
+		bottom: 0;
+	}
+	.crop-br::after {
+		right: 0;
+		bottom: 0;
+	}
+</style>
