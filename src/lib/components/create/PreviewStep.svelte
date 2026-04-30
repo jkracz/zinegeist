@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import TagInput from './TagInput.svelte';
+
+	const TERMS_HREF = resolve('/terms');
 
 	type Props = {
 		coverPreviewUrl: string | null;
@@ -84,7 +87,17 @@
 		</div>
 		<label class="mt-2 flex items-start gap-3 text-sm leading-6">
 			<Checkbox bind:checked={rightsAccepted} class="mt-[5px]" />
-			<span>I own or have permission to publish this PDF on Zinegeist.</span>
+			<span>
+				I own or have permission to publish this content on Zinegeist, and I agree to the
+				<a
+					href={TERMS_HREF}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-primary underline-offset-2 hover:underline focus-visible:underline"
+				>
+					Terms of Service
+				</a>.
+			</span>
 		</label>
 	</form>
 </div>
