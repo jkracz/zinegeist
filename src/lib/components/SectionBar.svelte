@@ -25,13 +25,14 @@
 			{#if i === crumbs.length - 1}
 				<strong class="font-medium text-ink">{labelOf(crumb)}</strong>
 			{:else if hrefOf(crumb)}
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+				<!-- eslint-disable svelte/no-navigation-without-resolve -->
 				<a
 					href={hrefOf(crumb)}
 					class="transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none"
 				>
 					{labelOf(crumb)}
 				</a>
+				<!-- eslint-enable svelte/no-navigation-without-resolve -->
 			{:else}
 				<span>{labelOf(crumb)}</span>
 			{/if}
