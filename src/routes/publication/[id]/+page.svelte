@@ -2,7 +2,8 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { findZine, WRITERS } from '$lib/data/zines';
-	import { SectionBar, ZineCover } from '$lib/components/zinegeist';
+	import SectionBar from '$lib/components/SectionBar.svelte';
+	import ZineCover from '$lib/components/ZineCover.svelte';
 
 	const HOME = resolve('/');
 	const PROFILE = resolve('/profile');

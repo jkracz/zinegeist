@@ -1,102 +1,121 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { SectionBar, CreateSteps } from '$lib/components/zinegeist';
+	import { useConvexClient } from '@mmailaender/convex-svelte';
+	import SectionBar from '$lib/components/SectionBar.svelte';
+	import PublicationStatusBadge from '$lib/components/PublicationStatusBadge.svelte';
+	import { CreateDraft } from '$lib/components/create/create-draft.svelte';
+	import CreateSteps from '$lib/components/create/CreateSteps.svelte';
+	import UploadStep from '$lib/components/create/UploadStep.svelte';
+	import PreviewStep from '$lib/components/create/PreviewStep.svelte';
+	import StepNav from '$lib/components/create/StepNav.svelte';
+	import type { PageData } from './$types';
 
-	const STEPS = ['Upload', 'Cover', 'Details', 'Review'];
-	const HOME = resolve('/');
-	const PROFILE = resolve('/profile');
+	let { data }: { data: PageData } = $props();
+
+	const STEPS = ['Upload', 'Preview'];
+
+	const draft = new CreateDraft(useConvexClient());
+
+	let currentStep = $state(0);
+	let maxStepReached = $state(0);
+	$effect(() => {
+		if (currentStep > maxStepReached) maxStepReached = currentStep;
+	});
+	let title = $state('');
+	let description = $state('');
+	let tags = $state<string[]>([]);
+	let rightsAccepted = $state(false);
+	let previewStep = $state<PreviewStep | null>(null);
+
+	const detailsReady = $derived(title.trim().length > 0 && description.trim().length > 0);
+	const publishDisabled = $derived(
+		draft.publishing ||
+			!draft.publicationId ||
+			!detailsReady ||
+			!rightsAccepted ||
+			Boolean(draft.publishedSlug)
+	);
+
+	function fileNameWithoutExtension(name: string): string {
+		const dot = name.lastIndexOf('.');
+		return dot > 0 ? name.slice(0, dot) : name;
+	}
+
+	async function onFile(file: File): Promise<void> {
+		currentStep = 0;
+		const ok = await draft.handleFile(file);
+		if (ok) {
+			title = fileNameWithoutExtension(file.name);
+			currentStep = 1;
+		}
+	}
+
+	async function publishDraft(): Promise<void> {
+		previewStep?.flushTags();
+		if (publishDisabled) return;
+		const slug = await draft.publish({ title, description, tags, rightsAccepted });
+		if (slug) {
+			await goto(resolve('/publication/[id]', { id: slug }));
+		}
+	}
 </script>
 
-<SectionBar crumbs={['My shelf', 'New publication']}>
+<SectionBar
+	crumbs={[
+		{
+			label: data.profile.handle,
+			href: resolve('/profile/[handle]', { handle: data.profile.handle })
+		},
+		'New publication'
+	]}
+>
 	{#snippet right()}
-		<span class="eyebrow">Draft · auto-saved</span>
-		<a class="zg-btn zg-btn-ghost" href={PROFILE}>Save &amp; exit</a>
+		<PublicationStatusBadge status={draft.publishedSlug ? 'published' : 'draft'} />
 	{/snippet}
 </SectionBar>
 
-<div class="px-12 pb-24">
-	<div class="mx-auto max-w-[920px] pt-14 pb-24">
-		<CreateSteps steps={STEPS} current={0} />
+<div class="px-6 pb-24 md:px-12">
+	<div class="mx-auto max-w-[920px] pt-12 pb-24 md:pt-14">
+		<CreateSteps
+			steps={STEPS}
+			current={currentStep}
+			canSelect={(i) => i <= maxStepReached && !draft.busy && !draft.publishing}
+			onSelect={(i) => (currentStep = i)}
+		/>
 
-		<h1 class="mb-3 font-serif text-[44px] leading-[1.05] font-normal tracking-[-0.015em]">
-			Bring us your <em class="text-primary italic">zine</em>.
-		</h1>
-		<p class="mb-9 max-w-[56ch] font-serif text-[17px] text-muted-foreground">
-			Upload a PDF — a single document, any size. We'll quietly pull the first page as a cover
-			image, and you'll have a chance to approve it on the next step.
-		</p>
+		{#if currentStep === 0}
+			<UploadStep
+				busy={draft.busy}
+				statusLabel={draft.statusLabel}
+				fileName={draft.selectedFile?.name ?? null}
+				{onFile}
+			/>
+		{:else}
+			<PreviewStep
+				bind:this={previewStep}
+				coverPreviewUrl={draft.coverPreviewUrl}
+				bind:title
+				bind:description
+				bind:tags
+				bind:rightsAccepted
+				onSubmit={publishDraft}
+			/>
+		{/if}
 
-		<div
-			class="dropzone flex flex-col items-center gap-3.5 rounded-xl border-[1.5px] border-dashed border-border px-6 py-16 text-center"
-		>
-			<div class="icon-pdf"></div>
-			<h3 class="font-serif text-2xl font-medium">Drag a PDF here</h3>
-			<p class="m-0 text-sm text-muted-foreground">or</p>
-			<button class="zg-btn zg-btn-outline" type="button">Choose a file</button>
-			<p class="m-0 mt-3.5 text-xs text-muted-foreground">
-				Up to 80 MB · single file · text-friendly
-			</p>
-		</div>
+		{#if draft.error}
+			<p class="mt-6 text-sm text-destructive" role="alert">{draft.error}</p>
+		{/if}
 
-		<div
-			class="cover-note mt-7 flex items-start gap-3 rounded-lg px-[18px] py-3.5 font-mono text-xs leading-[1.6] tracking-[0.04em] text-ink"
-		>
-			<span aria-hidden="true">✦</span>
-			<div>
-				<strong class="text-ink">How covers work.</strong> Zinegeist extracts a JPEG of your PDF's first
-				page automatically. No separate upload, no template required — your zine comes as it is. You can
-				also supply your own image on the next step.
-			</div>
-		</div>
-
-		<div class="mt-9 flex items-center justify-between border-t border-border pt-6">
-			<a class="zg-btn zg-btn-ghost" href={HOME}>← Cancel</a>
-			<button class="zg-btn zg-btn-primary opacity-40" type="button" disabled>
-				Continue to cover
-			</button>
-		</div>
+		<StepNav
+			{currentStep}
+			canContinueFromUpload={Boolean(draft.publicationId)}
+			uploadBusy={draft.busy}
+			{publishDisabled}
+			publishing={draft.publishing}
+			onBack={() => (currentStep = Math.max(0, currentStep - 1))}
+			onContinue={() => (currentStep = Math.min(STEPS.length - 1, currentStep + 1))}
+			onPublish={publishDraft}
+		/>
 	</div>
 </div>
-
-<style>
-	.dropzone {
-		background: color-mix(in oklch, var(--card) 60%, transparent);
-		transition:
-			border-color 0.2s,
-			background 0.2s;
-	}
-	.icon-pdf {
-		width: 64px;
-		height: 80px;
-		border: 1.5px solid var(--ink);
-		border-radius: 4px;
-		position: relative;
-		background: var(--paper-warm-1);
-	}
-	.icon-pdf::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		right: 0;
-		width: 18px;
-		height: 18px;
-		background: var(--background);
-		border-left: 1.5px solid var(--ink);
-		border-bottom: 1.5px solid var(--ink);
-	}
-	.icon-pdf::after {
-		content: 'PDF';
-		position: absolute;
-		bottom: 14px;
-		left: 0;
-		right: 0;
-		text-align: center;
-		font-family: var(--font-mono);
-		font-size: 11px;
-		letter-spacing: 0.1em;
-		color: var(--ink);
-	}
-	.cover-note {
-		background: color-mix(in oklch, var(--accent) 50%, transparent);
-	}
-</style>

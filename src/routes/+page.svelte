@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { ZINES } from '$lib/data/zines';
-	import { SectionBar, HeroStage, EditorialGrid } from '$lib/components/zinegeist';
+	import SectionBar from '$lib/components/SectionBar.svelte';
+	import HeroStage from '$lib/components/HeroStage.svelte';
+	import EditorialGrid from '$lib/components/EditorialGrid.svelte';
 
 	const CREATE = resolve('/create');
 </script>
