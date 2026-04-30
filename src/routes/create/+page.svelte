@@ -3,15 +3,17 @@
 	import { resolve } from '$app/paths';
 	import { useConvexClient } from '@mmailaender/convex-svelte';
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import PublicationStatusBadge from '$lib/components/PublicationStatusBadge.svelte';
 	import { CreateDraft } from '$lib/components/create/create-draft.svelte';
 	import CreateSteps from '$lib/components/create/CreateSteps.svelte';
 	import UploadStep from '$lib/components/create/UploadStep.svelte';
-	import CoverStep from '$lib/components/create/CoverStep.svelte';
-	import DetailsStep from '$lib/components/create/DetailsStep.svelte';
-	import ReviewStep from '$lib/components/create/ReviewStep.svelte';
+	import PreviewStep from '$lib/components/create/PreviewStep.svelte';
 	import StepNav from '$lib/components/create/StepNav.svelte';
+	import type { PageData } from './$types';
 
-	const STEPS = ['Upload', 'Cover', 'Details', 'Review'];
+	let { data }: { data: PageData } = $props();
+
+	const STEPS = ['Upload', 'Preview'];
 
 	const draft = new CreateDraft(useConvexClient());
 
@@ -24,7 +26,7 @@
 	let description = $state('');
 	let tags = $state<string[]>([]);
 	let rightsAccepted = $state(false);
-	let detailsStep = $state<DetailsStep | null>(null);
+	let previewStep = $state<PreviewStep | null>(null);
 
 	const detailsReady = $derived(title.trim().length > 0 && description.trim().length > 0);
 	const publishDisabled = $derived(
@@ -35,20 +37,22 @@
 			Boolean(draft.publishedSlug)
 	);
 
+	function fileNameWithoutExtension(name: string): string {
+		const dot = name.lastIndexOf('.');
+		return dot > 0 ? name.slice(0, dot) : name;
+	}
+
 	async function onFile(file: File): Promise<void> {
 		currentStep = 0;
 		const ok = await draft.handleFile(file);
-		if (ok) currentStep = 1;
-	}
-
-	async function reviewDetails(): Promise<void> {
-		detailsStep?.flushTags();
-		if (!detailsReady) return;
-		const ok = await draft.saveDetails({ title, description, tags });
-		if (ok) currentStep = 3;
+		if (ok) {
+			title = fileNameWithoutExtension(file.name);
+			currentStep = 1;
+		}
 	}
 
 	async function publishDraft(): Promise<void> {
+		previewStep?.flushTags();
 		if (publishDisabled) return;
 		const slug = await draft.publish({ title, description, tags, rightsAccepted });
 		if (slug) {
@@ -57,9 +61,17 @@
 	}
 </script>
 
-<SectionBar crumbs={['My shelf', 'New publication']}>
+<SectionBar
+	crumbs={[
+		{
+			label: data.profile.handle,
+			href: resolve('/profile/[handle]', { handle: data.profile.handle })
+		},
+		'New publication'
+	]}
+>
 	{#snippet right()}
-		<span class="eyebrow">{draft.publishedSlug ? 'Published' : 'Publication draft'}</span>
+		<PublicationStatusBadge status={draft.publishedSlug ? 'published' : 'draft'} />
 	{/snippet}
 </SectionBar>
 
@@ -79,23 +91,15 @@
 				fileName={draft.selectedFile?.name ?? null}
 				{onFile}
 			/>
-		{:else if currentStep === 1}
-			<CoverStep coverPreviewUrl={draft.coverPreviewUrl} file={draft.selectedFile} />
-		{:else if currentStep === 2}
-			<DetailsStep
-				bind:this={detailsStep}
+		{:else}
+			<PreviewStep
+				bind:this={previewStep}
+				coverPreviewUrl={draft.coverPreviewUrl}
 				bind:title
 				bind:description
 				bind:tags
-				onSubmit={reviewDetails}
-			/>
-		{:else}
-			<ReviewStep
-				coverPreviewUrl={draft.coverPreviewUrl}
-				{title}
-				{description}
-				{tags}
 				bind:rightsAccepted
+				onSubmit={publishDraft}
 			/>
 		{/if}
 
@@ -107,12 +111,10 @@
 			{currentStep}
 			canContinueFromUpload={Boolean(draft.publicationId)}
 			uploadBusy={draft.busy}
-			{detailsReady}
 			{publishDisabled}
 			publishing={draft.publishing}
 			onBack={() => (currentStep = Math.max(0, currentStep - 1))}
 			onContinue={() => (currentStep = Math.min(STEPS.length - 1, currentStep + 1))}
-			onReview={reviewDetails}
 			onPublish={publishDraft}
 		/>
 	</div>

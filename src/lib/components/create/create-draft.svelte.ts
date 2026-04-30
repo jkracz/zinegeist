@@ -125,25 +125,6 @@ export class CreateDraft {
 		}
 	}
 
-	async saveDetails(input: {
-		title: string;
-		description: string;
-		tags: string[];
-	}): Promise<boolean> {
-		if (!this.publicationId) return false;
-		this.error = null;
-		try {
-			await this.#client.mutation(api.publications.updateDraftDetails, {
-				publicationId: this.publicationId,
-				...input
-			});
-			return true;
-		} catch (e) {
-			this.error = e instanceof Error ? e.message : 'Could not save publication details.';
-			return false;
-		}
-	}
-
 	async publish(input: {
 		title: string;
 		description: string;
