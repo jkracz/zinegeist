@@ -14,6 +14,7 @@
 	let { data }: { data: PageData } = $props();
 
 	const STEPS = ['Upload', 'Preview'];
+	const HOME = resolve('/');
 
 	const draft = new CreateDraft(useConvexClient());
 
@@ -40,6 +41,15 @@
 	function fileNameWithoutExtension(name: string): string {
 		const dot = name.lastIndexOf('.');
 		return dot > 0 ? name.slice(0, dot) : name;
+	}
+
+	function cancelCreate(): void {
+		if (history.length > 1) {
+			history.back();
+			return;
+		}
+
+		void goto(HOME);
 	}
 
 	async function onFile(file: File): Promise<void> {
@@ -113,6 +123,7 @@
 			uploadBusy={draft.busy}
 			{publishDisabled}
 			publishing={draft.publishing}
+			onCancel={cancelCreate}
 			onBack={() => (currentStep = Math.max(0, currentStep - 1))}
 			onContinue={() => (currentStep = Math.min(STEPS.length - 1, currentStep + 1))}
 			onPublish={publishDraft}

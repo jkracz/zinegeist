@@ -58,11 +58,21 @@
 			<p>You agree not to use Zinegeist to:</p>
 			<ul>
 				<li>Upload content you do not have rights to</li>
-				<li>Distribute unlawful, harmful, or abusive material</li>
+				<li>Distribute unlawful, harmful, abusive, or otherwise inappropriate material</li>
 				<li>Interfere with or disrupt the platform</li>
 			</ul>
 			<p>
-				Zinegeist reserves the right to remove content or suspend accounts that violate these terms.
+				Zinegeist reserves the right, at its sole discretion, to review, remove, or unpublish any
+				content that violates these Terms or is deemed harmful, inappropriate, or unlawful, and to
+				suspend accounts associated with such violations.
+			</p>
+			<p>
+				While we strive to maintain a safe and respectful platform, Zinegeist does not actively
+				monitor all content and is not responsible for user-generated content.
+			</p>
+			<p>
+				We make reasonable efforts to remove content that violates these Terms once we become aware
+				of it.
 			</p>
 
 			<h2>5. Public Sharing</h2>

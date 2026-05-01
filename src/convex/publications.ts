@@ -1,11 +1,12 @@
 import { customAlphabet } from 'nanoid';
 import { v } from 'convex/values';
-import { mutation, type MutationCtx, type QueryCtx } from './_generated/server';
+import { mutation, query, type MutationCtx, type QueryCtx } from './_generated/server';
 import { authComponent } from './auth';
 import type { Doc, Id } from './_generated/dataModel';
 
 const ROUTE_SUFFIX_ALPHABET = '23456789abcdefghijkmnopqrstuvwxyz';
 const makeRouteSuffix = customAlphabet(ROUTE_SUFFIX_ALPHABET, 6);
+const PROFILE_PUBLICATIONS_LIMIT = 10;
 const MAX_SLUG_LENGTH = 72;
 const MAX_TITLE_LENGTH = 140;
 const MAX_DESCRIPTION_LENGTH = 1200;
@@ -35,6 +36,13 @@ async function findProfileByUserId(ctx: AuthedCtx, userId: string) {
 		.unique();
 }
 
+async function findProfileByHandle(ctx: QueryCtx, handle: string) {
+	return ctx.db
+		.query('profiles')
+		.withIndex('by_handle', (q) => q.eq('handle', handle.trim().toLowerCase()))
+		.unique();
+}
+
 async function requireAuthorWithProfile(ctx: AuthedCtx) {
 	const authUser = await authComponent.getAuthUser(ctx);
 	if (!authUser) throw new Error('Not authenticated.');
@@ -43,6 +51,29 @@ async function requireAuthorWithProfile(ctx: AuthedCtx) {
 	if (!profile) throw new Error('Profile required.');
 
 	return { authUser, profile };
+}
+
+async function publicationCoverUrl(
+	ctx: QueryCtx,
+	coverFileId: Id<'files'>
+): Promise<string | null> {
+	const file = await ctx.db.get(coverFileId);
+	if (!file) return null;
+	return await ctx.storage.getUrl(file.storageId);
+}
+
+async function presentProfilePublication(ctx: QueryCtx, publication: Doc<'publications'>) {
+	return {
+		id: publication._id,
+		title: publication.title ?? 'Untitled publication',
+		description: publication.description ?? null,
+		tags: publication.tags ?? [],
+		status: publication.status,
+		slug: publication.slug ?? null,
+		publishedAt: publication.publishedAt ?? null,
+		updatedAt: publication.updatedAt,
+		coverUrl: await publicationCoverUrl(ctx, publication.coverFileId)
+	};
 }
 
 function cleanOptionalText(input: string, maxLength: number): string | undefined {
@@ -182,6 +213,35 @@ export const generateUploadUrl = mutation({
 	handler: async (ctx) => {
 		await requireAuthorWithProfile(ctx);
 		return ctx.storage.generateUploadUrl();
+	}
+});
+
+export const listForProfile = query({
+	args: { handle: v.string() },
+	handler: async (ctx, { handle }) => {
+		const profile = await findProfileByHandle(ctx, handle);
+		if (!profile) return [];
+
+		const authUser = await authComponent.safeGetAuthUser(ctx);
+		const isOwner = authUser?._id === profile.userId;
+
+		const publications = isOwner
+			? await ctx.db
+					.query('publications')
+					.withIndex('by_authorId_and_updatedAt', (q) => q.eq('authorId', profile.userId))
+					.order('desc')
+					.take(PROFILE_PUBLICATIONS_LIMIT)
+			: await ctx.db
+					.query('publications')
+					.withIndex('by_authorId_and_status_and_updatedAt', (q) =>
+						q.eq('authorId', profile.userId).eq('status', 'published')
+					)
+					.order('desc')
+					.take(PROFILE_PUBLICATIONS_LIMIT);
+
+		return await Promise.all(
+			publications.map((publication) => presentProfilePublication(ctx, publication))
+		);
 	}
 });
 

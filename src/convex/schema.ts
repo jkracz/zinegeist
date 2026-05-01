@@ -39,5 +39,7 @@ export default defineSchema({
 		rightsConfirmedAt: v.optional(v.number())
 	})
 		.index('by_authorId_and_status', ['authorId', 'status'])
+		.index('by_authorId_and_updatedAt', ['authorId', 'updatedAt'])
+		.index('by_authorId_and_status_and_updatedAt', ['authorId', 'status', 'updatedAt'])
 		.index('by_slug', ['slug'])
 });
