@@ -1,0 +1,379 @@
+{
+	"schemaVersion": 2,
+	"generatedAt": "2026-05-01T00:00:00Z",
+	"title": "Design System: Zinegeist",
+	"extensions": {
+		"colorMeta": {
+			"warm-newsprint": {
+				"role": "neutral",
+				"displayName": "Warm Newsprint",
+				"canonical": "oklch(0.9529 0.0146 102.4597)",
+				"tonalRamp": [
+					"oklch(0.30 0.012 102)",
+					"oklch(0.40 0.013 102)",
+					"oklch(0.52 0.014 102)",
+					"oklch(0.64 0.014 102)",
+					"oklch(0.74 0.014 102)",
+					"oklch(0.83 0.014 102)",
+					"oklch(0.90 0.014 102)",
+					"oklch(0.95 0.0146 102.46)"
+				]
+			},
+			"aged-paper": {
+				"role": "neutral",
+				"displayName": "Aged Paper",
+				"canonical": "oklch(0.918 0.022 80)",
+				"tonalRamp": [
+					"oklch(0.28 0.018 80)",
+					"oklch(0.39 0.020 80)",
+					"oklch(0.50 0.022 80)",
+					"oklch(0.62 0.022 80)",
+					"oklch(0.73 0.022 80)",
+					"oklch(0.82 0.022 80)",
+					"oklch(0.88 0.022 80)",
+					"oklch(0.918 0.022 80)"
+				]
+			},
+			"foxed-edge": {
+				"role": "neutral",
+				"displayName": "Foxed Edge",
+				"canonical": "oklch(0.88 0.026 70)",
+				"tonalRamp": [
+					"oklch(0.25 0.018 70)",
+					"oklch(0.36 0.022 70)",
+					"oklch(0.48 0.024 70)",
+					"oklch(0.60 0.026 70)",
+					"oklch(0.70 0.026 70)",
+					"oklch(0.79 0.026 70)",
+					"oklch(0.85 0.026 70)",
+					"oklch(0.88 0.026 70)"
+				]
+			},
+			"soft-page": {
+				"role": "neutral",
+				"displayName": "Soft Page",
+				"canonical": "oklch(0.8902 0.0289 49.0874)",
+				"tonalRamp": [
+					"oklch(0.27 0.018 49)",
+					"oklch(0.39 0.022 49)",
+					"oklch(0.51 0.025 49)",
+					"oklch(0.62 0.027 49)",
+					"oklch(0.72 0.029 49)",
+					"oklch(0.81 0.029 49)",
+					"oklch(0.86 0.029 49)",
+					"oklch(0.89 0.0289 49.09)"
+				]
+			},
+			"tea-stain-beige": {
+				"role": "tertiary",
+				"displayName": "Tea-Stain Beige",
+				"canonical": "oklch(0.8502 0.0389 49.0874)",
+				"tonalRamp": [
+					"oklch(0.25 0.025 49)",
+					"oklch(0.36 0.030 49)",
+					"oklch(0.47 0.035 49)",
+					"oklch(0.58 0.038 49)",
+					"oklch(0.68 0.039 49)",
+					"oklch(0.77 0.039 49)",
+					"oklch(0.82 0.039 49)",
+					"oklch(0.85 0.0389 49.09)"
+				]
+			},
+			"linen-sand": {
+				"role": "secondary",
+				"displayName": "Linen Sand",
+				"canonical": "oklch(0.7473 0.0387 80.5476)",
+				"tonalRamp": [
+					"oklch(0.25 0.025 80)",
+					"oklch(0.36 0.030 80)",
+					"oklch(0.47 0.035 80)",
+					"oklch(0.57 0.038 80)",
+					"oklch(0.66 0.039 80)",
+					"oklch(0.71 0.039 80)",
+					"oklch(0.74 0.039 80)",
+					"oklch(0.7473 0.0387 80.55)"
+				]
+			},
+			"mocha-stamp": {
+				"role": "primary",
+				"displayName": "Mocha Stamp",
+				"canonical": "oklch(0.6083 0.0623 44.3588)",
+				"tonalRamp": [
+					"oklch(0.20 0.040 44)",
+					"oklch(0.30 0.050 44)",
+					"oklch(0.40 0.058 44)",
+					"oklch(0.50 0.062 44)",
+					"oklch(0.55 0.062 44)",
+					"oklch(0.61 0.0623 44.36)",
+					"oklch(0.70 0.060 44)",
+					"oklch(0.82 0.045 44)"
+				]
+			},
+			"faded-ink": {
+				"role": "neutral",
+				"displayName": "Faded Ink",
+				"canonical": "oklch(0.4063 0.0255 40.3627)",
+				"tonalRamp": [
+					"oklch(0.18 0.018 40)",
+					"oklch(0.27 0.022 40)",
+					"oklch(0.36 0.025 40)",
+					"oklch(0.41 0.0255 40.36)",
+					"oklch(0.50 0.024 40)",
+					"oklch(0.62 0.022 40)",
+					"oklch(0.75 0.020 40)",
+					"oklch(0.88 0.018 40)"
+				]
+			},
+			"pressed-ink": {
+				"role": "neutral",
+				"displayName": "Pressed Ink",
+				"canonical": "oklch(0.2721 0.0141 48.1783)",
+				"tonalRamp": [
+					"oklch(0.15 0.010 48)",
+					"oklch(0.21 0.013 48)",
+					"oklch(0.27 0.0141 48.18)",
+					"oklch(0.36 0.014 48)",
+					"oklch(0.48 0.014 48)",
+					"oklch(0.62 0.013 48)",
+					"oklch(0.78 0.012 48)",
+					"oklch(0.90 0.010 48)"
+				]
+			},
+			"weathered-clay": {
+				"role": "tertiary",
+				"displayName": "Weathered Clay",
+				"canonical": "oklch(0.7272 0.0539 52.332)",
+				"tonalRamp": [
+					"oklch(0.22 0.035 52)",
+					"oklch(0.34 0.045 52)",
+					"oklch(0.46 0.052 52)",
+					"oklch(0.58 0.054 52)",
+					"oklch(0.68 0.054 52)",
+					"oklch(0.73 0.0539 52.33)",
+					"oklch(0.82 0.045 52)",
+					"oklch(0.91 0.030 52)"
+				]
+			},
+			"oxidized-rust": {
+				"role": "tertiary",
+				"displayName": "Oxidized Rust",
+				"canonical": "oklch(0.644 0.0405 52.3917)",
+				"tonalRamp": [
+					"oklch(0.22 0.028 52)",
+					"oklch(0.33 0.034 52)",
+					"oklch(0.44 0.039 52)",
+					"oklch(0.55 0.040 52)",
+					"oklch(0.64 0.0405 52.39)",
+					"oklch(0.73 0.038 52)",
+					"oklch(0.83 0.030 52)",
+					"oklch(0.92 0.020 52)"
+				]
+			},
+			"paper-popover": {
+				"role": "neutral",
+				"displayName": "Paper Popover",
+				"canonical": "oklch(1 0 0)",
+				"tonalRamp": [
+					"oklch(0.30 0 0)",
+					"oklch(0.42 0 0)",
+					"oklch(0.55 0 0)",
+					"oklch(0.66 0 0)",
+					"oklch(0.76 0 0)",
+					"oklch(0.85 0 0)",
+					"oklch(0.93 0 0)",
+					"oklch(1 0 0)"
+				]
+			}
+		},
+		"typographyMeta": {
+			"display": {
+				"displayName": "Display",
+				"purpose": "Hero headlines only. One per page. Italic emphasis carries Mocha Stamp."
+			},
+			"headline": {
+				"displayName": "Headline",
+				"purpose": "Section titles. One per section."
+			},
+			"title": {
+				"displayName": "Title",
+				"purpose": "Card titles, publication names. Slightly heavier weight to hold at small sizes."
+			},
+			"body": {
+				"displayName": "Body",
+				"purpose": "The reading layer. Cap line length at 44–65ch on long-form copy."
+			},
+			"ui": {
+				"displayName": "UI",
+				"purpose": "Buttons, navigation. Never used for content."
+			},
+			"eyebrow": {
+				"displayName": "Eyebrow",
+				"purpose": "Metadata voice — counts, dates, status, breadcrumbs. Always UPPERCASE."
+			}
+		},
+		"shadows": [
+			{
+				"name": "shadow-sm",
+				"value": "2px 2px 0 0 hsl(20 18% 51% / 0.08), 2px 1px 2px -1px hsl(20 18% 51% / 0.08)",
+				"purpose": "Resting state for inset chips, kbd pills, segmented controls."
+			},
+			{
+				"name": "shadow",
+				"value": "2px 2px 0 0 hsl(20 18% 51% / 0.11), 2px 1px 2px -1px hsl(20 18% 51% / 0.11)",
+				"purpose": "Default card shadow."
+			},
+			{
+				"name": "shadow-md",
+				"value": "2px 2px 0 0 hsl(20 18% 51% / 0.12), 2px 2px 6px -1px hsl(20 18% 51% / 0.12)",
+				"purpose": "Hovered cards, active dropdowns."
+			},
+			{
+				"name": "shadow-lg",
+				"value": "2px 4px 0 0 hsl(20 18% 51% / 0.14), 4px 8px 18px -2px hsl(20 18% 51% / 0.18)",
+				"purpose": "Modal surfaces."
+			},
+			{
+				"name": "shadow-page",
+				"value": "0 1px 0 hsl(20 18% 35% / 0.12), 0 12px 24px -8px hsl(20 18% 30% / 0.22), 0 30px 60px -20px hsl(20 18% 25% / 0.28)",
+				"purpose": "Reserved for objects representing physical print artifacts (zine covers, featured editorial card)."
+			}
+		],
+		"motion": [
+			{
+				"name": "ease-press",
+				"value": "linear",
+				"purpose": "80ms button transform on :active. Mechanical, not animated."
+			},
+			{
+				"name": "ease-card-lift",
+				"value": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+				"purpose": "500ms zine-cover hover lift. Ease-out-quart — the book lifting off the shelf."
+			},
+			{
+				"name": "ease-ui",
+				"value": "ease",
+				"purpose": "150ms background and border-color transitions on interactive chrome."
+			}
+		],
+		"breakpoints": [
+			{ "name": "mobile", "value": "900px" }
+		]
+	},
+	"components": [
+		{
+			"name": "Primary Button",
+			"kind": "button",
+			"refersTo": "button-primary",
+			"description": "Pressed-ink fill with paper-newsprint text. The system's commit button. Hover blends 12% Mocha Stamp into the ink — a barely perceptible warming. :active drops 1px.",
+			"html": "<button class=\"ds-btn ds-btn-primary\">Discover publications <span aria-hidden=\"true\">↓</span></button>",
+			"css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; font-weight: 500; border: 1px solid transparent; transition: transform 80ms linear, background 150ms ease, border-color 150ms ease; white-space: nowrap; cursor: pointer; } .ds-btn:active { transform: translateY(1px); } .ds-btn-primary { background: oklch(0.2721 0.0141 48.1783); color: oklch(0.9529 0.0146 102.4597); } .ds-btn-primary:hover { background: color-mix(in oklch, oklch(0.2721 0.0141 48.1783) 88%, oklch(0.6083 0.0623 44.3588) 12%); } .ds-btn-primary:focus-visible { outline: 2px solid oklch(0.6083 0.0623 44.3588); outline-offset: 2px; }"
+		},
+		{
+			"name": "Outline Button",
+			"kind": "button",
+			"refersTo": "button-outline",
+			"description": "Pressed-ink border on transparent fill. Hover inverts to primary's color scheme — the printed-press idiom.",
+			"html": "<button class=\"ds-btn ds-btn-outline\">Publish your own</button>",
+			"css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; font-weight: 500; transition: transform 80ms linear, background 150ms ease, border-color 150ms ease, color 150ms ease; white-space: nowrap; cursor: pointer; } .ds-btn:active { transform: translateY(1px); } .ds-btn-outline { border: 1px solid oklch(0.2721 0.0141 48.1783); color: oklch(0.2721 0.0141 48.1783); background: transparent; } .ds-btn-outline:hover { background: oklch(0.2721 0.0141 48.1783); color: oklch(0.9529 0.0146 102.4597); } .ds-btn-outline:focus-visible { outline: 2px solid oklch(0.6083 0.0623 44.3588); outline-offset: 2px; }"
+		},
+		{
+			"name": "Eyebrow Label",
+			"kind": "custom",
+			"refersTo": "eyebrow-label",
+			"description": "The metadata voice. Mono UPPERCASE at 0.18em tracking, Faded Ink. Carries dates, counts, status, breadcrumbs.",
+			"html": "<span class=\"ds-eyebrow\">Recently published · 8 zines</span>",
+			"css": ".ds-eyebrow { font-family: 'JetBrains Mono', Menlo, monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: oklch(0.4063 0.0255 40.3627); }"
+		},
+		{
+			"name": "Search Input",
+			"kind": "input",
+			"refersTo": "input-search",
+			"description": "Pill-shaped header search with Aged Paper background, mono placeholder, and a kbd hint pill on the right. Hover darkens the border to Pressed Ink.",
+			"html": "<div class=\"ds-input-search\" role=\"button\" tabindex=\"0\"><span class=\"ds-input-search__icon\" aria-hidden=\"true\">⌕</span><span class=\"ds-input-search__placeholder\">Search zines &amp; writers</span><span class=\"ds-kbd\">⌘K</span></div>",
+			"css": ".ds-input-search { display: inline-flex; align-items: center; gap: 8px; min-width: 200px; padding: 8px 14px; border-radius: 999px; border: 1px solid oklch(0.82 0.0287 80.5476); background: oklch(0.918 0.022 80); font-family: 'DM Sans', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.04em; color: oklch(0.5416 0.0512 37.2132); cursor: text; transition: border-color 150ms ease, background 150ms ease; } .ds-input-search:hover { border-color: oklch(0.2721 0.0141 48.1783); } .ds-input-search:focus-visible { outline: 2px solid oklch(0.6083 0.0623 44.3588); outline-offset: 2px; } .ds-input-search__icon { font-size: 13px; } .ds-input-search__placeholder { flex: 1; } .ds-kbd { display: inline-block; padding: 2px 6px; border: 1px solid oklch(0.82 0.0287 80.5476); border-bottom-width: 2px; border-radius: 4px; font-family: 'JetBrains Mono', Menlo, monospace; font-size: 10px; background: oklch(0.918 0.022 80); letter-spacing: 0.04em; color: oklch(0.5416 0.0512 37.2132); }"
+		},
+		{
+			"name": "Nav Link (Active)",
+			"kind": "nav",
+			"refersTo": "nav-link-active",
+			"description": "Pill-shaped header navigation. Default is Faded Ink on transparent; hover fills Tea-Stain Beige at 50%; active inverts to Pressed Ink fill / Warm Newsprint text.",
+			"html": "<nav class=\"ds-nav\" aria-label=\"Primary\"><a class=\"ds-nav__link ds-nav__link--active\" href=\"#\">Discover</a><a class=\"ds-nav__link\" href=\"#\">My shelf</a></nav>",
+			"css": ".ds-nav { display: inline-flex; align-items: center; gap: 4px; } .ds-nav__link { padding: 8px 14px; border-radius: 999px; font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; color: oklch(0.4063 0.0255 40.3627); text-decoration: none; transition: background 150ms ease, color 150ms ease; cursor: pointer; } .ds-nav__link:hover { background: color-mix(in oklch, oklch(0.8502 0.0389 49.0874) 50%, transparent); color: oklch(0.2721 0.0141 48.1783); } .ds-nav__link--active { background: oklch(0.2721 0.0141 48.1783); color: oklch(0.9529 0.0146 102.4597); } .ds-nav__link:focus-visible { outline: 2px solid oklch(0.6083 0.0623 44.3588); outline-offset: 2px; }"
+		},
+		{
+			"name": "Zine Card",
+			"kind": "card",
+			"refersTo": "card-zine",
+			"description": "The signature card. Cover image on Soft Page background with shadow-page weight, 3px right-side cover-edge stripe simulating a printed page-block, and metadata + serif title + italic byline below. Hover lifts the cover 4px and rotates −0.6°.",
+			"html": "<a class=\"ds-zcard\" href=\"#\"><div class=\"ds-zcard__cover-wrap\"><div class=\"ds-zcard__cover\"><div class=\"ds-zcard__cover-art\"></div><div class=\"ds-zcard__cover-edge\" aria-hidden=\"true\"></div></div></div><div class=\"ds-zcard__meta\"><span>No. 04</span><span>32 pp</span></div><h3 class=\"ds-zcard__title\">On Slowness</h3><div class=\"ds-zcard__byline\">by Mira Ostlund</div><p class=\"ds-zcard__desc\">A short collection on the particular hour in early spring when the light slows down across the kitchen floor.</p></a>",
+			"css": ".ds-zcard { display: flex; flex-direction: column; gap: 14px; min-width: 0; cursor: pointer; color: oklch(0.4063 0.0255 40.3627); text-decoration: none; font-family: 'Fraunces', Georgia, serif; } .ds-zcard__cover-wrap { position: relative; } .ds-zcard__cover { position: relative; aspect-ratio: 3 / 4; width: 100%; overflow: hidden; border-radius: 2px; background: oklch(0.8902 0.0289 49.0874); box-shadow: 0 1px 0 hsl(20 18% 35% / 0.12), 0 12px 24px -8px hsl(20 18% 30% / 0.22), 0 30px 60px -20px hsl(20 18% 25% / 0.28); transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1); } .ds-zcard:hover .ds-zcard__cover { transform: translateY(-4px) rotate(-0.6deg); } .ds-zcard__cover-art { position: absolute; inset: 0; background: linear-gradient(140deg, oklch(0.7473 0.0387 80.5476) 0%, oklch(0.6083 0.0623 44.3588) 100%); } .ds-zcard__cover-edge { position: absolute; right: -3px; top: 6px; bottom: 6px; width: 3px; background: repeating-linear-gradient(0deg, #ede1cc 0 1px, #cdb997 1px 2px); opacity: 0.85; } .ds-zcard__meta { display: flex; align-items: center; justify-content: space-between; font-family: 'JetBrains Mono', Menlo, monospace; font-size: 11px; letter-spacing: 0.06em; color: oklch(0.5416 0.0512 37.2132); } .ds-zcard__title { font-size: 22px; line-height: 1.15; font-weight: 500; letter-spacing: -0.01em; color: oklch(0.2721 0.0141 48.1783); margin: 0; } .ds-zcard__byline { font-size: 13px; font-style: italic; color: oklch(0.5416 0.0512 37.2132); } .ds-zcard__desc { margin: 0; font-size: 14px; line-height: 1.5; color: oklch(0.4063 0.0255 40.3627); display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }"
+		},
+		{
+			"name": "Layout Switcher",
+			"kind": "custom",
+			"refersTo": "nav-link-active",
+			"description": "Segmented pill control for view modes. Mono labels, active button inverts to Pressed Ink fill / Warm Newsprint text — the same press-inversion idiom as buttons.",
+			"html": "<div class=\"ds-segmented\" role=\"tablist\"><button class=\"ds-segmented__btn ds-segmented__btn--active\" type=\"button\">Editorial</button><button class=\"ds-segmented__btn\" type=\"button\">Shelf</button><button class=\"ds-segmented__btn\" type=\"button\">List</button></div>",
+			"css": ".ds-segmented { display: inline-flex; align-items: center; border: 1px solid oklch(0.82 0.0287 80.5476); border-radius: 999px; padding: 3px; background: oklch(0.97 0.012 102.4597); gap: 2px; } .ds-segmented__btn { padding: 7px 14px; border-radius: 999px; font-family: 'JetBrains Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.06em; color: oklch(0.5416 0.0512 37.2132); background: transparent; border: 0; cursor: pointer; transition: background 150ms ease, color 150ms ease; } .ds-segmented__btn:hover { color: oklch(0.2721 0.0141 48.1783); } .ds-segmented__btn--active { background: oklch(0.2721 0.0141 48.1783); color: oklch(0.9529 0.0146 102.4597); } .ds-segmented__btn:focus-visible { outline: 2px solid oklch(0.6083 0.0623 44.3588); outline-offset: 2px; }"
+		},
+		{
+			"name": "Editorial Divider",
+			"kind": "custom",
+			"refersTo": "eyebrow-label",
+			"description": "Major section break. A 1px line with a centered three-dot serif glyph that punches through the line on the page background.",
+			"html": "<div class=\"ds-divider\"><span class=\"ds-divider__mark\">·  ·  ·</span></div>",
+			"css": ".ds-divider { position: relative; height: 1px; background: oklch(0.82 0.0287 80.5476); margin: 32px 0; } .ds-divider__mark { position: absolute; left: 50%; top: -10px; transform: translateX(-50%); background: oklch(0.9529 0.0146 102.4597); padding: 0 12px; font-family: 'Fraunces', Georgia, serif; font-size: 14px; color: oklch(0.5416 0.0512 37.2132); letter-spacing: 0.4em; }"
+		}
+	],
+	"narrative": {
+		"northStar": "The Open Shelf",
+		"overview": "Zinegeist is the visual feel of walking into a small independent bookshop on a slow afternoon — warm paper, considered type, the quiet authority of things that were made, not generated. The system is built around the act of reading: serif type does the heavy lifting, mono carries the labels and metadata, sans handles only the interactive chrome. Surfaces are tinted neutrals on the Mocha Mouse axis (warm beige to pressed-ink brown), never neutral grey, never pure white. A persistent paper-grain overlay sits across every page, multiplied into the warm tones so the screen has the soft tactile noise of newsprint. This is a brand register at heart — discovery, reading, and publication pages are the product, and the editor / dashboard surfaces extend that voice rather than impose a generic SaaS shell on top of it. The system explicitly rejects three things: the generic-tooling-as-publishing-surface look (Notion, Drive, document chrome with writing inside it), the personal-site-builder template look (Squarespace/Wix/Carrd hero-grid-cards-CTA), and the algorithmic-feed dashboard look (engagement counts, follower counters, growth-hacker chrome). What's left is a CMS that feels like a publication.",
+		"keyCharacteristics": [
+			"Paper-grain texture across every surface (never decorative-only — it's structural to the feel)",
+			"Serif-first hierarchy (Fraunces) with mono labels (JetBrains Mono) and minimal sans (DM Sans)",
+			"Warm tinted neutrals exclusively — no #fff, no #000, no neutral grey",
+			"Editorial 12-column grid with intentional column-span variation (no uniform card walls)",
+			"Italic serif as the only emphasis device — never gradient text, never colored highlight blocks",
+			"Pressed-ink buttons with offset paper-shadow (2px down, 0 blur) — printed-press feel, never glassy"
+		],
+		"rules": [
+			{ "name": "The No-Grey Rule", "body": "Every neutral is tinted toward the Mocha axis (40–102° hue, 0.005–0.03 chroma). Untinted greys and pure white/black are forbidden outside the popover surface.", "section": "colors" },
+			{ "name": "The Rare Stamp Rule", "body": "Mocha Stamp covers ≤8% of any rendered surface. It carries italic emphasis inside headlines and focus state. It does not fill buttons, blocks, or hero backgrounds.", "section": "colors" },
+			{ "name": "The Paper-Not-Background Rule", "body": "Surfaces are paper. Use the warm-paper stack (Warm Newsprint → Aged Paper → Foxed Edge → Soft Page) for any neutral surface. Never reach for framework default neutrals.", "section": "colors" },
+			{ "name": "The Single-Serif Rule", "body": "Fraunces handles display, headline, title, and body — the optical-size axis gives the variation. Do not introduce a second serif.", "section": "typography" },
+			{ "name": "The Italic-as-Emphasis Rule", "body": "Emphasis inside headlines is italic Fraunces in Mocha Stamp — never bold, never underline, never color-block highlight.", "section": "typography" },
+			{ "name": "The Mono-for-Metadata Rule", "body": "Anything that is about the content (counts, dates, status, breadcrumbs, page numbers, kbd hints) is set in JetBrains Mono at 11px / 0.18em / UPPERCASE.", "section": "typography" },
+			{ "name": "The Hard-Offset Rule", "body": "Shadows are 2px–4px hard offsets in warm-brown HSL, not soft Material drop shadows. The visual model is paper laid on paper, not card floating in space.", "section": "elevation" },
+			{ "name": "The Cover-Shadow Rule", "body": "shadow-page is reserved exclusively for objects representing physical print artifacts (zine covers, the featured hero card).", "section": "elevation" },
+			{ "name": "The Paper-Grain-Always Rule", "body": "The grain overlay is a permanent z-60 fixture, not a hero-only effect. Do not opt screens out of it.", "section": "elevation" }
+		],
+		"dos": [
+			"Do keep Fraunces as the only serif. Use the optical-size axis to differentiate display vs. body — not a second family.",
+			"Do use italic Fraunces in Mocha Stamp as the system's only emphasis device inside headlines.",
+			"Do tint every neutral toward the Mocha hue (0.005–0.03 chroma at 40–102° hue). The system reads as paper, not background.",
+			"Do use 2px hard-offset shadows with warm-brown HSL alpha for elevation. Soft Material drop shadows break the printed-press feel.",
+			"Do apply the paper-grain overlay (PaperGrain.svelte) on every screen — it is a system primitive, not a hero effect.",
+			"Do vary column spans in editorial grids (the discovery grid uses a [6, 3, 3, 4, 4, 4] span pattern). Uniform card walls flatten the page.",
+			"Do set metadata in mono UPPERCASE at 0.18em tracking (the eyebrow style). Counts, dates, status, breadcrumbs all use this voice.",
+			"Do use <em> italics + Mocha Stamp inline inside serif headlines for the system's signature flourish.",
+			"Do invert button colors on hover (Pressed Ink ↔ Warm Newsprint) — the printed-press idiom. Use it consistently across primary, outline, and active-nav states.",
+			"Do reserve shadow-page for objects representing physical print artifacts (zine covers, the featured editorial card)."
+		],
+		"donts": [
+			"Don't use #fff, #000, or any framework neutral grey (bg-zinc-*, bg-slate-*, bg-neutral-*). All neutrals are warm and tinted.",
+			"Don't introduce a second serif. Fraunces handles every reading surface.",
+			"Don't use bold weight for emphasis. Italic + Mocha Stamp is the only flourish.",
+			"Don't apply shadow-page to ordinary UI cards. Its weight is meaningful — the cards that have it represent physical objects.",
+			"Don't build the homepage / discovery surface as a Notion-style document or a Squarespace-style hero-grid-CTA template. It is a publication shelf.",
+			"Don't show engagement counts, follower-count theater, or trending signals as primary affordances. Discovery is editorial-shaped, not feed-shaped.",
+			"Don't use side-stripe colored borders anywhere. The single sanctioned side-stripe in the system is .cover-edge on zine covers, and it represents the page-block of a printed booklet.",
+			"Don't use gradient text (background-clip: text). Color emphasis is solid Mocha Stamp on italic Fraunces — nothing else.",
+			"Don't use glassmorphism beyond the sticky header. The header's blur is justified by its scroll behavior; no other surface gets a backdrop-filter.",
+			"Don't use uniform card grids (same-sized cards repeated endlessly). The 12-column editorial grid with featured + side-stack + variable-span tail is the canonical discovery layout.",
+			"Don't wrap pages in centered max-width containers. The system uses px-12 (48px) edge padding directly on the page; the editorial grid spans the full content width.",
+			"Don't write growth-hacker or marketing-coded copy (no supercharge, unlock, level up, AI-powered). The voice is plainspoken and unhurried — match the type.",
+			"Don't add bouncy or elastic easing. Motion is exponential ease-out for cards, 80ms transforms for buttons. Mechanical, not playful.",
+			"Don't use em dashes in UI copy. Use commas, colons, or periods."
+		]
+	}
+}
