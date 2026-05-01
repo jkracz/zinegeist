@@ -34,7 +34,7 @@
 			</p>
 			<div class="flex flex-wrap items-center gap-3">
 				<a class="zg-btn zg-btn-primary" href="#discovery">
-					Discover this season's zines
+					Discover publications
 					<span aria-hidden="true">↓</span>
 				</a>
 				<a class="zg-btn zg-btn-outline" href={CREATE}>Publish your own</a>
