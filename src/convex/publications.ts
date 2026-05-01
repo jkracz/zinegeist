@@ -78,6 +78,7 @@ async function presentProfilePublication(ctx: QueryCtx, publication: Doc<'public
 		slug: publication.slug ?? null,
 		publishedAt: publication.publishedAt ?? null,
 		updatedAt: publication.updatedAt,
+		createdAt: publication._creationTime,
 		coverUrl: await publicationCoverUrl(ctx, publication.coverFileId)
 	};
 }
@@ -230,7 +231,12 @@ export const getBySlug = query({
 			.withIndex('by_slug', (q) => q.eq('slug', slug))
 			.unique();
 
-		if (!publication || publication.status !== 'published') return null;
+		if (!publication) return null;
+
+		const viewer = await authComponent.safeGetAuthUser(ctx);
+		const isOwner = viewer?._id === publication.authorId;
+		if (publication.status === 'draft') return null;
+		if (publication.status === 'unpublished' && !isOwner) return null;
 
 		const profile = await ctx.db
 			.query('profiles')
@@ -241,13 +247,16 @@ export const getBySlug = query({
 		return {
 			id: publication._id,
 			slug: publication.slug ?? null,
+			status: publication.status,
 			title: publication.title ?? 'Untitled publication',
 			description: publication.description ?? null,
 			tags: publication.tags ?? [],
 			publishedAt: publication.publishedAt ?? null,
 			updatedAt: publication.updatedAt,
+			createdAt: publication._creationTime,
 			coverUrl: await publicationCoverUrl(ctx, publication.coverFileId),
 			pdfUrl: await publicationPdfUrl(ctx, publication.pdfFileId),
+			isOwner,
 			author: {
 				handle: profile?.handle ?? null,
 				name: authUser?.name ?? null,
@@ -255,6 +264,27 @@ export const getBySlug = query({
 				location: profile?.location ?? null,
 				image: authUser?.image ?? null
 			}
+		};
+	}
+});
+
+export const getDraftForResume = query({
+	args: { publicationId: v.id('publications') },
+	handler: async (ctx, { publicationId }) => {
+		const viewer = await authComponent.safeGetAuthUser(ctx);
+		if (!viewer) return null;
+
+		const publication = await ctx.db.get(publicationId);
+		if (!publication) return null;
+		if (publication.authorId !== viewer._id) return null;
+		if (publication.status !== 'draft') return null;
+
+		return {
+			id: publication._id,
+			title: publication.title ?? '',
+			description: publication.description ?? '',
+			tags: publication.tags ?? [],
+			coverUrl: await publicationCoverUrl(ctx, publication.coverFileId)
 		};
 	}
 });
@@ -412,5 +442,83 @@ export const publish = mutation({
 		});
 
 		return { slug };
+	}
+});
+
+export const unpublish = mutation({
+	args: { publicationId: v.id('publications') },
+	handler: async (ctx, args) => {
+		const { authUser } = await requireAuthorWithProfile(ctx);
+		const publication = await requireOwnedPublication(ctx, args.publicationId, authUser._id);
+		if (publication.status !== 'published')
+			throw new Error('Only published items can be unpublished.');
+
+		await ctx.db.patch(args.publicationId, {
+			status: 'unpublished',
+			updatedAt: Date.now()
+		});
+
+		return { publicationId: args.publicationId };
+	}
+});
+
+export const republish = mutation({
+	args: { publicationId: v.id('publications') },
+	handler: async (ctx, args) => {
+		const { authUser } = await requireAuthorWithProfile(ctx);
+		const publication = await requireOwnedPublication(ctx, args.publicationId, authUser._id);
+		if (publication.status !== 'unpublished')
+			throw new Error('Only unpublished items can be republished.');
+
+		await ctx.db.patch(args.publicationId, {
+			status: 'published',
+			updatedAt: Date.now()
+		});
+
+		return { publicationId: args.publicationId, slug: publication.slug ?? null };
+	}
+});
+
+export const updatePublishedDetails = mutation({
+	args: {
+		publicationId: v.id('publications'),
+		title: v.string(),
+		description: v.string(),
+		tags: v.array(v.string())
+	},
+	handler: async (ctx, args) => {
+		const { authUser } = await requireAuthorWithProfile(ctx);
+		const publication = await requireOwnedPublication(ctx, args.publicationId, authUser._id);
+		if (publication.status !== 'published' && publication.status !== 'unpublished') {
+			throw new Error('Use the editor to update drafts.');
+		}
+
+		const title = cleanOptionalText(args.title, MAX_TITLE_LENGTH);
+		if (!title) throw new Error('Title is required.');
+		const description = cleanOptionalText(args.description, MAX_DESCRIPTION_LENGTH);
+		const tags = cleanTags(args.tags);
+
+		await ctx.db.patch(args.publicationId, {
+			title,
+			description,
+			tags,
+			updatedAt: Date.now()
+		});
+
+		return { publicationId: args.publicationId };
+	}
+});
+
+export const deletePublication = mutation({
+	args: { publicationId: v.id('publications') },
+	handler: async (ctx, args) => {
+		const { authUser } = await requireAuthorWithProfile(ctx);
+		const publication = await requireOwnedPublication(ctx, args.publicationId, authUser._id);
+
+		await ctx.db.delete(publication._id);
+		await releaseFileReference(ctx, publication.pdfFileId);
+		await releaseFileReference(ctx, publication.coverFileId);
+
+		return { publicationId: args.publicationId };
 	}
 });

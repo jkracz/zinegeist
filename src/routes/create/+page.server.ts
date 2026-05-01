@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { createConvexHttpClient } from '@mmailaender/convex-better-auth-svelte/sveltekit';
 import type { PageServerLoad } from './$types';
 import { api } from '$convex/_generated/api';
+import type { Id } from '$convex/_generated/dataModel';
 
 export const load = (async ({ locals, url }) => {
 	if (!locals.token) {
@@ -19,8 +20,23 @@ export const load = (async ({ locals, url }) => {
 		throw redirect(307, '/onboarding/handle');
 	}
 
+	const draftParam = url.searchParams.get('draft');
+	let resumeDraft: Awaited<
+		ReturnType<typeof client.query<typeof api.publications.getDraftForResume>>
+	> | null = null;
+	if (draftParam) {
+		try {
+			resumeDraft = await client.query(api.publications.getDraftForResume, {
+				publicationId: draftParam as Id<'publications'>
+			});
+		} catch {
+			resumeDraft = null;
+		}
+	}
+
 	return {
 		currentUser: result.authUser,
-		profile: result.profile
+		profile: result.profile,
+		resumeDraft
 	};
 }) satisfies PageServerLoad;

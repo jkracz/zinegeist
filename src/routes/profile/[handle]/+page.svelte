@@ -2,6 +2,7 @@
 	import Avatar from '$lib/components/Avatar.svelte';
 	import ProfilePublicationCard from '$lib/components/ProfilePublicationCard.svelte';
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
@@ -12,6 +13,7 @@
 	import Loader2Icon from '@lucide/svelte/icons/loader-2';
 	import { useConvexClient } from '@mmailaender/convex-svelte';
 	import { api } from '$convex/_generated/api';
+	import type { Id } from '$convex/_generated/dataModel';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import type { PageProps } from './$types';
@@ -24,6 +26,19 @@
 		bio: string;
 		location: string;
 		links: Link[];
+	};
+
+	type PublicationStatus = 'draft' | 'published' | 'unpublished';
+	type ShelfPublication = {
+		id: string;
+		title: string;
+		description: string | null;
+		tags: string[];
+		status: PublicationStatus;
+		slug: string | null;
+		publishedAt: number | null;
+		updatedAt: number;
+		coverUrl: string | null;
 	};
 
 	function snapshot(): Draft {
@@ -39,12 +54,27 @@
 	let draft = $state<Draft>(snapshot());
 	let saving = $state(false);
 	let error = $state<string | null>(null);
+	let previewAsVisitor = $state(false);
+
+	let editingPubId = $state<string | null>(null);
+	let editPubSaving = $state(false);
+	let editPubError: string | null = $state(null);
+
+	type ConfirmTarget = { id: string; status: PublicationStatus; title: string };
+	let confirmKind = $state<'unpublish' | 'republish' | 'delete' | null>(null);
+	let confirmTarget = $state<ConfirmTarget | null>(null);
+	let confirmBusy = $state(false);
+	let actionError: string | null = $state(null);
 
 	const client = useConvexClient();
 	const displayName = $derived(data.profileView.name?.trim() || 'Writer');
+	const ownerMode = $derived(data.isOwnProfile && !previewAsVisitor);
 
 	const catalogueDateFmt = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric' });
-	const publicationCount = $derived(data.publications.length);
+	const visiblePublications = $derived(
+		ownerMode ? data.publications : data.publications.filter((p) => p.status === 'published')
+	);
+	const publicationCount = $derived(visiblePublications.length);
 	const countLabel = $derived(
 		publicationCount === 0
 			? 'None filed'
@@ -52,8 +82,113 @@
 	);
 	const latestFiledLabel = $derived.by(() => {
 		if (publicationCount === 0) return null;
-		const t = data.publications.reduce((acc, p) => Math.max(acc, p.publishedAt ?? p.updatedAt), 0);
+		const t = visiblePublications.reduce(
+			(acc, p) => Math.max(acc, p.publishedAt ?? p.updatedAt),
+			0
+		);
 		return t > 0 ? catalogueDateFmt.format(new Date(t)) : null;
+	});
+
+	function handleCardAction(
+		action: 'edit' | 'unpublish' | 'republish' | 'delete',
+		pub: ShelfPublication
+	) {
+		actionError = null;
+		if (action === 'edit') {
+			editPubError = null;
+			editingPubId = pub.id;
+			return;
+		}
+		confirmTarget = { id: pub.id, status: pub.status, title: pub.title };
+		confirmKind = action;
+	}
+
+	function cancelPubEdit() {
+		editingPubId = null;
+		editPubError = null;
+	}
+
+	async function savePubEdit(
+		id: string,
+		payload: { title: string; description: string; tags: string[] }
+	) {
+		const trimmed = payload.title.trim();
+		if (!trimmed) {
+			editPubError = 'A title is required.';
+			return;
+		}
+		if (editPubSaving) return;
+		editPubSaving = true;
+		editPubError = null;
+		try {
+			await client.mutation(api.publications.updatePublishedDetails, {
+				publicationId: id as Id<'publications'>,
+				title: trimmed,
+				description: payload.description,
+				tags: payload.tags
+			});
+			await invalidateAll();
+			editingPubId = null;
+		} catch (e) {
+			editPubError = e instanceof Error ? e.message : 'Could not save these changes.';
+		} finally {
+			editPubSaving = false;
+		}
+	}
+
+	async function performConfirm() {
+		if (!confirmKind || !confirmTarget || confirmBusy) return;
+		confirmBusy = true;
+		actionError = null;
+		try {
+			const id = confirmTarget.id as Id<'publications'>;
+			if (confirmKind === 'unpublish') {
+				await client.mutation(api.publications.unpublish, { publicationId: id });
+			} else if (confirmKind === 'republish') {
+				await client.mutation(api.publications.republish, { publicationId: id });
+			} else if (confirmKind === 'delete') {
+				await client.mutation(api.publications.deletePublication, { publicationId: id });
+			}
+			await invalidateAll();
+			confirmKind = null;
+			confirmTarget = null;
+		} catch (e) {
+			actionError = e instanceof Error ? e.message : 'That action could not be completed.';
+		} finally {
+			confirmBusy = false;
+		}
+	}
+
+	const dialogContent = $derived.by(() => {
+		if (!confirmKind || !confirmTarget) return null;
+		if (confirmKind === 'unpublish') {
+			return {
+				title: `Unpublish "${confirmTarget.title}"?`,
+				body: 'This will unpublish your publication and remove it from your profile. The URL will stop resolving until you republish. You can republish at any time.',
+				confirmLabel: confirmBusy ? 'Unpublishing…' : 'Unpublish',
+				destructive: false
+			};
+		}
+		if (confirmKind === 'republish') {
+			return {
+				title: `Republish "${confirmTarget.title}"?`,
+				body: 'This will return your publication to your profile and the URL will resolve again.',
+				confirmLabel: confirmBusy ? 'Republishing…' : 'Republish',
+				destructive: false
+			};
+		}
+		const isPublished = confirmTarget.status === 'published';
+		const isDraft = confirmTarget.status === 'draft';
+		return {
+			title: `Delete "${confirmTarget.title}"?`,
+			body: isDraft
+				? 'Deleting this draft will remove the file and discard your progress. This cannot be undone.'
+				: isPublished
+					? 'Deleting this will unpublish your publication and remove it from your profile. This cannot be undone.'
+					: 'Deleting this will remove it from your profile. This cannot be undone.',
+			confirmLabel: confirmBusy ? 'Deleting…' : 'Delete',
+			destructive: true
+		};
 	});
 
 	function startEdit() {
@@ -314,23 +449,74 @@
 				Publications
 			</h2>
 			<div
-				class="flex items-center gap-3 pb-2 font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase"
+				class="flex items-center gap-4 pb-2 font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase"
 			>
 				<span>{countLabel}</span>
 				{#if latestFiledLabel}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
 					<span>Last filed <span class="text-ink">{latestFiledLabel}</span></span>
 				{/if}
+				{#if data.isOwnProfile}
+					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
+					<div
+						class="inline-flex items-center rounded-full border border-border bg-card p-[3px] tracking-[0.16em] uppercase shadow-[2px_2px_0_0_hsl(20_18%_51%/0.1)]"
+						role="group"
+						aria-label="View mode"
+					>
+						<button
+							type="button"
+							class="view-toggle-btn"
+							class:active={!previewAsVisitor}
+							aria-pressed={!previewAsVisitor}
+							onclick={() => (previewAsVisitor = false)}
+						>
+							Owner
+						</button>
+						<button
+							type="button"
+							class="view-toggle-btn"
+							class:active={previewAsVisitor}
+							aria-pressed={previewAsVisitor}
+							onclick={() => {
+								previewAsVisitor = true;
+								if (editing) cancelEdit();
+								editingPubId = null;
+							}}
+						>
+							Visitor
+						</button>
+					</div>
+				{/if}
 			</div>
 		</header>
 
-		{#if publicationCount > 0 || data.isOwnProfile}
-			<div class="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-8 gap-y-14">
-				{#each data.publications as publication (publication.id)}
-					<ProfilePublicationCard {publication} showStatus={data.isOwnProfile} />
+		{#if actionError}
+			<p
+				class="mb-6 font-mono text-[11px] tracking-[0.1em] text-destructive uppercase"
+				role="alert"
+			>
+				{actionError}
+			</p>
+		{/if}
+
+		{#if publicationCount > 0 || ownerMode}
+			<div
+				class="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] items-start gap-x-8 gap-y-14"
+			>
+				{#each visiblePublications as publication (publication.id)}
+					<ProfilePublicationCard
+						{publication}
+						{ownerMode}
+						editing={ownerMode && editingPubId === publication.id}
+						saving={editPubSaving && editingPubId === publication.id}
+						editError={editingPubId === publication.id ? editPubError : null}
+						onAction={handleCardAction}
+						onSaveEdit={savePubEdit}
+						onCancelEdit={cancelPubEdit}
+					/>
 				{/each}
 
-				{#if data.isOwnProfile}
+				{#if ownerMode}
 					<a
 						class="group flex min-w-0 flex-col gap-3.5 text-inherit no-underline"
 						href={resolve('/create')}
@@ -379,7 +565,47 @@
 	</section>
 </div>
 
+{#if dialogContent}
+	<ConfirmDialog
+		open={confirmKind !== null}
+		title={dialogContent.title}
+		body={dialogContent.body}
+		confirmLabel={dialogContent.confirmLabel}
+		destructive={dialogContent.destructive}
+		busy={confirmBusy}
+		onConfirm={performConfirm}
+		onCancel={() => {
+			confirmKind = null;
+			confirmTarget = null;
+		}}
+	/>
+{/if}
+
 <style>
+	.view-toggle-btn {
+		padding: 4px 10px;
+		border-radius: 999px;
+		color: var(--muted-foreground);
+		font: inherit;
+		letter-spacing: inherit;
+		text-transform: inherit;
+		background: transparent;
+		transition:
+			background 150ms ease,
+			color 150ms ease;
+	}
+	.view-toggle-btn:hover:not(.active) {
+		color: var(--ink);
+	}
+	.view-toggle-btn.active {
+		background: var(--ink);
+		color: var(--paper-warm-1);
+	}
+	.view-toggle-btn:focus-visible {
+		outline: 2px solid var(--ring);
+		outline-offset: 2px;
+	}
+
 	.group:hover .compose-frame {
 		box-shadow:
 			0 1px 0 hsl(20 18% 35% / 0.14),
