@@ -62,6 +62,12 @@ async function publicationCoverUrl(
 	return await ctx.storage.getUrl(file.storageId);
 }
 
+async function publicationPdfUrl(ctx: QueryCtx, pdfFileId: Id<'files'>): Promise<string | null> {
+	const file = await ctx.db.get(pdfFileId);
+	if (!file) return null;
+	return await ctx.storage.getUrl(file.storageId);
+}
+
 async function presentProfilePublication(ctx: QueryCtx, publication: Doc<'publications'>) {
 	return {
 		id: publication._id,
@@ -213,6 +219,43 @@ export const generateUploadUrl = mutation({
 	handler: async (ctx) => {
 		await requireAuthorWithProfile(ctx);
 		return ctx.storage.generateUploadUrl();
+	}
+});
+
+export const getBySlug = query({
+	args: { slug: v.string() },
+	handler: async (ctx, { slug }) => {
+		const publication = await ctx.db
+			.query('publications')
+			.withIndex('by_slug', (q) => q.eq('slug', slug))
+			.unique();
+
+		if (!publication || publication.status !== 'published') return null;
+
+		const profile = await ctx.db
+			.query('profiles')
+			.withIndex('by_userId', (q) => q.eq('userId', publication.authorId))
+			.unique();
+		const authUser = await authComponent.getAnyUserById(ctx, publication.authorId);
+
+		return {
+			id: publication._id,
+			slug: publication.slug ?? null,
+			title: publication.title ?? 'Untitled publication',
+			description: publication.description ?? null,
+			tags: publication.tags ?? [],
+			publishedAt: publication.publishedAt ?? null,
+			updatedAt: publication.updatedAt,
+			coverUrl: await publicationCoverUrl(ctx, publication.coverFileId),
+			pdfUrl: await publicationPdfUrl(ctx, publication.pdfFileId),
+			author: {
+				handle: profile?.handle ?? null,
+				name: authUser?.name ?? null,
+				bio: profile?.bio ?? null,
+				location: profile?.location ?? null,
+				image: authUser?.image ?? null
+			}
+		};
 	}
 });
 
