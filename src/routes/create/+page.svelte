@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { useConvexClient } from '@mmailaender/convex-svelte';
+	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import PublicationStatusBadge from '$lib/components/PublicationStatusBadge.svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import { CreateDraft } from '$lib/components/create/create-draft.svelte';
 	import CreateSteps from '$lib/components/create/CreateSteps.svelte';
 	import UploadStep from '$lib/components/create/UploadStep.svelte';
@@ -15,19 +18,30 @@
 
 	const STEPS = ['Upload', 'Preview'];
 	const HOME = resolve('/');
+	const profileHandle = untrack(() => data.profile.handle);
+	const initialResume = untrack(() => data.resumeDraft);
 
 	const draft = new CreateDraft(useConvexClient());
 
-	let currentStep = $state(0);
-	let maxStepReached = $state(0);
+	const initialStep = initialResume ? 1 : 0;
+	let currentStep = $state(initialStep);
+	let maxStepReached = $state(initialStep);
 	$effect(() => {
 		if (currentStep > maxStepReached) maxStepReached = currentStep;
 	});
-	let title = $state('');
-	let description = $state('');
-	let tags = $state<string[]>([]);
+	let title = $state(initialResume?.title ?? '');
+	let description = $state(initialResume?.description ?? '');
+	let tags = $state<string[]>(initialResume?.tags ?? []);
 	let rightsAccepted = $state(false);
 	let previewStep = $state<PreviewStep | null>(null);
+	let deleteDialogOpen = $state(false);
+
+	if (initialResume) {
+		draft.hydrateFromServer({
+			id: initialResume.id,
+			coverUrl: initialResume.coverUrl
+		});
+	}
 
 	const detailsReady = $derived(title.trim().length > 0 && description.trim().length > 0);
 	const publishDisabled = $derived(
@@ -69,18 +83,36 @@
 			await goto(resolve('/publication/[id]', { id: slug }));
 		}
 	}
+
+	async function confirmDeleteDraft(): Promise<void> {
+		const ok = await draft.deleteDraft();
+		if (!ok) return;
+		deleteDialogOpen = false;
+		await goto(resolve('/profile/[handle]', { handle: profileHandle }));
+	}
 </script>
 
 <SectionBar
 	crumbs={[
 		{
-			label: data.profile.handle,
-			href: resolve('/profile/[handle]', { handle: data.profile.handle })
+			label: profileHandle,
+			href: resolve('/profile/[handle]', { handle: profileHandle })
 		},
-		'New publication'
+		initialResume ? 'Resume draft' : 'New publication'
 	]}
 >
 	{#snippet right()}
+		{#if draft.publicationId && !draft.publishedSlug}
+			<button
+				type="button"
+				class="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+				disabled={draft.busy || draft.publishing || draft.deleting}
+				onclick={() => (deleteDialogOpen = true)}
+			>
+				<Trash2Icon class="size-3.5" aria-hidden="true" />
+				<span>Delete draft</span>
+			</button>
+		{/if}
 		<PublicationStatusBadge status={draft.publishedSlug ? 'published' : 'draft'} />
 	{/snippet}
 </SectionBar>
@@ -130,3 +162,13 @@
 		/>
 	</div>
 </div>
+
+<ConfirmDialog
+	bind:open={deleteDialogOpen}
+	title="Delete this draft?"
+	body="Deleting this draft will remove the file and discard your progress. This cannot be undone."
+	confirmLabel={draft.deleting ? 'Deleting…' : 'Delete draft'}
+	destructive
+	busy={draft.deleting}
+	onConfirm={confirmDeleteDraft}
+/>

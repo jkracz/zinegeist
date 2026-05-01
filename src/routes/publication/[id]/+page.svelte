@@ -109,10 +109,11 @@
 
 			<div class="mt-7">
 				{#if publication.pdfUrl}
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<!-- eslint-disable svelte/no-navigation-without-resolve -->
 					<a class="zg-btn zg-btn-primary" href={publication.pdfUrl} target="_blank" rel="noopener">
 						Read now →
 					</a>
+					<!-- eslint-enable svelte/no-navigation-without-resolve -->
 				{:else}
 					<button class="zg-btn zg-btn-primary" type="button" disabled>Read now →</button>
 				{/if}

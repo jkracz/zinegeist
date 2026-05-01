@@ -109,9 +109,4 @@
 		background: oklch(0.91 0.006 80);
 		border-color: var(--border);
 	}
-	.status-pill[data-status='unpublished'] .label {
-		text-decoration: line-through;
-		text-decoration-thickness: 1px;
-		text-decoration-color: oklch(0.55 0.02 50 / 0.55);
-	}
 </style>

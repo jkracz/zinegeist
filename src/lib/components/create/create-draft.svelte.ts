@@ -22,6 +22,7 @@ export class CreateDraft {
 	publishedSlug: string | null = $state(null);
 	error: string | null = $state(null);
 	publishing: boolean = $state(false);
+	deleting: boolean = $state(false);
 
 	busy = $derived(this.state !== 'idle' && this.state !== 'ready');
 
@@ -122,6 +123,34 @@ export class CreateDraft {
 			this.error = e instanceof Error ? e.message : 'Could not prepare this PDF.';
 			this.state = 'idle';
 			return false;
+		}
+	}
+
+	hydrateFromServer(input: { id: Id<'publications'>; coverUrl: string | null }): void {
+		this.publicationId = input.id;
+		this.coverPreviewUrl = input.coverUrl;
+		this.state = 'ready';
+		this.selectedFile = null;
+		this.error = null;
+	}
+
+	async deleteDraft(): Promise<boolean> {
+		if (!this.publicationId || this.deleting) return false;
+		this.deleting = true;
+		this.error = null;
+		try {
+			await this.#client.mutation(api.publications.deletePublication, {
+				publicationId: this.publicationId
+			});
+			this.#reset();
+			this.selectedFile = null;
+			this.state = 'idle';
+			return true;
+		} catch (e) {
+			this.error = e instanceof Error ? e.message : 'Could not delete this draft.';
+			return false;
+		} finally {
+			this.deleting = false;
 		}
 	}
 

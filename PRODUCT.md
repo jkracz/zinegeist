@@ -18,13 +18,13 @@ Success means writers feel like they have a real place (not a workaround), and r
 
 ## Brand Personality
 
-**Calm, clear, cozy.** A first-time visitor should leave thinking *this is where writing lives* — a place that's quiet, considered, and welcoming, with a slight handmade warmth. Voice is plainspoken and unhurried; never breathless, never marketing-coded, never apologetic about being small.
+**Calm, clear, cozy.** A first-time visitor should leave thinking _this is where writing lives_ — a place that's quiet, considered, and welcoming, with a slight handmade warmth. Voice is plainspoken and unhurried; never breathless, never marketing-coded, never apologetic about being small.
 
 ## Anti-references
 
 - **Notion / Google Drive shared links.** Generic tooling repurposed as a publishing surface. Zinegeist should never feel like a workspace product where writing happens to live; the surface itself has to feel like a publication, not a document.
 - **Personal-site builders (Squarespace/Wix/Carrd templates).** Zinegeist isn't trying to be your homepage with a writing section — it's a shared shelf of independent publications with consistent reading affordances.
-- **Goodreads (the current version).** The *idea* of a community of readers around independent work is right; the cluttered, ad-laden, abandoned-shareware execution is the anti-reference. Aim for what a thoughtfully maintained Goodreads-for-writing could feel like.
+- **Goodreads (the current version).** The _idea_ of a community of readers around independent work is right; the cluttered, ad-laden, abandoned-shareware execution is the anti-reference. Aim for what a thoughtfully maintained Goodreads-for-writing could feel like.
 - **Algorithmic feed / growth-hacker dashboards.** No engagement metrics displayed as the point, no follower-count theater, no "grow your audience" framing. Discovery is editorial-shelf shaped, not feed-shaped.
 
 Avoid naming specific newsletter platforms as anti-references — newsletter delivery may live here in the future, and the platform shouldn't be defined in opposition to that medium.

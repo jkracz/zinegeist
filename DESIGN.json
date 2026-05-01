@@ -255,9 +255,7 @@
 				"purpose": "150ms background and border-color transitions on interactive chrome."
 			}
 		],
-		"breakpoints": [
-			{ "name": "mobile", "value": "900px" }
-		]
+		"breakpoints": [{ "name": "mobile", "value": "900px" }]
 	},
 	"components": [
 		{
@@ -337,15 +335,51 @@
 			"Pressed-ink buttons with offset paper-shadow (2px down, 0 blur) — printed-press feel, never glassy"
 		],
 		"rules": [
-			{ "name": "The No-Grey Rule", "body": "Every neutral is tinted toward the Mocha axis (40–102° hue, 0.005–0.03 chroma). Untinted greys and pure white/black are forbidden outside the popover surface.", "section": "colors" },
-			{ "name": "The Rare Stamp Rule", "body": "Mocha Stamp covers ≤8% of any rendered surface. It carries italic emphasis inside headlines and focus state. It does not fill buttons, blocks, or hero backgrounds.", "section": "colors" },
-			{ "name": "The Paper-Not-Background Rule", "body": "Surfaces are paper. Use the warm-paper stack (Warm Newsprint → Aged Paper → Foxed Edge → Soft Page) for any neutral surface. Never reach for framework default neutrals.", "section": "colors" },
-			{ "name": "The Single-Serif Rule", "body": "Fraunces handles display, headline, title, and body — the optical-size axis gives the variation. Do not introduce a second serif.", "section": "typography" },
-			{ "name": "The Italic-as-Emphasis Rule", "body": "Emphasis inside headlines is italic Fraunces in Mocha Stamp — never bold, never underline, never color-block highlight.", "section": "typography" },
-			{ "name": "The Mono-for-Metadata Rule", "body": "Anything that is about the content (counts, dates, status, breadcrumbs, page numbers, kbd hints) is set in JetBrains Mono at 11px / 0.18em / UPPERCASE.", "section": "typography" },
-			{ "name": "The Hard-Offset Rule", "body": "Shadows are 2px–4px hard offsets in warm-brown HSL, not soft Material drop shadows. The visual model is paper laid on paper, not card floating in space.", "section": "elevation" },
-			{ "name": "The Cover-Shadow Rule", "body": "shadow-page is reserved exclusively for objects representing physical print artifacts (zine covers, the featured hero card).", "section": "elevation" },
-			{ "name": "The Paper-Grain-Always Rule", "body": "The grain overlay is a permanent z-60 fixture, not a hero-only effect. Do not opt screens out of it.", "section": "elevation" }
+			{
+				"name": "The No-Grey Rule",
+				"body": "Every neutral is tinted toward the Mocha axis (40–102° hue, 0.005–0.03 chroma). Untinted greys and pure white/black are forbidden outside the popover surface.",
+				"section": "colors"
+			},
+			{
+				"name": "The Rare Stamp Rule",
+				"body": "Mocha Stamp covers ≤8% of any rendered surface. It carries italic emphasis inside headlines and focus state. It does not fill buttons, blocks, or hero backgrounds.",
+				"section": "colors"
+			},
+			{
+				"name": "The Paper-Not-Background Rule",
+				"body": "Surfaces are paper. Use the warm-paper stack (Warm Newsprint → Aged Paper → Foxed Edge → Soft Page) for any neutral surface. Never reach for framework default neutrals.",
+				"section": "colors"
+			},
+			{
+				"name": "The Single-Serif Rule",
+				"body": "Fraunces handles display, headline, title, and body — the optical-size axis gives the variation. Do not introduce a second serif.",
+				"section": "typography"
+			},
+			{
+				"name": "The Italic-as-Emphasis Rule",
+				"body": "Emphasis inside headlines is italic Fraunces in Mocha Stamp — never bold, never underline, never color-block highlight.",
+				"section": "typography"
+			},
+			{
+				"name": "The Mono-for-Metadata Rule",
+				"body": "Anything that is about the content (counts, dates, status, breadcrumbs, page numbers, kbd hints) is set in JetBrains Mono at 11px / 0.18em / UPPERCASE.",
+				"section": "typography"
+			},
+			{
+				"name": "The Hard-Offset Rule",
+				"body": "Shadows are 2px–4px hard offsets in warm-brown HSL, not soft Material drop shadows. The visual model is paper laid on paper, not card floating in space.",
+				"section": "elevation"
+			},
+			{
+				"name": "The Cover-Shadow Rule",
+				"body": "shadow-page is reserved exclusively for objects representing physical print artifacts (zine covers, the featured hero card).",
+				"section": "elevation"
+			},
+			{
+				"name": "The Paper-Grain-Always Rule",
+				"body": "The grain overlay is a permanent z-60 fixture, not a hero-only effect. Do not opt screens out of it.",
+				"section": "elevation"
+			}
 		],
 		"dos": [
 			"Do keep Fraunces as the only serif. Use the optical-size axis to differentiate display vs. body — not a second family.",
