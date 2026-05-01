@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-
 	type Props = {
 		currentStep: number;
 		canContinueFromUpload: boolean;
 		uploadBusy: boolean;
 		publishDisabled: boolean;
 		publishing: boolean;
+		onCancel: () => void;
 		onBack: () => void;
 		onContinue: () => void;
 		onPublish: () => void;
@@ -18,17 +17,16 @@
 		uploadBusy,
 		publishDisabled,
 		publishing,
+		onCancel,
 		onBack,
 		onContinue,
 		onPublish
 	}: Props = $props();
-
-	const HOME = resolve('/');
 </script>
 
 <div class="mt-9 flex items-center justify-between border-t border-border pt-6">
 	{#if currentStep === 0}
-		<a class="zg-btn zg-btn-ghost" href={HOME}>Cancel</a>
+		<button class="zg-btn zg-btn-ghost" type="button" onclick={onCancel}> Cancel </button>
 		<button
 			class="zg-btn zg-btn-primary disabled:cursor-not-allowed disabled:opacity-40"
 			type="button"
