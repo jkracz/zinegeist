@@ -1,7 +1,10 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
+	import Share2 from '@lucide/svelte/icons/share-2';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import PublicationViewer from '$lib/components/pdf/PublicationViewer.svelte';
+	import { sharePublication } from '$lib/utils/share';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -9,6 +12,14 @@
 	let readerOpen = $state(false);
 
 	const publication = $derived(data.publication);
+
+	function share() {
+		if (!browser) return;
+		sharePublication({
+			title: publication.title,
+			url: window.location.href
+		});
+	}
 	const authorName = $derived(publication.author.name?.trim() || 'Writer');
 	const authorHref = $derived(
 		publication.author.handle
@@ -28,7 +39,30 @@
 	const dateLabel = $derived(
 		publication.publishedAt ? dateFormatter.format(new Date(publication.publishedAt)) : null
 	);
+
+	const pageTitle = $derived(`${publication.title} · Zinegeist`);
+	const pageDescription = $derived(
+		publication.description ?? `${publication.title} by ${authorName} on Zinegeist`
+	);
 </script>
+
+<svelte:head>
+	<title>{pageTitle}</title>
+	<meta name="description" content={pageDescription} />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content={publication.title} />
+	<meta property="og:description" content={pageDescription} />
+	{#if publication.coverUrl}
+		<meta property="og:image" content={publication.coverUrl} />
+		<meta property="og:image:alt" content="{publication.title} cover" />
+	{/if}
+	<meta name="twitter:card" content={publication.coverUrl ? 'summary_large_image' : 'summary'} />
+	<meta name="twitter:title" content={publication.title} />
+	<meta name="twitter:description" content={pageDescription} />
+	{#if publication.coverUrl}
+		<meta name="twitter:image" content={publication.coverUrl} />
+	{/if}
+</svelte:head>
 
 <SectionBar
 	crumbs={[
@@ -110,7 +144,7 @@
 				</div>
 			</dl>
 
-			<div class="mt-7">
+			<div class="mt-7 flex flex-wrap items-center gap-3">
 				{#if publication.pdfUrl}
 					<button class="zg-btn zg-btn-primary" type="button" onclick={() => (readerOpen = true)}>
 						Read now →
@@ -118,6 +152,15 @@
 				{:else}
 					<button class="zg-btn zg-btn-primary" type="button" disabled>Read now →</button>
 				{/if}
+				<button
+					class="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+					type="button"
+					onclick={share}
+					aria-label="Share publication"
+				>
+					<Share2 class="size-4" />
+					Share
+				</button>
 			</div>
 
 			<footer class="mt-9 border-t border-border/70 pt-7">
@@ -180,6 +223,7 @@
 		pdfUrl={publication.pdfUrl}
 		open={readerOpen}
 		onClose={() => (readerOpen = false)}
+		onShare={share}
 	/>
 {/if}
 

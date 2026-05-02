@@ -16,6 +16,7 @@
 	import BookOpen from '@lucide/svelte/icons/book-open';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Rows from '@lucide/svelte/icons/rows-3';
+	import Share2 from '@lucide/svelte/icons/share-2';
 	import X from '@lucide/svelte/icons/x';
 
 	interface Props {
@@ -25,6 +26,7 @@
 		isMobile: boolean;
 		isFullscreen: boolean;
 		toggleFullscreen: () => void;
+		onShare: () => void;
 		onClose: () => void;
 	}
 
@@ -35,6 +37,7 @@
 		isMobile,
 		isFullscreen,
 		toggleFullscreen,
+		onShare,
 		onClose
 	}: Props = $props();
 
@@ -131,6 +134,9 @@
 			{:else}
 				<Maximize />
 			{/if}
+		</Button>
+		<Button variant="ghost" size="icon-sm" onclick={onShare} aria-label="Share publication">
+			<Share2 />
 		</Button>
 		<div class="mx-1 h-5 w-px bg-border" aria-hidden="true"></div>
 		<Button variant="ghost" size="icon-sm" onclick={onClose} aria-label="Close reader">

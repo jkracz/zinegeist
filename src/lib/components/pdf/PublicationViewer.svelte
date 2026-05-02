@@ -23,9 +23,10 @@
 		pdfUrl: string;
 		open: boolean;
 		onClose: () => void;
+		onShare: () => void;
 	}
 
-	let { pdfUrl, open, onClose }: Props = $props();
+	let { pdfUrl, open, onClose, onShare }: Props = $props();
 
 	const mobile = useIsMobile();
 	let viewMode = $state<ViewMode>('book');
@@ -123,6 +124,7 @@
 										isMobile={mobile.current}
 										isFullscreen={fullscreen.current}
 										toggleFullscreen={fullscreen.toggle}
+										{onShare}
 										{onClose}
 									/>
 									<div class="relative flex-1 bg-paper-warm-2">
