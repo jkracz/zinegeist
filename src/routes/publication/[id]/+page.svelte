@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import PublicationViewer from '$lib/components/pdf/PublicationViewer.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -109,11 +110,7 @@
 
 			<div class="mt-7">
 				{#if publication.pdfUrl}
-					<!-- eslint-disable svelte/no-navigation-without-resolve -->
-					<a class="zg-btn zg-btn-primary" href={publication.pdfUrl} target="_blank" rel="noopener">
-						Read now →
-					</a>
-					<!-- eslint-enable svelte/no-navigation-without-resolve -->
+					<PublicationViewer pdfUrl={publication.pdfUrl} />
 				{:else}
 					<button class="zg-btn zg-btn-primary" type="button" disabled>Read now →</button>
 				{/if}
