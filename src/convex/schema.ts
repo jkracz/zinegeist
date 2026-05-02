@@ -5,12 +5,15 @@ export default defineSchema({
 	profiles: defineTable({
 		userId: v.string(),
 		handle: v.string(),
+		name: v.optional(v.string()),
 		bio: v.optional(v.string()),
 		location: v.optional(v.string()),
 		links: v.optional(v.array(v.object({ label: v.string(), url: v.string() })))
 	})
 		.index('by_userId', ['userId'])
-		.index('by_handle', ['handle']),
+		.index('by_handle', ['handle'])
+		.searchIndex('search_handle', { searchField: 'handle' })
+		.searchIndex('search_name', { searchField: 'name' }),
 	files: defineTable({
 		uploaderId: v.string(),
 		storageId: v.id('_storage'),
@@ -43,4 +46,5 @@ export default defineSchema({
 		.index('by_authorId_and_status_and_updatedAt', ['authorId', 'status', 'updatedAt'])
 		.index('by_status_and_publishedAt', ['status', 'publishedAt'])
 		.index('by_slug', ['slug'])
+		.searchIndex('search_title', { searchField: 'title', filterFields: ['status'] })
 });

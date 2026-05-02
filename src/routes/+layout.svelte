@@ -7,6 +7,7 @@
 	import { authClient } from '$lib/auth-client';
 	import Header from '$lib/components/Header.svelte';
 	import PaperGrain from '$lib/components/PaperGrain.svelte';
+	import CommandPalette from '$lib/components/CommandPalette.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 
 	let { children, data } = $props();
@@ -14,11 +15,24 @@
 	if (browser) {
 		createSvelteAuthClient({ authClient, convexClient, getServerState: () => data.authState });
 	}
+
+	let commandOpen = $state(false);
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
+			event.preventDefault();
+			commandOpen = !commandOpen;
+		}
+	}
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <Toaster position="top-center" richColors />
 
-<Header {data} />
+<Header {data} onOpenSearch={() => (commandOpen = true)} />
+
+<CommandPalette bind:open={commandOpen} />
 
 <main class="relative min-w-0">
 	{@render children()}

@@ -11,7 +11,10 @@
 		profile?: { handle: string } | null;
 	};
 
-	let { data }: { data?: HeaderData } = $props();
+	let { data, onOpenSearch }: { data?: HeaderData; onOpenSearch?: () => void } = $props();
+
+	const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+	const shortcutLabel = $derived(isMac ? '⌘K' : 'Ctrl K');
 
 	const isAuthenticated = $derived(data?.authState?.isAuthenticated ?? false);
 	const profileHref = $derived(
@@ -77,15 +80,16 @@
 	</nav>
 
 	<div class="flex items-center gap-2.5 justify-self-end">
-		<div
+		<button
+			type="button"
 			class="header-search inline-flex min-w-[200px] cursor-text items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 font-mono text-xs tracking-[0.04em] text-muted-foreground max-[900px]:hidden"
-			role="button"
-			tabindex="0"
+			onclick={() => onOpenSearch?.()}
+			aria-label="Search zines and writers"
 		>
 			<span class="text-[13px]" aria-hidden="true">⌕</span>
 			<span>Search zines &amp; writers</span>
-			<span class="kbd ml-auto">⌘K</span>
-		</div>
+			<span class="kbd ml-auto">{shortcutLabel}</span>
+		</button>
 		<a class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]" href={CREATE}> ＋ Publish </a>
 
 		{#if isAuthenticated}
