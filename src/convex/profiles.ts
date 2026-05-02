@@ -109,6 +109,7 @@ export const createProfile = mutation({
 		await ctx.db.insert('profiles', {
 			userId: authUser._id,
 			handle,
+			name: authUser.name ?? undefined,
 			bio: args.bio,
 			location: args.location,
 			links: args.links
@@ -134,10 +135,16 @@ export const updateProfile = mutation({
 
 		const patch: Partial<{
 			handle: string;
+			name: string | undefined;
 			bio: string | undefined;
 			location: string | undefined;
 			links: { label: string; url: string }[] | undefined;
 		}> = {};
+
+		const currentName = authUser.name ?? undefined;
+		if (currentName !== profile.name) {
+			patch.name = currentName;
+		}
 
 		if (args.handle !== undefined) {
 			const handle = normalizeHandle(args.handle);
