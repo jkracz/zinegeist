@@ -3,9 +3,8 @@
 </script>
 
 <script lang="ts">
-	import { useScroll, ScrollStrategy } from '@embedpdf/plugin-scroll/svelte';
-	import { useSpread, SpreadMode } from '@embedpdf/plugin-spread/svelte';
-	import { useZoom, ZoomMode } from '@embedpdf/plugin-zoom/svelte';
+	import { useScroll } from '@embedpdf/plugin-scroll/svelte';
+	import { useZoom } from '@embedpdf/plugin-zoom/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils.js';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
@@ -24,31 +23,23 @@
 		viewMode: ViewMode;
 		setViewMode: (mode: ViewMode) => void;
 		isMobile: boolean;
-		containerEl: HTMLElement | null;
 		isFullscreen: boolean;
+		toggleFullscreen: () => void;
 		onClose: () => void;
 	}
 
-	let { documentId, viewMode, setViewMode, isMobile, containerEl, isFullscreen, onClose }: Props =
-		$props();
+	let {
+		documentId,
+		viewMode,
+		setViewMode,
+		isMobile,
+		isFullscreen,
+		toggleFullscreen,
+		onClose
+	}: Props = $props();
 
 	const scroll = useScroll(() => documentId);
-	const spread = useSpread(() => documentId);
 	const zoom = useZoom(() => documentId);
-
-	const VIEW_MODE_CONFIG: Record<ViewMode, { strategy: ScrollStrategy; spread: SpreadMode }> = {
-		book: { strategy: ScrollStrategy.Horizontal, spread: SpreadMode.Odd },
-		single: { strategy: ScrollStrategy.Horizontal, spread: SpreadMode.None },
-		scroll: { strategy: ScrollStrategy.Vertical, spread: SpreadMode.None }
-	};
-
-	$effect(() => {
-		const config = VIEW_MODE_CONFIG[viewMode];
-		if (!scroll.provides || !spread.provides) return;
-		scroll.provides.setScrollStrategy(config.strategy);
-		spread.provides.setSpreadMode(config.spread);
-		zoom.provides?.requestZoom(ZoomMode.FitWidth);
-	});
 
 	const modes = $derived(
 		[
@@ -61,15 +52,6 @@
 			icon: typeof BookOpen;
 		}>
 	);
-
-	function toggleFullscreen() {
-		if (!containerEl) return;
-		if (document.fullscreenElement) {
-			document.exitFullscreen();
-		} else {
-			containerEl.requestFullscreen();
-		}
-	}
 </script>
 
 <div

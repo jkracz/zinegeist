@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { onDestroy } from 'svelte';
 	import { usePdfiumEngine } from '@embedpdf/engines/svelte';
 	import { EmbedPDF } from '@embedpdf/core/svelte';
 	import { createPluginRegistration } from '@embedpdf/core';
@@ -13,10 +12,12 @@
 	import { SpreadPluginPackage, SpreadMode } from '@embedpdf/plugin-spread/svelte';
 	import { RenderPluginPackage } from '@embedpdf/plugin-render/svelte';
 	import { ZoomPluginPackage, ZoomMode } from '@embedpdf/plugin-zoom/svelte';
-	import { Loader2 } from '@lucide/svelte';
+	import Loader2 from '@lucide/svelte/icons/loader-2';
 	import { useIsMobile } from '$lib/hooks/useIsMobile.svelte';
+	import { useFullscreen } from '$lib/hooks/useFullscreen.svelte';
 	import ViewerToolbar, { type ViewMode } from './ViewerToolbar.svelte';
 	import ViewerCanvas from './ViewerCanvas.svelte';
+	import ViewModeSync from './ViewModeSync.svelte';
 
 	interface Props {
 		pdfUrl: string;
@@ -62,21 +63,10 @@
 	]);
 
 	let containerEl = $state<HTMLDivElement | null>(null);
-	let isFullscreen = $state(false);
-
-	function handleFullscreenChange() {
-		isFullscreen = document.fullscreenElement === containerEl;
-	}
+	const fullscreen = useFullscreen(() => containerEl);
 
 	$effect(() => {
-		if (!browser) return;
-		document.addEventListener('fullscreenchange', handleFullscreenChange);
-		return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-	});
-
-	$effect(() => {
-		if (!browser) return;
-		if (!open) return;
+		if (!browser || !open) return;
 		const prev = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
 		return () => {
@@ -84,24 +74,26 @@
 		};
 	});
 
-	function handleKey(e: KeyboardEvent) {
-		if (e.key === 'Escape' && open && !document.fullscreenElement) {
-			onClose();
-		}
-	}
-
 	$effect(() => {
 		if (!browser || !open) return;
+		const handleKey = (e: KeyboardEvent) => {
+			if (e.key === 'Escape' && !document.fullscreenElement) onClose();
+		};
 		window.addEventListener('keydown', handleKey);
 		return () => window.removeEventListener('keydown', handleKey);
 	});
-
-	onDestroy(() => {
-		if (browser && document.fullscreenElement === containerEl) {
-			document.exitFullscreen().catch(() => {});
-		}
-	});
 </script>
+
+{#snippet status(text: string, spinning: boolean)}
+	<div class="flex flex-1 items-center justify-center bg-paper-warm-2 px-6 text-center">
+		<div class="flex items-center gap-2 text-muted-foreground">
+			{#if spinning}
+				<Loader2 class="size-4 animate-spin" />
+			{/if}
+			<span class="font-mono text-xs tracking-wide">{text}</span>
+		</div>
+	</div>
+{/snippet}
 
 {#if open}
 	<div
@@ -112,18 +104,9 @@
 		aria-label="Publication reader"
 	>
 		{#if pdfEngine.isLoading || !pdfEngine.engine}
-			<div class="flex flex-1 items-center justify-center bg-paper-warm-2">
-				<div class="flex items-center gap-2 text-muted-foreground">
-					<Loader2 class="size-4 animate-spin" />
-					<span class="font-mono text-xs tracking-wide">Loading viewer…</span>
-				</div>
-			</div>
+			{@render status('Loading viewer…', true)}
 		{:else if pdfEngine.error}
-			<div class="flex flex-1 items-center justify-center bg-paper-warm-2 px-6 text-center">
-				<span class="font-mono text-xs tracking-wide text-muted-foreground">
-					Couldn’t load PDF engine.
-				</span>
-			</div>
+			{@render status('Couldn’t load PDF engine.', false)}
 		{:else}
 			<EmbedPDF engine={pdfEngine.engine} {plugins}>
 				{#snippet children({ activeDocumentId })}
@@ -132,13 +115,14 @@
 						<DocumentContent {documentId}>
 							{#snippet children(state)}
 								{#if state.isLoaded}
+									<ViewModeSync {documentId} {viewMode} />
 									<ViewerToolbar
 										{documentId}
 										{viewMode}
 										{setViewMode}
 										isMobile={mobile.current}
-										{containerEl}
-										{isFullscreen}
+										isFullscreen={fullscreen.current}
+										toggleFullscreen={fullscreen.toggle}
 										{onClose}
 									/>
 									<div class="relative flex-1 bg-paper-warm-2">
@@ -147,20 +131,9 @@
 										{/key}
 									</div>
 								{:else if state.isError}
-									<div
-										class="flex flex-1 items-center justify-center bg-paper-warm-2 px-6 text-center"
-									>
-										<span class="font-mono text-xs tracking-wide text-muted-foreground">
-											Couldn’t open the document.
-										</span>
-									</div>
+									{@render status('Couldn’t open the document.', false)}
 								{:else}
-									<div class="flex flex-1 items-center justify-center bg-paper-warm-2">
-										<div class="flex items-center gap-2 text-muted-foreground">
-											<Loader2 class="size-4 animate-spin" />
-											<span class="font-mono text-xs tracking-wide">Loading document…</span>
-										</div>
-									</div>
+									{@render status('Loading document…', true)}
 								{/if}
 							{/snippet}
 						</DocumentContent>
