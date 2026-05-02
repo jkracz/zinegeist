@@ -324,34 +324,4 @@
 		background: var(--card);
 		letter-spacing: 0.04em;
 	}
-
-	/* Scroll hint animation */
-	.scroll-line {
-		width: 56px;
-		height: 1px;
-		background: currentColor;
-		position: relative;
-		overflow: hidden;
-	}
-	.scroll-line::after {
-		content: '';
-		position: absolute;
-		left: -20px;
-		top: 0;
-		width: 20px;
-		height: 100%;
-		background: var(--ink);
-		animation: scroll-line 2.4s ease-in-out infinite;
-	}
-	@keyframes scroll-line {
-		0% {
-			left: -20px;
-		}
-		60% {
-			left: 56px;
-		}
-		100% {
-			left: 56px;
-		}
-	}
 }

@@ -41,5 +41,6 @@ export default defineSchema({
 		.index('by_authorId_and_status', ['authorId', 'status'])
 		.index('by_authorId_and_updatedAt', ['authorId', 'updatedAt'])
 		.index('by_authorId_and_status_and_updatedAt', ['authorId', 'status', 'updatedAt'])
+		.index('by_status_and_publishedAt', ['status', 'publishedAt'])
 		.index('by_slug', ['slug'])
 });
