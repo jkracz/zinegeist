@@ -1,12 +1,39 @@
 import { customAlphabet } from 'nanoid';
 import { v } from 'convex/values';
-import { mutation, query, type MutationCtx, type QueryCtx } from './_generated/server';
+import { TableAggregate } from '@convex-dev/aggregate';
+import { Triggers } from 'convex-helpers/server/triggers';
+import { customCtx, customMutation } from 'convex-helpers/server/customFunctions';
+import {
+	mutation as rawMutation,
+	query,
+	type MutationCtx,
+	type QueryCtx
+} from './_generated/server';
+import { components } from './_generated/api';
 import { authComponent } from './auth';
-import type { Doc, Id } from './_generated/dataModel';
+import type { DataModel, Doc, Id } from './_generated/dataModel';
+
+type PublicationStatus = Doc<'publications'>['status'];
+
+const publicationsByStatus = new TableAggregate<{
+	Namespace: PublicationStatus;
+	Key: number;
+	DataModel: DataModel;
+	TableName: 'publications';
+}>(components.publicationsByStatus, {
+	namespace: (doc) => doc.status,
+	sortKey: (doc) => doc._creationTime
+});
+
+const triggers = new Triggers<DataModel>();
+triggers.register('publications', publicationsByStatus.trigger());
+
+const mutation = customMutation(rawMutation, customCtx(triggers.wrapDB));
 
 const ROUTE_SUFFIX_ALPHABET = '23456789abcdefghijkmnopqrstuvwxyz';
 const makeRouteSuffix = customAlphabet(ROUTE_SUFFIX_ALPHABET, 6);
 const PROFILE_PUBLICATIONS_LIMIT = 10;
+const HOME_PUBLICATIONS_LIMIT = 8;
 const MAX_SLUG_LENGTH = 72;
 const MAX_TITLE_LENGTH = 140;
 const MAX_DESCRIPTION_LENGTH = 1200;
@@ -80,6 +107,29 @@ async function presentProfilePublication(ctx: QueryCtx, publication: Doc<'public
 		updatedAt: publication.updatedAt,
 		createdAt: publication._creationTime,
 		coverUrl: await publicationCoverUrl(ctx, publication.coverFileId)
+	};
+}
+
+async function presentHomePublication(ctx: QueryCtx, publication: Doc<'publications'>) {
+	const profile = await ctx.db
+		.query('profiles')
+		.withIndex('by_userId', (q) => q.eq('userId', publication.authorId))
+		.unique();
+	const authUser = await authComponent.getAnyUserById(ctx, publication.authorId);
+
+	return {
+		id: publication._id,
+		title: publication.title ?? 'Untitled publication',
+		description: publication.description ?? null,
+		tags: publication.tags ?? [],
+		slug: publication.slug ?? null,
+		publishedAt: publication.publishedAt ?? null,
+		updatedAt: publication.updatedAt,
+		coverUrl: await publicationCoverUrl(ctx, publication.coverFileId),
+		author: {
+			handle: profile?.handle ?? null,
+			name: authUser?.name ?? null
+		}
 	};
 }
 
@@ -315,6 +365,42 @@ export const listForProfile = query({
 		return await Promise.all(
 			publications.map((publication) => presentProfilePublication(ctx, publication))
 		);
+	}
+});
+
+export const listRecentPublished = query({
+	args: {},
+	handler: async (ctx) => {
+		const publications = await ctx.db
+			.query('publications')
+			.withIndex('by_status_and_publishedAt', (q) => q.eq('status', 'published'))
+			.order('desc')
+			.take(HOME_PUBLICATIONS_LIMIT);
+
+		return await Promise.all(
+			publications
+				.filter((publication) => publication.slug && publication.publishedAt)
+				.map((publication) => presentHomePublication(ctx, publication))
+		);
+	}
+});
+
+export const countPublished = query({
+	args: {},
+	handler: async (ctx) => {
+		return await publicationsByStatus.count(ctx, { namespace: 'published' });
+	}
+});
+
+export const countByStatus = query({
+	args: {},
+	handler: async (ctx) => {
+		const [draft, published, unpublished] = await Promise.all([
+			publicationsByStatus.count(ctx, { namespace: 'draft' }),
+			publicationsByStatus.count(ctx, { namespace: 'published' }),
+			publicationsByStatus.count(ctx, { namespace: 'unpublished' })
+		]);
+		return { draft, published, unpublished, total: draft + published + unpublished };
 	}
 });
 
