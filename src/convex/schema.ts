@@ -33,6 +33,7 @@ export default defineSchema({
 		updatedAt: v.number(),
 		pdfFileId: v.id('files'),
 		coverFileId: v.id('files'),
+		pageCount: v.optional(v.number()),
 		title: v.optional(v.string()),
 		description: v.optional(v.string()),
 		tags: v.optional(v.array(v.string())),

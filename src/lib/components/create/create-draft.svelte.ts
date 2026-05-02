@@ -87,8 +87,8 @@ export class CreateDraft {
 			const pdfStorageId = await this.#uploadBlob(file, 'application/pdf');
 
 			this.state = 'extracting-cover';
-			const { renderPdfCover } = await import('$lib/pdf/cover.client');
-			const coverBlob = await renderPdfCover(file);
+			const { preparePdfUpload } = await import('$lib/pdf/upload.client');
+			const { coverBlob, pageCount } = await preparePdfUpload(file);
 			const coverFile = new File([coverBlob], `${file.name.replace(/\.pdf$/i, '')}-cover.jpg`, {
 				type: 'image/jpeg'
 			});
@@ -105,7 +105,8 @@ export class CreateDraft {
 					storageId: coverStorageId,
 					name: coverFile.name,
 					mimeType: coverFile.type
-				}
+				},
+				pageCount
 			};
 			const draft = draftToReplace
 				? await this.#client.mutation(api.publications.replaceDraftFiles, {

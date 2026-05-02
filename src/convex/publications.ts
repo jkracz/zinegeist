@@ -40,6 +40,7 @@ const MAX_DESCRIPTION_LENGTH = 1200;
 const MAX_TAGS = 12;
 const MAX_TAG_LENGTH = 32;
 const MAX_FILE_NAME_LENGTH = 240;
+const MAX_PAGE_COUNT = 100_000;
 
 type AuthedCtx = QueryCtx | MutationCtx;
 type FileKind = 'publication_pdf' | 'publication_cover';
@@ -55,6 +56,10 @@ const uploadedFileValidator = v.object({
 	name: v.string(),
 	mimeType: v.string()
 });
+
+const pdfMetadataValidator = {
+	pageCount: v.number()
+};
 
 async function findProfileByUserId(ctx: AuthedCtx, userId: string) {
 	return ctx.db
@@ -106,6 +111,7 @@ async function presentProfilePublication(ctx: QueryCtx, publication: Doc<'public
 		publishedAt: publication.publishedAt ?? null,
 		updatedAt: publication.updatedAt,
 		createdAt: publication._creationTime,
+		pageCount: publication.pageCount ?? null,
 		coverUrl: await publicationCoverUrl(ctx, publication.coverFileId)
 	};
 }
@@ -125,6 +131,7 @@ async function presentHomePublication(ctx: QueryCtx, publication: Doc<'publicati
 		slug: publication.slug ?? null,
 		publishedAt: publication.publishedAt ?? null,
 		updatedAt: publication.updatedAt,
+		pageCount: publication.pageCount ?? null,
 		coverUrl: await publicationCoverUrl(ctx, publication.coverFileId),
 		author: {
 			handle: profile?.handle ?? null,
@@ -160,6 +167,13 @@ function cleanTags(tags: string[]): string[] | undefined {
 	}
 
 	return cleaned.length > 0 ? cleaned : undefined;
+}
+
+function cleanPositiveInteger(input: number, fieldName: string, max: number): number {
+	if (!Number.isSafeInteger(input) || input < 1 || input > max) {
+		throw new Error(`${fieldName} must be a positive integer.`);
+	}
+	return input;
 }
 
 function titleToSlug(title: string): string {
@@ -304,6 +318,7 @@ export const getBySlug = query({
 			publishedAt: publication.publishedAt ?? null,
 			updatedAt: publication.updatedAt,
 			createdAt: publication._creationTime,
+			pageCount: publication.pageCount ?? null,
 			coverUrl: await publicationCoverUrl(ctx, publication.coverFileId),
 			pdfUrl: await publicationPdfUrl(ctx, publication.pdfFileId),
 			isOwner,
@@ -334,6 +349,7 @@ export const getDraftForResume = query({
 			title: publication.title ?? '',
 			description: publication.description ?? '',
 			tags: publication.tags ?? [],
+			pageCount: publication.pageCount ?? null,
 			coverUrl: await publicationCoverUrl(ctx, publication.coverFileId)
 		};
 	}
@@ -407,7 +423,8 @@ export const countByStatus = query({
 export const createDraft = mutation({
 	args: {
 		pdfFile: uploadedFileValidator,
-		coverFile: uploadedFileValidator
+		coverFile: uploadedFileValidator,
+		...pdfMetadataValidator
 	},
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
@@ -430,6 +447,7 @@ export const createDraft = mutation({
 			updatedAt: now,
 			pdfFileId,
 			coverFileId,
+			pageCount: cleanPositiveInteger(args.pageCount, 'Page count', MAX_PAGE_COUNT),
 			status: 'draft'
 		});
 
@@ -441,7 +459,8 @@ export const replaceDraftFiles = mutation({
 	args: {
 		publicationId: v.id('publications'),
 		pdfFile: uploadedFileValidator,
-		coverFile: uploadedFileValidator
+		coverFile: uploadedFileValidator,
+		...pdfMetadataValidator
 	},
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
@@ -464,6 +483,7 @@ export const replaceDraftFiles = mutation({
 		await ctx.db.patch(args.publicationId, {
 			pdfFileId,
 			coverFileId,
+			pageCount: cleanPositiveInteger(args.pageCount, 'Page count', MAX_PAGE_COUNT),
 			updatedAt: Date.now()
 		});
 
