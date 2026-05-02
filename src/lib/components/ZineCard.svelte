@@ -71,7 +71,9 @@
 		<span class="truncate">{tagLabel || 'Publication'}</span>
 		<span class="shrink-0">{dateLabel}</span>
 	</div>
-	<h3 class="font-serif text-[22px] leading-[1.15] font-medium tracking-[-0.01em]">
+	<h3
+		class="font-serif text-[22px] leading-[1.15] font-medium tracking-[-0.01em] [overflow-wrap:anywhere]"
+	>
 		{publication.title}
 	</h3>
 	<div class="text-[13px] text-muted-foreground italic">by {authorLabel}</div>

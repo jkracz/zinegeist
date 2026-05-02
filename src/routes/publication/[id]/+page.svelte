@@ -61,7 +61,7 @@
 
 		<article class="flex w-full min-w-0 flex-col">
 			<h1
-				class="font-serif text-[36px] leading-[1.04] font-normal tracking-[-0.025em] text-balance text-ink md:text-[56px]"
+				class="font-serif text-[36px] leading-[1.04] font-normal tracking-[-0.025em] text-balance [overflow-wrap:anywhere] text-ink md:text-[56px]"
 			>
 				{publication.title}
 			</h1>

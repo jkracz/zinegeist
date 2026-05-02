@@ -2,6 +2,8 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+	import { authClient } from '$lib/auth-client';
 	import SignInDialog from '$lib/components/auth/SignInDialog.svelte';
 	import UserMenu from '$lib/components/auth/UserMenu.svelte';
 
@@ -10,13 +12,19 @@
 		currentUser?: { name?: string | null; image?: string | null } | null;
 		profile?: { handle: string } | null;
 	};
+	type CurrentUser = NonNullable<HeaderData['currentUser']>;
+	type SessionData = { user?: CurrentUser | null } | null;
 
 	let { data, onOpenSearch }: { data?: HeaderData; onOpenSearch?: () => void } = $props();
 
 	const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 	const shortcutLabel = $derived(isMac ? '⌘K' : 'Ctrl K');
 
-	const isAuthenticated = $derived(data?.authState?.isAuthenticated ?? false);
+	let sessionUser = $state<CurrentUser | null>(null);
+	const currentUser = $derived(data?.currentUser ?? sessionUser);
+	const isAuthenticated = $derived(
+		(data?.authState?.isAuthenticated ?? false) || Boolean(sessionUser)
+	);
 	const profileHref = $derived(
 		data?.profile?.handle
 			? resolve('/profile/[handle]', { handle: data.profile.handle })
@@ -32,6 +40,15 @@
 	};
 
 	let signInDialogOpen = $state(false);
+
+	onMount(() => {
+		const unsubscribe = authClient.useSession().subscribe((session) => {
+			const data = session.data as SessionData;
+			sessionUser = data?.user ?? null;
+		});
+
+		return unsubscribe;
+	});
 
 	$effect(() => {
 		if (page.url.searchParams.get('signin') === '1' && !isAuthenticated) {
@@ -93,7 +110,7 @@
 		<a class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]" href={CREATE}> ＋ Publish </a>
 
 		{#if isAuthenticated}
-			<UserMenu currentUser={data?.currentUser} />
+			<UserMenu {currentUser} />
 		{:else}
 			<button
 				type="button"

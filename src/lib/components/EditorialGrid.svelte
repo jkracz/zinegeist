@@ -53,7 +53,7 @@
 						<div class="min-w-0">
 							<div class="mb-2 font-serif text-[20px] text-primary italic">by {featuredAuthor}</div>
 							<div
-								class="line-clamp-3 font-serif text-[clamp(38px,5vw,64px)] leading-[0.95] tracking-[-0.025em] text-balance [overflow-wrap:anywhere] text-ink"
+								class="line-clamp-3 font-serif text-[clamp(38px,5vw,64px)] leading-[1.05] tracking-[-0.025em] text-balance [overflow-wrap:anywhere] text-ink"
 							>
 								{featured.title}
 							</div>
