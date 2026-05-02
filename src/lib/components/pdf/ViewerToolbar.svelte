@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { useScroll, ScrollStrategy } from '@embedpdf/plugin-scroll/svelte';
 	import { useSpread, SpreadMode } from '@embedpdf/plugin-spread/svelte';
-	import { useZoom } from '@embedpdf/plugin-zoom/svelte';
+	import { useZoom, ZoomMode } from '@embedpdf/plugin-zoom/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils.js';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
@@ -17,6 +17,7 @@
 	import BookOpen from '@lucide/svelte/icons/book-open';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Rows from '@lucide/svelte/icons/rows-3';
+	import X from '@lucide/svelte/icons/x';
 
 	interface Props {
 		documentId: string;
@@ -25,9 +26,11 @@
 		isMobile: boolean;
 		containerEl: HTMLElement | null;
 		isFullscreen: boolean;
+		onClose: () => void;
 	}
 
-	let { documentId, viewMode, setViewMode, isMobile, containerEl, isFullscreen }: Props = $props();
+	let { documentId, viewMode, setViewMode, isMobile, containerEl, isFullscreen, onClose }: Props =
+		$props();
 
 	const scroll = useScroll(() => documentId);
 	const spread = useSpread(() => documentId);
@@ -44,6 +47,7 @@
 		if (!scroll.provides || !spread.provides) return;
 		scroll.provides.setScrollStrategy(config.strategy);
 		spread.provides.setSpreadMode(config.spread);
+		zoom.provides?.requestZoom(ZoomMode.FitWidth);
 	});
 
 	const modes = $derived(
@@ -145,6 +149,10 @@
 			{:else}
 				<Maximize />
 			{/if}
+		</Button>
+		<div class="mx-1 h-5 w-px bg-border" aria-hidden="true"></div>
+		<Button variant="ghost" size="icon-sm" onclick={onClose} aria-label="Close reader">
+			<X />
 		</Button>
 	</div>
 </div>

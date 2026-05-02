@@ -6,6 +6,8 @@
 
 	let { data }: PageProps = $props();
 
+	let readerOpen = $state(false);
+
 	const publication = $derived(data.publication);
 	const authorName = $derived(publication.author.name?.trim() || 'Writer');
 	const authorHref = $derived(
@@ -110,7 +112,9 @@
 
 			<div class="mt-7">
 				{#if publication.pdfUrl}
-					<PublicationViewer pdfUrl={publication.pdfUrl} />
+					<button class="zg-btn zg-btn-primary" type="button" onclick={() => (readerOpen = true)}>
+						Read now →
+					</button>
 				{:else}
 					<button class="zg-btn zg-btn-primary" type="button" disabled>Read now →</button>
 				{/if}
@@ -170,6 +174,14 @@
 		</article>
 	</div>
 </div>
+
+{#if publication.pdfUrl}
+	<PublicationViewer
+		pdfUrl={publication.pdfUrl}
+		open={readerOpen}
+		onClose={() => (readerOpen = false)}
+	/>
+{/if}
 
 <style>
 	.dossier-fact {

@@ -325,3 +325,14 @@
 		letter-spacing: 0.04em;
 	}
 }
+
+/* PDF viewer: enforce per-item scroll snap in horizontal modes so
+   single-page items (e.g. covers) center cleanly without neighboring
+   spreads bleeding into the viewport. */
+.zg-pdf-viewport-snap {
+	scroll-snap-type: x mandatory;
+}
+.zg-pdf-viewport-snap > div > div:nth-child(2) > div {
+	scroll-snap-align: center;
+	scroll-snap-stop: always;
+}

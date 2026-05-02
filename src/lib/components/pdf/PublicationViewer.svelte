@@ -20,16 +20,18 @@
 
 	interface Props {
 		pdfUrl: string;
+		open: boolean;
+		onClose: () => void;
 	}
 
-	let { pdfUrl }: Props = $props();
+	let { pdfUrl, open, onClose }: Props = $props();
 
 	const mobile = useIsMobile();
 	let viewMode = $state<ViewMode>('book');
 	let didInit = $state(false);
 
 	$effect(() => {
-		if (didInit) return;
+		if (didInit || !open) return;
 		viewMode = mobile.current ? 'single' : 'book';
 		didInit = true;
 	});
@@ -56,7 +58,7 @@
 		}),
 		createPluginRegistration(SpreadPluginPackage, { defaultSpreadMode: SpreadMode.None }),
 		createPluginRegistration(RenderPluginPackage),
-		createPluginRegistration(ZoomPluginPackage, { defaultZoomLevel: ZoomMode.FitPage })
+		createPluginRegistration(ZoomPluginPackage, { defaultZoomLevel: ZoomMode.FitWidth })
 	]);
 
 	let containerEl = $state<HTMLDivElement | null>(null);
@@ -72,6 +74,28 @@
 		return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
 	});
 
+	$effect(() => {
+		if (!browser) return;
+		if (!open) return;
+		const prev = document.body.style.overflow;
+		document.body.style.overflow = 'hidden';
+		return () => {
+			document.body.style.overflow = prev;
+		};
+	});
+
+	function handleKey(e: KeyboardEvent) {
+		if (e.key === 'Escape' && open && !document.fullscreenElement) {
+			onClose();
+		}
+	}
+
+	$effect(() => {
+		if (!browser || !open) return;
+		window.addEventListener('keydown', handleKey);
+		return () => window.removeEventListener('keydown', handleKey);
+	});
+
 	onDestroy(() => {
 		if (browser && document.fullscreenElement === containerEl) {
 			document.exitFullscreen().catch(() => {});
@@ -79,69 +103,70 @@
 	});
 </script>
 
-<div
-	bind:this={containerEl}
-	class="overflow-hidden rounded-md border border-border bg-background shadow-sm"
-	class:fixed={isFullscreen}
-	class:inset-0={isFullscreen}
-	class:z-50={isFullscreen}
->
-	{#if pdfEngine.isLoading || !pdfEngine.engine}
-		<div class="flex h-[640px] items-center justify-center bg-paper-warm-2">
-			<div class="flex items-center gap-2 text-muted-foreground">
-				<Loader2 class="size-4 animate-spin" />
-				<span class="font-mono text-xs tracking-wide">Loading viewer…</span>
+{#if open}
+	<div
+		bind:this={containerEl}
+		class="fixed inset-0 z-50 flex flex-col bg-background"
+		role="dialog"
+		aria-modal="true"
+		aria-label="Publication reader"
+	>
+		{#if pdfEngine.isLoading || !pdfEngine.engine}
+			<div class="flex flex-1 items-center justify-center bg-paper-warm-2">
+				<div class="flex items-center gap-2 text-muted-foreground">
+					<Loader2 class="size-4 animate-spin" />
+					<span class="font-mono text-xs tracking-wide">Loading viewer…</span>
+				</div>
 			</div>
-		</div>
-	{:else if pdfEngine.error}
-		<div class="flex h-[640px] items-center justify-center bg-paper-warm-2 px-6 text-center">
-			<span class="font-mono text-xs tracking-wide text-muted-foreground">
-				Couldn’t load PDF engine.
-			</span>
-		</div>
-	{:else}
-		<EmbedPDF engine={pdfEngine.engine} {plugins}>
-			{#snippet children({ activeDocumentId })}
-				{#if activeDocumentId}
-					{@const documentId = activeDocumentId}
-					<DocumentContent {documentId}>
-						{#snippet children(state)}
-							{#if state.isLoaded}
-								<ViewerToolbar
-									{documentId}
-									{viewMode}
-									{setViewMode}
-									isMobile={mobile.current}
-									{containerEl}
-									{isFullscreen}
-								/>
-								<div
-									class="relative bg-paper-warm-2"
-									class:h-[calc(100vh-49px)]={isFullscreen}
-									class:h-[640px]={!isFullscreen}
-								>
-									<ViewerCanvas {documentId} />
-								</div>
-							{:else if state.isError}
-								<div
-									class="flex h-[640px] items-center justify-center bg-paper-warm-2 px-6 text-center"
-								>
-									<span class="font-mono text-xs tracking-wide text-muted-foreground">
-										Couldn’t open the document.
-									</span>
-								</div>
-							{:else}
-								<div class="flex h-[640px] items-center justify-center bg-paper-warm-2">
-									<div class="flex items-center gap-2 text-muted-foreground">
-										<Loader2 class="size-4 animate-spin" />
-										<span class="font-mono text-xs tracking-wide">Loading document…</span>
+		{:else if pdfEngine.error}
+			<div class="flex flex-1 items-center justify-center bg-paper-warm-2 px-6 text-center">
+				<span class="font-mono text-xs tracking-wide text-muted-foreground">
+					Couldn’t load PDF engine.
+				</span>
+			</div>
+		{:else}
+			<EmbedPDF engine={pdfEngine.engine} {plugins}>
+				{#snippet children({ activeDocumentId })}
+					{#if activeDocumentId}
+						{@const documentId = activeDocumentId}
+						<DocumentContent {documentId}>
+							{#snippet children(state)}
+								{#if state.isLoaded}
+									<ViewerToolbar
+										{documentId}
+										{viewMode}
+										{setViewMode}
+										isMobile={mobile.current}
+										{containerEl}
+										{isFullscreen}
+										{onClose}
+									/>
+									<div class="relative flex-1 bg-paper-warm-2">
+										{#key viewMode}
+											<ViewerCanvas {documentId} {viewMode} />
+										{/key}
 									</div>
-								</div>
-							{/if}
-						{/snippet}
-					</DocumentContent>
-				{/if}
-			{/snippet}
-		</EmbedPDF>
-	{/if}
-</div>
+								{:else if state.isError}
+									<div
+										class="flex flex-1 items-center justify-center bg-paper-warm-2 px-6 text-center"
+									>
+										<span class="font-mono text-xs tracking-wide text-muted-foreground">
+											Couldn’t open the document.
+										</span>
+									</div>
+								{:else}
+									<div class="flex flex-1 items-center justify-center bg-paper-warm-2">
+										<div class="flex items-center gap-2 text-muted-foreground">
+											<Loader2 class="size-4 animate-spin" />
+											<span class="font-mono text-xs tracking-wide">Loading document…</span>
+										</div>
+									</div>
+								{/if}
+							{/snippet}
+						</DocumentContent>
+					{/if}
+				{/snippet}
+			</EmbedPDF>
+		{/if}
+	</div>
+{/if}
