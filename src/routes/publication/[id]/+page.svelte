@@ -35,7 +35,11 @@
 			.join('')
 	);
 
-	const dateFormatter = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric' });
+	const dateFormatter = new Intl.DateTimeFormat('en', {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric'
+	});
 	const dateLabel = $derived(
 		publication.publishedAt ? dateFormatter.format(new Date(publication.publishedAt)) : null
 	);
@@ -78,6 +82,18 @@
 	>
 		<div class="w-full md:sticky md:top-24 md:block md:w-auto md:self-start">
 			<div class="mx-auto w-fit md:mx-0">
+				{#if publication.tags.length > 0}
+					<div
+						class="mb-3 flex flex-wrap gap-x-2 gap-y-1 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase"
+					>
+						{#each publication.tags as tag, i (tag)}
+							<span>{tag}</span>
+							{#if i < publication.tags.length - 1}
+								<span aria-hidden="true">·</span>
+							{/if}
+						{/each}
+					</div>
+				{/if}
 				{#if publication.coverUrl}
 					<img
 						src={publication.coverUrl}
@@ -137,9 +153,9 @@
 					<dd class="dossier-fact">{dateLabel ?? '—'}</dd>
 				</div>
 				<div>
-					<dt>Tags</dt>
+					<dt>Pages</dt>
 					<dd class="dossier-fact">
-						{publication.tags.length > 0 ? publication.tags.join(' · ') : '—'}
+						{publication.pageCount ?? '—'}
 					</dd>
 				</div>
 			</dl>
