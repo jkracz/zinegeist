@@ -9,6 +9,7 @@
 	import XIcon from '@lucide/svelte/icons/x';
 	import type { ConvexClient } from 'convex/browser';
 	import { onDestroy } from 'svelte';
+	import { MAX_PROFILE_IMAGE_SIZE_BYTES } from '$lib/constants';
 
 	type Props = {
 		client: ConvexClient;
@@ -17,7 +18,6 @@
 		editable: boolean;
 	};
 
-	const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
 	const PROFILE_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 	let { client, displayName, image, editable }: Props = $props();
@@ -34,7 +34,7 @@
 		if (!PROFILE_IMAGE_TYPES.includes(file.type)) {
 			return 'Choose a JPEG, PNG, WebP, or GIF.';
 		}
-		if (file.size > MAX_PROFILE_IMAGE_SIZE) {
+		if (file.size > MAX_PROFILE_IMAGE_SIZE_BYTES) {
 			return 'Profile pictures can be up to 5 MB.';
 		}
 		return null;

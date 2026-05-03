@@ -2,9 +2,11 @@ import type { ConvexClient } from 'convex/browser';
 import { toast } from 'svelte-sonner';
 import { api } from '$convex/_generated/api';
 import type { Id } from '$convex/_generated/dataModel';
-import { PUBLICATION_LIMIT_REACHED } from '$lib/constants';
-
-const SHELF_FULL_MESSAGE = 'Shelf full. 5 of 5 published.';
+import {
+	MAX_PDF_FILE_SIZE_BYTES,
+	PUBLICATION_LIMIT_REACHED,
+	SHELF_FULL_MESSAGE
+} from '$lib/constants';
 
 export type UploadState =
 	| 'idle'
@@ -12,8 +14,6 @@ export type UploadState =
 	| 'extracting-cover'
 	| 'uploading-cover'
 	| 'ready';
-
-const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
 export class CreateDraft {
 	#client: ConvexClient;
@@ -52,7 +52,7 @@ export class CreateDraft {
 		if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
 			return 'Choose a PDF file to continue.';
 		}
-		if (file.size > MAX_FILE_SIZE) {
+		if (file.size > MAX_PDF_FILE_SIZE_BYTES) {
 			return 'PDFs can be up to 100 MB.';
 		}
 		return null;

@@ -68,7 +68,7 @@
 	<div
 		class="flex items-center justify-between font-mono text-[11px] tracking-[0.06em] text-muted-foreground"
 	>
-		<span class="truncate">{tagLabel || 'Publication'}</span>
+		<span class="truncate">{tagLabel}</span>
 		<span class="shrink-0">{dateLabel}</span>
 	</div>
 	<h3

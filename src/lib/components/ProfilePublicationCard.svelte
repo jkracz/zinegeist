@@ -133,21 +133,26 @@
 {/snippet}
 
 {#snippet readingMeta()}
-	<div
-		class="flex items-center justify-between gap-3 font-mono text-[11px] tracking-[0.06em] text-muted-foreground"
-	>
-		{#if tagLabel}
-			<span class="truncate">{tagLabel}</span>
+	<div class="flex min-h-[24px] items-center justify-between gap-3">
+		{#if ownerMode}
+			<PublicationStatusBadge status={publication.status} />
 		{:else}
 			<span></span>
 		{/if}
-		<span class="shrink-0">{dateLabel}</span>
+		<span class="shrink-0 font-mono text-[11px] tracking-[0.06em] text-muted-foreground">
+			{dateLabel}
+		</span>
 	</div>
 	<h3
 		class="font-serif text-[22px] leading-[1.15] font-medium tracking-[-0.01em] text-balance [overflow-wrap:anywhere] hyphens-auto"
 	>
 		{publication.title}
 	</h3>
+	{#if tagLabel}
+		<div class="truncate font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase">
+			{tagLabel}
+		</div>
+	{/if}
 	{#if publication.description}
 		<p
 			class="m-0 line-clamp-3 overflow-hidden font-serif text-sm leading-[1.5] [overflow-wrap:anywhere] text-foreground"
@@ -215,17 +220,11 @@
 			href={resolve('/publication/[id]', { id: publication.slug })}
 		>
 			{@render coverFrame()}
-			{#if ownerMode}
-				<PublicationStatusBadge status={publication.status} />
-			{/if}
 			{@render readingMeta()}
 		</a>
 	{:else}
 		<div class="group flex min-w-0 cursor-default flex-col gap-3.5 text-inherit">
 			{@render coverFrame()}
-			{#if ownerMode}
-				<PublicationStatusBadge status={publication.status} />
-			{/if}
 			{@render readingMeta()}
 		</div>
 	{/if}

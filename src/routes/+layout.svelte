@@ -6,6 +6,7 @@
 	import { createSvelteAuthClient } from '@mmailaender/convex-better-auth-svelte/svelte';
 	import { authClient } from '$lib/auth-client';
 	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 	import PaperGrain from '$lib/components/PaperGrain.svelte';
 	import CommandPalette from '$lib/components/CommandPalette.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
@@ -37,5 +38,7 @@
 <main class="relative min-w-0">
 	{@render children()}
 </main>
+
+<Footer {data} />
 
 <PaperGrain />

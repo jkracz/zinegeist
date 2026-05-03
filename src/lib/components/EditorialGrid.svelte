@@ -22,7 +22,7 @@
 	const featuredAuthor = $derived(
 		featured?.author.name ?? featured?.author.handle ?? 'Zinegeist writer'
 	);
-	const featuredTags = $derived(featured?.tags.slice(0, 2).join(' · ') ?? 'Publication');
+	const featuredTags = $derived(featured?.tags.slice(0, 2).join(' · ') ?? '');
 	const sideStack = $derived(publications.slice(1, 3));
 	const tail = $derived(publications.slice(3));
 
@@ -62,7 +62,7 @@
 							class="mt-7 flex items-end justify-between gap-4 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
 						>
 							<span class="truncate">{featuredTags}</span>
-							<span class="zg-btn zg-btn-outline shrink-0">Read →</span>
+							<span class="zg-btn zg-btn-outline shrink-0">Read</span>
 						</div>
 					</div>
 					<div class="relative border-l border-border max-sm:hidden">

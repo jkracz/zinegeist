@@ -10,6 +10,10 @@
    Zinegeist — Mocha Mouse palette, editorial typography
    ============================================================ */
 
+html {
+	scroll-behavior: smooth;
+}
+
 :root {
 	--background: oklch(0.9529 0.0146 102.4597);
 	--foreground: oklch(0.4063 0.0255 40.3627);

@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { MAX_TAGS, MAX_TAG_LENGTH } from '$lib/constants';
+
 	type Props = {
 		tags: string[];
 		id?: string;
 		max?: number;
 	};
 
-	let { tags = $bindable([]), id = 'tags', max = 12 }: Props = $props();
+	let { tags = $bindable([]), id = 'tags', max = MAX_TAGS }: Props = $props();
 
 	let entry = $state('');
 
@@ -50,7 +52,7 @@
 		class="min-w-[160px] flex-1 border-0 bg-transparent px-0.5 py-1 text-sm outline-0"
 		bind:value={entry}
 		type="text"
-		maxlength={32}
+		maxlength={MAX_TAG_LENGTH}
 		placeholder={tags.length ? '' : 'essay, art, poetry'}
 		onblur={commit}
 		onkeydown={onKeydown}
