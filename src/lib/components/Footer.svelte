@@ -10,6 +10,7 @@
 
 	const HOME = resolve('/');
 	const CREATE = resolve('/create');
+	const ABOUT = resolve('/about');
 	const TERMS = resolve('/terms');
 	const CONTACT = 'support@zinegeist.club';
 
@@ -56,6 +57,7 @@
 			<ul class="footer-links flex flex-col gap-3">
 				<li><a href={HOME}>Discover</a></li>
 				<li><a href={CREATE}>Start a zine</a></li>
+				<li><a href={ABOUT}>About</a></li>
 				{#if isAuthenticated}
 					<li><a href={profileHref}>My shelf</a></li>
 				{/if}
