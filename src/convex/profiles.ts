@@ -1,8 +1,26 @@
 import { v } from 'convex/values';
-import { query, mutation, type QueryCtx } from './_generated/server';
+import { query, mutation, type MutationCtx, type QueryCtx } from './_generated/server';
 import { authComponent } from './auth';
+import { resolveProfileImageUrl } from './profileImages';
+import type { Id } from './_generated/dataModel';
 
 const HANDLE_RE = /^[a-z0-9-]{3,30}$/;
+const MAX_FILE_NAME_LENGTH = 240;
+const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
+const PROFILE_IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+
+type AuthedCtx = QueryCtx | MutationCtx;
+type UploadedFileInput = {
+	storageId: Id<'_storage'>;
+	name: string;
+	mimeType: string;
+};
+
+const uploadedFileValidator = v.object({
+	storageId: v.id('_storage'),
+	name: v.string(),
+	mimeType: v.string()
+});
 
 function normalizeHandle(input: string): string {
 	return input.trim().toLowerCase();
@@ -14,7 +32,7 @@ function assertValidHandle(handle: string): void {
 	}
 }
 
-async function findProfileByUserId(ctx: QueryCtx, userId: string) {
+async function findProfileByUserId(ctx: AuthedCtx, userId: string) {
 	return ctx.db
 		.query('profiles')
 		.withIndex('by_userId', (q) => q.eq('userId', userId))
@@ -28,18 +46,92 @@ async function findProfileByHandle(ctx: QueryCtx, handle: string) {
 		.unique();
 }
 
+function cleanOptionalText(input: string, maxLength: number): string | undefined {
+	const cleaned = input.trim().replace(/\s+/g, ' ');
+	return cleaned ? cleaned.slice(0, maxLength) : undefined;
+}
+
+function cleanFileName(input: string): string {
+	return cleanOptionalText(input, MAX_FILE_NAME_LENGTH) ?? 'profile-image';
+}
+
+function cleanMimeType(input: string | undefined): string {
+	return cleanOptionalText(input ?? '', 120)?.toLowerCase() ?? 'application/octet-stream';
+}
+
+async function acquireProfileImageFile(
+	ctx: MutationCtx,
+	uploaderId: string,
+	file: UploadedFileInput
+): Promise<Id<'files'>> {
+	const metadata = await ctx.db.system.get('_storage', file.storageId);
+	if (!metadata) throw new Error('Uploaded file not found.');
+
+	const mimeType = cleanMimeType(metadata.contentType ?? file.mimeType);
+	if (!PROFILE_IMAGE_MIME_TYPES.has(mimeType)) {
+		throw new Error('Profile picture must be a JPEG, PNG, WebP, or GIF.');
+	}
+	if (metadata.size > MAX_PROFILE_IMAGE_SIZE) {
+		throw new Error('Profile pictures can be up to 5 MB.');
+	}
+
+	const existing = await ctx.db
+		.query('files')
+		.withIndex('by_sha256', (q) => q.eq('sha256', metadata.sha256))
+		.unique();
+
+	if (existing) {
+		await ctx.db.patch(existing._id, {
+			refCount: existing.refCount + 1
+		});
+		if (existing.storageId !== file.storageId) {
+			await ctx.storage.delete(file.storageId);
+		}
+		return existing._id;
+	}
+
+	return await ctx.db.insert('files', {
+		uploaderId,
+		storageId: file.storageId,
+		name: cleanFileName(file.name),
+		mimeType,
+		sha256: metadata.sha256,
+		size: metadata.size,
+		kind: 'profile_image',
+		refCount: 1
+	});
+}
+
+async function releaseFileReference(ctx: MutationCtx, fileId: Id<'files'>): Promise<void> {
+	const file = await ctx.db.get(fileId);
+	if (!file) return;
+
+	if (file.refCount <= 1) {
+		await ctx.storage.delete(file.storageId);
+		await ctx.db.delete(file._id);
+		return;
+	}
+
+	await ctx.db.patch(file._id, {
+		refCount: file.refCount - 1
+	});
+}
+
 export const getMyProfile = query({
 	args: {},
 	handler: async (ctx) => {
 		const authUser = await authComponent.getAuthUser(ctx);
 		if (!authUser) return null;
 		const profile = await findProfileByUserId(ctx, authUser._id);
+		const image = profile
+			? await resolveProfileImageUrl(ctx, profile, authUser.image)
+			: (authUser.image ?? null);
 		return {
 			authUser: {
 				id: authUser._id,
 				name: authUser.name ?? null,
 				email: authUser.email ?? null,
-				image: authUser.image ?? null
+				image
 			},
 			profile: profile
 				? {
@@ -68,7 +160,7 @@ export const getProfileByHandle = query({
 			location: profile.location ?? null,
 			links: profile.links ?? [],
 			name: authUser?.name ?? null,
-			image: authUser?.image ?? null,
+			image: await resolveProfileImageUrl(ctx, profile, authUser?.image),
 			userId: profile.userId
 		};
 	}
@@ -169,5 +261,38 @@ export const updateProfile = mutation({
 
 		await ctx.db.patch(profile._id, patch);
 		return { handle: patch.handle ?? profile.handle };
+	}
+});
+
+export const generateProfileImageUploadUrl = mutation({
+	args: {},
+	handler: async (ctx) => {
+		const authUser = await authComponent.getAuthUser(ctx);
+		if (!authUser) throw new Error('Not authenticated.');
+		const profile = await findProfileByUserId(ctx, authUser._id);
+		if (!profile) throw new Error('Profile not found.');
+		return ctx.storage.generateUploadUrl();
+	}
+});
+
+export const updateProfileImage = mutation({
+	args: {
+		file: uploadedFileValidator
+	},
+	handler: async (ctx, args) => {
+		const authUser = await authComponent.getAuthUser(ctx);
+		if (!authUser) throw new Error('Not authenticated.');
+
+		const profile = await findProfileByUserId(ctx, authUser._id);
+		if (!profile) throw new Error('Profile not found.');
+
+		const profileImageFileId = await acquireProfileImageFile(ctx, authUser._id, args.file);
+		await ctx.db.patch(profile._id, { profileImageFileId });
+
+		if (profile.profileImageFileId) {
+			await releaseFileReference(ctx, profile.profileImageFileId);
+		}
+
+		return { ok: true };
 	}
 });

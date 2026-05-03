@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 import { query, type QueryCtx } from './_generated/server';
 import { authComponent } from './auth';
+import { resolveProfileImageUrl } from './profileImages';
 import type { Doc, Id } from './_generated/dataModel';
 
 const SEARCH_LIMIT = 5;
@@ -58,7 +59,7 @@ async function presentProfile(ctx: QueryCtx, profile: Doc<'profiles'>): Promise<
 	return {
 		handle: profile.handle,
 		name: profile.name ?? authUser?.name ?? null,
-		image: authUser?.image ?? null,
+		image: await resolveProfileImageUrl(ctx, profile, authUser?.image),
 		bio: profile.bio ?? null
 	};
 }
