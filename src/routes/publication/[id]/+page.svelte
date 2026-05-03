@@ -147,10 +147,10 @@
 			<div class="mt-7 flex flex-wrap items-center gap-3">
 				{#if publication.pdfUrl}
 					<button class="zg-btn zg-btn-primary" type="button" onclick={() => (readerOpen = true)}>
-						Read now →
+						Read now
 					</button>
 				{:else}
-					<button class="zg-btn zg-btn-primary" type="button" disabled>Read now →</button>
+					<button class="zg-btn zg-btn-primary" type="button" disabled>Read now</button>
 				{/if}
 				<button
 					class="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
@@ -164,7 +164,7 @@
 			</div>
 
 			<footer class="mt-9 border-t border-border/70 pt-7">
-				<div class="eyebrow mb-3">About the writer</div>
+				<div class="eyebrow mb-3">About the author</div>
 				<div class="flex items-start gap-4">
 					{#if publication.author.image}
 						<img

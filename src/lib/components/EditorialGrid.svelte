@@ -62,7 +62,7 @@
 							class="mt-7 flex items-end justify-between gap-4 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
 						>
 							<span class="truncate">{featuredTags}</span>
-							<span class="zg-btn zg-btn-outline shrink-0">Read →</span>
+							<span class="zg-btn zg-btn-outline shrink-0">Read</span>
 						</div>
 					</div>
 					<div class="relative border-l border-border max-sm:hidden">

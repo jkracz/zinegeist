@@ -18,8 +18,6 @@
 	<span class="dot" aria-hidden="true">
 		<span class="dot-core"></span>
 	</span>
-	<span class="prefix">Status</span>
-	<span class="sep" aria-hidden="true">·</span>
 	<span class="label">{LABELS[status]}</span>
 </div>
 
@@ -45,16 +43,6 @@
 			border-color 0.2s ease,
 			color 0.2s ease,
 			box-shadow 0.2s ease;
-	}
-
-	.prefix {
-		color: var(--muted-foreground);
-		font-weight: 500;
-	}
-
-	.sep {
-		color: color-mix(in oklch, var(--muted-foreground) 60%, transparent);
-		margin: 0 -1px;
 	}
 
 	.label {
