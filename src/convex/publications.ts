@@ -35,6 +35,13 @@ const ROUTE_SUFFIX_ALPHABET = '23456789abcdefghijkmnopqrstuvwxyz';
 const makeRouteSuffix = customAlphabet(ROUTE_SUFFIX_ALPHABET, 6);
 const PROFILE_PUBLICATIONS_LIMIT = 10;
 const HOME_PUBLICATIONS_LIMIT = 8;
+// Keep in sync with src/lib/constants.ts (client mirror).
+// Convex's bundler does not reach outside src/convex, so duplicate the
+// values here. PUBLICATION_LIMIT_REACHED is the error string thrown by
+// createDraft and matched by create-draft.svelte.ts to show the "Shelf
+// full" toast.
+const PUBLICATION_UPLOAD_LIMIT = 5;
+const PUBLICATION_LIMIT_REACHED = 'PUBLICATION_LIMIT_REACHED';
 const MAX_SLUG_LENGTH = 72;
 const MAX_TITLE_LENGTH = 140;
 const MAX_DESCRIPTION_LENGTH = 1200;
@@ -84,6 +91,14 @@ async function requireAuthorWithProfile(ctx: AuthedCtx) {
 	if (!profile) throw new Error('Profile required.');
 
 	return { authUser, profile };
+}
+
+async function countActivePublicationsForAuthor(ctx: AuthedCtx, authorId: string): Promise<number> {
+	const rows = await ctx.db
+		.query('publications')
+		.withIndex('by_authorId_and_updatedAt', (q) => q.eq('authorId', authorId))
+		.take(PUBLICATION_UPLOAD_LIMIT + 1);
+	return rows.length;
 }
 
 async function publicationCoverUrl(
@@ -288,6 +303,20 @@ export const generateUploadUrl = mutation({
 	}
 });
 
+export const getMyShelfStatus = query({
+	args: {},
+	handler: async (ctx) => {
+		const authUser = await authComponent.safeGetAuthUser(ctx);
+		if (!authUser) return null;
+		const count = await countActivePublicationsForAuthor(ctx, authUser._id);
+		return {
+			count: Math.min(count, PUBLICATION_UPLOAD_LIMIT),
+			limit: PUBLICATION_UPLOAD_LIMIT,
+			isFull: count >= PUBLICATION_UPLOAD_LIMIT
+		};
+	}
+});
+
 export const getBySlug = query({
 	args: { slug: v.string() },
 	handler: async (ctx, { slug }) => {
@@ -429,6 +458,12 @@ export const createDraft = mutation({
 	},
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
+
+		const existing = await countActivePublicationsForAuthor(ctx, authUser._id);
+		if (existing >= PUBLICATION_UPLOAD_LIMIT) {
+			throw new Error(PUBLICATION_LIMIT_REACHED);
+		}
+
 		const pdfFileId = await acquireFileForPublication(
 			ctx,
 			authUser._id,

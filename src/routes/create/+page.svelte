@@ -12,6 +12,7 @@
 	import UploadStep from '$lib/components/create/UploadStep.svelte';
 	import PreviewStep from '$lib/components/create/PreviewStep.svelte';
 	import StepNav from '$lib/components/create/StepNav.svelte';
+	import ShelfFullCard from '$lib/components/ShelfFullCard.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -98,11 +99,11 @@
 			label: profileHandle,
 			href: resolve('/profile/[handle]', { handle: profileHandle })
 		},
-		initialResume ? 'Resume draft' : 'New publication'
+		data.shelfFull ? 'Shelf full' : initialResume ? 'Resume draft' : 'New publication'
 	]}
 >
 	{#snippet right()}
-		{#if draft.publicationId && !draft.publishedSlug}
+		{#if !data.shelfFull && draft.publicationId && !draft.publishedSlug}
 			<button
 				type="button"
 				class="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
@@ -113,62 +114,77 @@
 				<span>Delete draft</span>
 			</button>
 		{/if}
-		<PublicationStatusBadge status={draft.publishedSlug ? 'published' : 'draft'} />
+		{#if !data.shelfFull}
+			<PublicationStatusBadge status={draft.publishedSlug ? 'published' : 'draft'} />
+		{/if}
 	{/snippet}
 </SectionBar>
 
-<div class="px-6 pb-24 md:px-12">
-	<div class="mx-auto max-w-[920px] pt-12 pb-24 md:pt-14">
-		<CreateSteps
-			steps={STEPS}
-			current={currentStep}
-			canSelect={(i) => i <= maxStepReached && !draft.busy && !draft.publishing}
-			onSelect={(i) => (currentStep = i)}
-		/>
-
-		{#if currentStep === 0}
-			<UploadStep
-				busy={draft.busy}
-				statusLabel={draft.statusLabel}
-				fileName={draft.selectedFile?.name ?? null}
-				{onFile}
+{#if data.shelfFull}
+	<ShelfFullCard variant="page">
+		{#snippet footer()}
+			<a
+				class="zg-btn zg-btn-outline !px-5 !py-2.5 !text-[13px]"
+				href={resolve('/profile/[handle]', { handle: profileHandle })}
+			>
+				Back to your shelf
+			</a>
+		{/snippet}
+	</ShelfFullCard>
+{:else}
+	<div class="px-6 pb-24 md:px-12">
+		<div class="mx-auto max-w-[920px] pt-12 pb-24 md:pt-14">
+			<CreateSteps
+				steps={STEPS}
+				current={currentStep}
+				canSelect={(i) => i <= maxStepReached && !draft.busy && !draft.publishing}
+				onSelect={(i) => (currentStep = i)}
 			/>
-		{:else}
-			<PreviewStep
-				bind:this={previewStep}
-				coverPreviewUrl={draft.coverPreviewUrl}
-				bind:title
-				bind:description
-				bind:tags
-				bind:rightsAccepted
-				onSubmit={publishDraft}
+
+			{#if currentStep === 0}
+				<UploadStep
+					busy={draft.busy}
+					statusLabel={draft.statusLabel}
+					fileName={draft.selectedFile?.name ?? null}
+					{onFile}
+				/>
+			{:else}
+				<PreviewStep
+					bind:this={previewStep}
+					coverPreviewUrl={draft.coverPreviewUrl}
+					bind:title
+					bind:description
+					bind:tags
+					bind:rightsAccepted
+					onSubmit={publishDraft}
+				/>
+			{/if}
+
+			{#if draft.error}
+				<p class="mt-6 text-sm text-destructive" role="alert">{draft.error}</p>
+			{/if}
+
+			<StepNav
+				{currentStep}
+				canContinueFromUpload={Boolean(draft.publicationId)}
+				uploadBusy={draft.busy}
+				{publishDisabled}
+				publishing={draft.publishing}
+				onCancel={cancelCreate}
+				onBack={() => (currentStep = Math.max(0, currentStep - 1))}
+				onContinue={() => (currentStep = Math.min(STEPS.length - 1, currentStep + 1))}
+				onPublish={publishDraft}
 			/>
-		{/if}
-
-		{#if draft.error}
-			<p class="mt-6 text-sm text-destructive" role="alert">{draft.error}</p>
-		{/if}
-
-		<StepNav
-			{currentStep}
-			canContinueFromUpload={Boolean(draft.publicationId)}
-			uploadBusy={draft.busy}
-			{publishDisabled}
-			publishing={draft.publishing}
-			onCancel={cancelCreate}
-			onBack={() => (currentStep = Math.max(0, currentStep - 1))}
-			onContinue={() => (currentStep = Math.min(STEPS.length - 1, currentStep + 1))}
-			onPublish={publishDraft}
-		/>
+		</div>
 	</div>
-</div>
 
-<ConfirmDialog
-	bind:open={deleteDialogOpen}
-	title="Delete this draft?"
-	body="Deleting this draft will remove the file and discard your progress. This cannot be undone."
-	confirmLabel={draft.deleting ? 'Deleting…' : 'Delete draft'}
-	destructive
-	busy={draft.deleting}
-	onConfirm={confirmDeleteDraft}
-/>
+	<ConfirmDialog
+		bind:open={deleteDialogOpen}
+		title="Delete this draft?"
+		body="Deleting this draft will remove the file and discard your progress. This cannot be undone."
+		confirmLabel={draft.deleting ? 'Deleting…' : 'Delete draft'}
+		destructive
+		busy={draft.deleting}
+		onConfirm={confirmDeleteDraft}
+	/>
+{/if}

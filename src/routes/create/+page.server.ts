@@ -34,9 +34,13 @@ export const load = (async ({ locals, url }) => {
 		}
 	}
 
+	const shelfStatus = await client.query(api.publications.getMyShelfStatus, {});
+	const shelfFull = Boolean(shelfStatus?.isFull) && !resumeDraft;
+
 	return {
 		currentUser: result.authUser,
 		profile: result.profile,
-		resumeDraft
+		resumeDraft,
+		shelfFull
 	};
 }) satisfies PageServerLoad;
