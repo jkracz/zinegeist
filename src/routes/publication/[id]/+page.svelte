@@ -125,7 +125,7 @@
 				<p
 					class="mt-6 max-w-[58ch] font-serif text-base leading-[1.6] text-muted-foreground italic"
 				>
-					No description filed for this issue.
+					No description added for this publication.
 				</p>
 			{/if}
 
@@ -133,7 +133,7 @@
 				class="mt-7 grid grid-cols-2 gap-x-8 gap-y-[18px] border-y border-border/70 py-[20px] font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase"
 			>
 				<div>
-					<dt>Filed</dt>
+					<dt>Published</dt>
 					<dd class="dossier-fact">{dateLabel ?? '—'}</dd>
 				</div>
 				<div>

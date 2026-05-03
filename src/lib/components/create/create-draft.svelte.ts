@@ -2,6 +2,9 @@ import type { ConvexClient } from 'convex/browser';
 import { toast } from 'svelte-sonner';
 import { api } from '$convex/_generated/api';
 import type { Id } from '$convex/_generated/dataModel';
+import { PUBLICATION_LIMIT_REACHED } from '$lib/constants';
+
+const SHELF_FULL_MESSAGE = 'Shelf full. 5 of 5 published.';
 
 export type UploadState =
 	| 'idle'
@@ -121,7 +124,13 @@ export class CreateDraft {
 			return true;
 		} catch (e) {
 			this.#reset();
-			this.error = e instanceof Error ? e.message : 'Could not prepare this PDF.';
+			const rawMessage = e instanceof Error ? e.message : 'Could not prepare this PDF.';
+			if (rawMessage.includes(PUBLICATION_LIMIT_REACHED)) {
+				toast.error(SHELF_FULL_MESSAGE);
+				this.error = SHELF_FULL_MESSAGE;
+			} else {
+				this.error = rawMessage;
+			}
 			this.state = 'idle';
 			return false;
 		}

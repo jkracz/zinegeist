@@ -30,7 +30,6 @@
 			? resolve('/profile/[handle]', { handle: data.profile.handle })
 			: resolve('/onboarding/handle')
 	);
-
 	const HOME = resolve('/');
 	const CREATE = resolve('/create');
 

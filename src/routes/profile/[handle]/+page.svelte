@@ -3,6 +3,9 @@
 	import ProfileImagePicker from '$lib/components/ProfileImagePicker.svelte';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
+	import PublicationCountEyebrow from '$lib/components/PublicationCountEyebrow.svelte';
+	import ShelfFullCard from '$lib/components/ShelfFullCard.svelte';
+	import { PUBLICATION_UPLOAD_LIMIT } from '$lib/constants';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
@@ -75,12 +78,14 @@
 		ownerMode ? data.publications : data.publications.filter((p) => p.status === 'published')
 	);
 	const publicationCount = $derived(visiblePublications.length);
+	const ownerShelfCount = $derived(data.isOwnProfile ? data.publications.length : 0);
+	const shelfFull = $derived(ownerMode && ownerShelfCount >= PUBLICATION_UPLOAD_LIMIT);
 	const countLabel = $derived(
 		publicationCount === 0
-			? 'None filed'
+			? 'None published'
 			: `${publicationCount} ${publicationCount === 1 ? 'entry' : 'entries'}`
 	);
-	const latestFiledLabel = $derived.by(() => {
+	const latestPublishedLabel = $derived.by(() => {
 		if (publicationCount === 0) return null;
 		const t = visiblePublications.reduce(
 			(acc, p) => Math.max(acc, p.publishedAt ?? p.updatedAt),
@@ -449,9 +454,13 @@
 				class="flex items-center gap-4 pb-2 font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase"
 			>
 				<span>{countLabel}</span>
-				{#if latestFiledLabel}
+				{#if latestPublishedLabel}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
-					<span>Last filed <span class="text-ink">{latestFiledLabel}</span></span>
+					<span>Last published <span class="text-ink">{latestPublishedLabel}</span></span>
+				{/if}
+				{#if ownerMode && ownerShelfCount >= 3}
+					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
+					<PublicationCountEyebrow count={ownerShelfCount} limit={PUBLICATION_UPLOAD_LIMIT} />
 				{/if}
 				{#if data.isOwnProfile}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
@@ -513,7 +522,9 @@
 					/>
 				{/each}
 
-				{#if ownerMode}
+				{#if ownerMode && shelfFull}
+					<ShelfFullCard variant="compact" />
+				{:else if ownerMode}
 					<a
 						class="group flex min-w-0 flex-col gap-3.5 text-inherit no-underline"
 						href={resolve('/create')}

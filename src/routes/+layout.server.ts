@@ -8,7 +8,11 @@ import { building } from '$app/environment';
 
 export const load = (async ({ locals }) => {
 	if (building) {
-		return { authState: { isAuthenticated: false }, currentUser: null, profile: null };
+		return {
+			authState: { isAuthenticated: false },
+			currentUser: null,
+			profile: null
+		};
 	}
 
 	const authState = getAuthState();
