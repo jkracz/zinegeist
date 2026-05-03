@@ -5,6 +5,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import TagInput from './TagInput.svelte';
+	import { MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$lib/constants';
 
 	const TERMS_HREF = resolve('/terms');
 
@@ -65,7 +66,7 @@
 			<Input
 				id="title"
 				bind:value={title}
-				maxlength={200}
+				maxlength={MAX_TITLE_LENGTH}
 				placeholder="What do we call your masterpiece?"
 				required
 			/>
@@ -75,7 +76,7 @@
 			<Textarea
 				id="description"
 				bind:value={description}
-				maxlength={1200}
+				maxlength={MAX_DESCRIPTION_LENGTH}
 				rows={7}
 				placeholder="A short note for readers."
 				required

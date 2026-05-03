@@ -22,7 +22,7 @@
 	const featuredAuthor = $derived(
 		featured?.author.name ?? featured?.author.handle ?? 'Zinegeist writer'
 	);
-	const featuredTags = $derived(featured?.tags.slice(0, 2).join(' · ') ?? 'Publication');
+	const featuredTags = $derived(featured?.tags.slice(0, 2).join(' · ') ?? '');
 	const sideStack = $derived(publications.slice(1, 3));
 	const tail = $derived(publications.slice(3));
 
