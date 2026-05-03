@@ -11,6 +11,7 @@ import {
 } from './_generated/server';
 import { components } from './_generated/api';
 import { authComponent } from './auth';
+import { resolveProfileImageUrl } from './profileImages';
 import type { DataModel, Doc, Id } from './_generated/dataModel';
 
 type PublicationStatus = Doc<'publications'>['status'];
@@ -327,7 +328,7 @@ export const getBySlug = query({
 				name: authUser?.name ?? null,
 				bio: profile?.bio ?? null,
 				location: profile?.location ?? null,
-				image: authUser?.image ?? null
+				image: await resolveProfileImageUrl(ctx, profile, authUser?.image)
 			}
 		};
 	}

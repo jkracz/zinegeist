@@ -10,6 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as profileImages from "../profileImages.js";
 import type * as profiles from "../profiles.js";
 import type * as publications from "../publications.js";
 import type * as search from "../search.js";
@@ -23,6 +24,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  profileImages: typeof profileImages;
   profiles: typeof profiles;
   publications: typeof publications;
   search: typeof search;

@@ -14,8 +14,8 @@ Always use bun as the package manager.
 
 When building UI:
 
-- See if any on [Shadcn Svelte](https://www.shadcn-svelte.com/docs/components) fit our needs before writing your own.
-- prefer tailwind over custom css classes unless there is a strong benefit to using custom css.
+- See if any on [Shadcn Svelte](https://www.shadcn-svelte.com/docs/components) fit our needs before writing your own
+- prefer tailwind over custom css classes
 
 ## Source Code Reference
 

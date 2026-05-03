@@ -8,6 +8,7 @@ export default defineSchema({
 		name: v.optional(v.string()),
 		bio: v.optional(v.string()),
 		location: v.optional(v.string()),
+		profileImageFileId: v.optional(v.id('files')),
 		links: v.optional(v.array(v.object({ label: v.string(), url: v.string() })))
 	})
 		.index('by_userId', ['userId'])
@@ -22,7 +23,11 @@ export default defineSchema({
 		// Indexed copy of _storage.sha256; Convex remains the source of truth.
 		sha256: v.string(),
 		size: v.number(),
-		kind: v.union(v.literal('publication_pdf'), v.literal('publication_cover')),
+		kind: v.union(
+			v.literal('publication_pdf'),
+			v.literal('publication_cover'),
+			v.literal('profile_image')
+		),
 		refCount: v.number()
 	})
 		.index('by_sha256', ['sha256'])

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Avatar from '$lib/components/Avatar.svelte';
 	import ProfilePublicationCard from '$lib/components/ProfilePublicationCard.svelte';
+	import ProfileImagePicker from '$lib/components/ProfileImagePicker.svelte';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import { Input } from '$lib/components/ui/input';
@@ -298,15 +298,12 @@
 <div class="px-12 pb-24">
 	<form id="profile-edit-form" onsubmit={save}>
 		<div class="grid grid-cols-[180px_1fr] items-start gap-9 border-b border-border pt-14 pb-9">
-			{#if data.profileView.image}
-				<img
-					src={data.profileView.image}
-					alt={displayName}
-					class="size-40 rounded-full border border-border object-cover shadow-md"
-				/>
-			{:else}
-				<Avatar name={displayName} />
-			{/if}
+			<ProfileImagePicker
+				{client}
+				{displayName}
+				image={data.profileView.image}
+				editable={data.isOwnProfile}
+			/>
 
 			<div class="flex flex-col gap-4">
 				<div>
