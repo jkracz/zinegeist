@@ -51,7 +51,8 @@
 				<span class="text-primary italic">full</span>.
 			</h1>
 			<p class="mx-auto mt-10 max-w-[44ch] font-serif text-[19px] leading-[1.55] text-foreground">
-				5 works is the shape of a shelf for now. To file a new one, you need to delete an existing publication.
+				5 works is the shape of a shelf for now. To file a new one, you need to delete an existing
+				publication.
 			</p>
 			{#if footer}
 				<div class="mt-12">
