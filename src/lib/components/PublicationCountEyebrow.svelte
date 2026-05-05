@@ -32,7 +32,7 @@
 					{label}
 				</Tooltip.Trigger>
 				<Tooltip.Content sideOffset={8} class="font-mono text-[10px] tracking-[0.16em] uppercase">
-					Shelves are currently limited to {safeLimit} publications.
+					Free shelves are limited to {safeLimit} publications. Subscribe to Plus for a larger shelf.
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</Tooltip.Provider>

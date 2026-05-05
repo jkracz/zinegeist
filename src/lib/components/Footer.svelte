@@ -11,6 +11,7 @@
 	const HOME = resolve('/');
 	const CREATE = resolve('/create');
 	const ABOUT = resolve('/about');
+	const PRICING = resolve('/pricing');
 	const TERMS = resolve('/terms');
 	const PRIVACY = resolve('/privacy');
 	const CONTACT = 'support@zinegeist.club';
@@ -59,6 +60,7 @@
 				<li><a href={HOME}>Discover</a></li>
 				<li><a href={CREATE}>Start a zine</a></li>
 				<li><a href={ABOUT}>About</a></li>
+				<li><a href={PRICING}>Plus</a></li>
 				{#if isAuthenticated}
 					<li><a href={profileHref}>My shelf</a></li>
 				{/if}

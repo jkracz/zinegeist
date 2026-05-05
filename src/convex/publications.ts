@@ -1,5 +1,6 @@
 import { customAlphabet } from 'nanoid';
 import { v } from 'convex/values';
+import { makeFunctionReference, type FunctionReference } from 'convex/server';
 import { TableAggregate } from '@convex-dev/aggregate';
 import { Triggers } from 'convex-helpers/server/triggers';
 import { customCtx, customMutation } from 'convex-helpers/server/customFunctions';
@@ -52,6 +53,17 @@ const MAX_PAGE_COUNT = 100_000;
 
 type AuthedCtx = QueryCtx | MutationCtx;
 type FileKind = 'publication_pdf' | 'publication_cover';
+type BillingPlan = {
+	plan: 'free' | 'plus';
+	publicationLimit: number;
+	isPlus: boolean;
+	subscriptionStatus: string | null;
+	productKey: 'plusMonthly' | 'plusYearly' | null;
+};
+
+const getPlanForUser = makeFunctionReference<'query', { userId: string }, BillingPlan>(
+	'billing:getPlanForUser'
+) as unknown as FunctionReference<'query', 'internal', { userId: string }, BillingPlan>;
 
 type UploadedFileInput = {
 	storageId: Id<'_storage'>;
@@ -93,11 +105,15 @@ async function requireAuthorWithProfile(ctx: AuthedCtx) {
 	return { authUser, profile };
 }
 
-async function countActivePublicationsForAuthor(ctx: AuthedCtx, authorId: string): Promise<number> {
+async function countActivePublicationsForAuthor(
+	ctx: AuthedCtx,
+	authorId: string,
+	limit = PUBLICATION_UPLOAD_LIMIT
+): Promise<number> {
 	const rows = await ctx.db
 		.query('publications')
 		.withIndex('by_authorId_and_updatedAt', (q) => q.eq('authorId', authorId))
-		.take(PUBLICATION_UPLOAD_LIMIT + 1);
+		.take(limit + 1);
 	return rows.length;
 }
 
@@ -305,14 +321,31 @@ export const generateUploadUrl = mutation({
 
 export const getMyShelfStatus = query({
 	args: {},
+	returns: v.union(
+		v.object({
+			count: v.number(),
+			limit: v.number(),
+			isFull: v.boolean(),
+			plan: v.union(v.literal('free'), v.literal('plus')),
+			isPlus: v.boolean(),
+			subscriptionStatus: v.union(v.string(), v.null()),
+			productKey: v.union(v.literal('plusMonthly'), v.literal('plusYearly'), v.null())
+		}),
+		v.null()
+	),
 	handler: async (ctx) => {
 		const authUser = await authComponent.safeGetAuthUser(ctx);
 		if (!authUser) return null;
-		const count = await countActivePublicationsForAuthor(ctx, authUser._id);
+		const plan: BillingPlan = await ctx.runQuery(getPlanForUser, { userId: authUser._id });
+		const count = await countActivePublicationsForAuthor(ctx, authUser._id, plan.publicationLimit);
 		return {
-			count: Math.min(count, PUBLICATION_UPLOAD_LIMIT),
-			limit: PUBLICATION_UPLOAD_LIMIT,
-			isFull: count >= PUBLICATION_UPLOAD_LIMIT
+			count: Math.min(count, plan.publicationLimit),
+			limit: plan.publicationLimit,
+			isFull: count >= plan.publicationLimit,
+			plan: plan.plan,
+			isPlus: plan.isPlus,
+			subscriptionStatus: plan.subscriptionStatus,
+			productKey: plan.productKey
 		};
 	}
 });
@@ -459,8 +492,13 @@ export const createDraft = mutation({
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
 
-		const existing = await countActivePublicationsForAuthor(ctx, authUser._id);
-		if (existing >= PUBLICATION_UPLOAD_LIMIT) {
+		const plan: BillingPlan = await ctx.runQuery(getPlanForUser, { userId: authUser._id });
+		const existing = await countActivePublicationsForAuthor(
+			ctx,
+			authUser._id,
+			plan.publicationLimit
+		);
+		if (existing >= plan.publicationLimit) {
 			throw new Error(PUBLICATION_LIMIT_REACHED);
 		}
 

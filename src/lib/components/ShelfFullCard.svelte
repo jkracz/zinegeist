@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { Snippet } from 'svelte';
 
 	type Variant = 'compact' | 'page';
 	let { variant = 'compact', footer }: { variant?: Variant; footer?: Snippet } = $props();
+
+	const PRICING = resolve('/pricing');
 </script>
 
 {#if variant === 'compact'}
@@ -24,15 +27,9 @@
 					<div
 						class="font-serif text-[28px] leading-[1.04] font-normal tracking-[-0.015em] text-ink"
 					>
-						5 is the
-						<span class="text-primary italic">shape</span>
-						<br />of a shelf for now.
-					</div>
-					<div
-						class="mt-1 font-mono text-[9px] leading-[1.5] tracking-[0.18em] text-muted-foreground/85 uppercase"
-					>
-						Delete a work
-						<br />to free a slot
+						Subscribe for
+						<span class="text-primary italic">more</span>
+						room.
 					</div>
 				</div>
 			</div>
@@ -51,14 +48,14 @@
 				<span class="text-primary italic">full</span>.
 			</h1>
 			<p class="mx-auto mt-10 max-w-[44ch] font-serif text-[19px] leading-[1.55] text-foreground">
-				5 works is the shape of a shelf for now. To file a new one, you need to delete an existing
-				publication.
+				Subscribe to Plus for more space.
 			</p>
-			{#if footer}
-				<div class="mt-12">
+			<div class="mt-12 flex flex-wrap items-center justify-center gap-3">
+				<a class="zg-btn zg-btn-primary !px-5 !py-2.5 !text-[13px]" href={PRICING}> See Plus </a>
+				{#if footer}
 					{@render footer()}
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
 	</section>
 {/if}

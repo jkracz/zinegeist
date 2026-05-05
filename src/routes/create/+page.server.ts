@@ -41,6 +41,7 @@ export const load = (async ({ locals, url }) => {
 		currentUser: result.authUser,
 		profile: result.profile,
 		resumeDraft,
-		shelfFull
+		shelfFull,
+		shelfStatus
 	};
 }) satisfies PageServerLoad;

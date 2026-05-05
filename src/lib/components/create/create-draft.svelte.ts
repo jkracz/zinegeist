@@ -5,7 +5,7 @@ import type { Id } from '$convex/_generated/dataModel';
 import {
 	MAX_PDF_FILE_SIZE_BYTES,
 	PUBLICATION_LIMIT_REACHED,
-	SHELF_FULL_MESSAGE
+	SHELF_FULL_UPGRADE_MESSAGE
 } from '$lib/constants';
 
 export type UploadState =
@@ -126,8 +126,8 @@ export class CreateDraft {
 			this.#reset();
 			const rawMessage = e instanceof Error ? e.message : 'Could not prepare this PDF.';
 			if (rawMessage.includes(PUBLICATION_LIMIT_REACHED)) {
-				toast.error(SHELF_FULL_MESSAGE);
-				this.error = SHELF_FULL_MESSAGE;
+				toast.error(SHELF_FULL_UPGRADE_MESSAGE);
+				this.error = SHELF_FULL_UPGRADE_MESSAGE;
 			} else {
 				this.error = rawMessage;
 			}

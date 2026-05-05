@@ -5,7 +5,6 @@
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import PublicationCountEyebrow from '$lib/components/PublicationCountEyebrow.svelte';
 	import ShelfFullCard from '$lib/components/ShelfFullCard.svelte';
-	import { PUBLICATION_UPLOAD_LIMIT } from '$lib/constants';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
@@ -79,7 +78,8 @@
 	);
 	const publicationCount = $derived(visiblePublications.length);
 	const ownerShelfCount = $derived(data.isOwnProfile ? data.publications.length : 0);
-	const shelfFull = $derived(ownerMode && ownerShelfCount >= PUBLICATION_UPLOAD_LIMIT);
+	const publicationLimit = $derived(data.shelfStatus?.limit ?? 5);
+	const shelfFull = $derived(ownerMode && ownerShelfCount >= publicationLimit);
 	const countLabel = $derived(
 		publicationCount === 0
 			? 'None published'
@@ -460,7 +460,7 @@
 				{/if}
 				{#if ownerMode && ownerShelfCount >= 3}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
-					<PublicationCountEyebrow count={ownerShelfCount} limit={PUBLICATION_UPLOAD_LIMIT} />
+					<PublicationCountEyebrow count={ownerShelfCount} limit={publicationLimit} />
 				{/if}
 				{#if data.isOwnProfile}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
