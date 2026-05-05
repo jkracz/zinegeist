@@ -12,6 +12,7 @@
 	const CREATE = resolve('/create');
 	const ABOUT = resolve('/about');
 	const TERMS = resolve('/terms');
+	const PRIVACY = resolve('/privacy');
 	const CONTACT = 'support@zinegeist.club';
 
 	const isAuthenticated = $derived(data?.authState?.isAuthenticated ?? false);
@@ -68,6 +69,7 @@
 			<div class="eyebrow mb-5">Legal</div>
 			<ul class="footer-links flex flex-col gap-3">
 				<li><a href={TERMS}>Terms of Service</a></li>
+				<li><a href={PRIVACY}>Privacy Policy</a></li>
 			</ul>
 			<div class="mt-6">
 				<div class="eyebrow mb-2">Contact</div>
