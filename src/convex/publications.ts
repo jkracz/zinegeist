@@ -12,6 +12,7 @@ import {
 } from './_generated/server';
 import { components } from './_generated/api';
 import { authComponent } from './auth';
+import type { BillingPlan } from './lib/billingModel';
 import { resolveProfileImageUrl } from './profileImages';
 import type { DataModel, Doc, Id } from './_generated/dataModel';
 
@@ -53,13 +54,6 @@ const MAX_PAGE_COUNT = 100_000;
 
 type AuthedCtx = QueryCtx | MutationCtx;
 type FileKind = 'publication_pdf' | 'publication_cover';
-type BillingPlan = {
-	plan: 'free' | 'plus';
-	publicationLimit: number;
-	isPlus: boolean;
-	subscriptionStatus: string | null;
-	productKey: 'plusMonthly' | 'plusYearly' | null;
-};
 
 const getPlanForUser = makeFunctionReference<'query', { userId: string }, BillingPlan>(
 	'billing:getPlanForUser'

@@ -2,19 +2,12 @@ import { v } from 'convex/values';
 import { authComponent } from './auth';
 import { polar } from './polar';
 import { internalQuery, query } from './_generated/server';
-
-export const FREE_PUBLICATION_LIMIT = 5;
-export const PLUS_PUBLICATION_LIMIT = 1000;
-
-type PlusProductKey = 'plusMonthly' | 'plusYearly';
-type Plan = 'free' | 'plus';
-type BillingPlan = {
-	plan: Plan;
-	publicationLimit: number;
-	isPlus: boolean;
-	subscriptionStatus: string | null;
-	productKey: PlusProductKey | null;
-};
+import {
+	FREE_PUBLICATION_LIMIT,
+	PLUS_PUBLICATION_LIMIT,
+	type BillingPlan,
+	type Plan
+} from './lib/billingModel';
 
 const planValidator = v.object({
 	plan: v.union(v.literal('free'), v.literal('plus')),
