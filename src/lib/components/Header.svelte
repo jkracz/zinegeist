@@ -11,6 +11,7 @@
 		authState?: { isAuthenticated: boolean };
 		currentUser?: { name?: string | null; image?: string | null } | null;
 		profile?: { handle: string } | null;
+		billingPlan?: { isPlus: boolean } | null;
 	};
 	type CurrentUser = NonNullable<HeaderData['currentUser']>;
 	type SessionData = { user?: CurrentUser | null } | null;
@@ -109,7 +110,7 @@
 		<a class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]" href={CREATE}> ＋ Publish </a>
 
 		{#if isAuthenticated}
-			<UserMenu {currentUser} />
+			<UserMenu {currentUser} billingPlan={data?.billingPlan ?? null} />
 		{:else}
 			<button
 				type="button"

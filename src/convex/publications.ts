@@ -9,8 +9,9 @@ import {
 	type MutationCtx,
 	type QueryCtx
 } from './_generated/server';
-import { components } from './_generated/api';
+import { components, internal } from './_generated/api';
 import { authComponent } from './auth';
+import type { BillingPlan } from './lib/billingModel';
 import { resolveProfileImageUrl } from './profileImages';
 import type { DataModel, Doc, Id } from './_generated/dataModel';
 
@@ -93,11 +94,15 @@ async function requireAuthorWithProfile(ctx: AuthedCtx) {
 	return { authUser, profile };
 }
 
-async function countActivePublicationsForAuthor(ctx: AuthedCtx, authorId: string): Promise<number> {
+async function countActivePublicationsForAuthor(
+	ctx: AuthedCtx,
+	authorId: string,
+	limit = PUBLICATION_UPLOAD_LIMIT
+): Promise<number> {
 	const rows = await ctx.db
 		.query('publications')
 		.withIndex('by_authorId_and_updatedAt', (q) => q.eq('authorId', authorId))
-		.take(PUBLICATION_UPLOAD_LIMIT + 1);
+		.take(limit + 1);
 	return rows.length;
 }
 
@@ -305,14 +310,33 @@ export const generateUploadUrl = mutation({
 
 export const getMyShelfStatus = query({
 	args: {},
+	returns: v.union(
+		v.object({
+			count: v.number(),
+			limit: v.number(),
+			isFull: v.boolean(),
+			plan: v.union(v.literal('free'), v.literal('plus')),
+			isPlus: v.boolean(),
+			subscriptionStatus: v.union(v.string(), v.null()),
+			productKey: v.union(v.literal('plusMonthly'), v.literal('plusYearly'), v.null())
+		}),
+		v.null()
+	),
 	handler: async (ctx) => {
 		const authUser = await authComponent.safeGetAuthUser(ctx);
 		if (!authUser) return null;
-		const count = await countActivePublicationsForAuthor(ctx, authUser._id);
+		const plan: BillingPlan = await ctx.runQuery(internal.billing.getPlanForUser, {
+			userId: authUser._id
+		});
+		const count = await countActivePublicationsForAuthor(ctx, authUser._id, plan.publicationLimit);
 		return {
-			count: Math.min(count, PUBLICATION_UPLOAD_LIMIT),
-			limit: PUBLICATION_UPLOAD_LIMIT,
-			isFull: count >= PUBLICATION_UPLOAD_LIMIT
+			count: Math.min(count, plan.publicationLimit),
+			limit: plan.publicationLimit,
+			isFull: count >= plan.publicationLimit,
+			plan: plan.plan,
+			isPlus: plan.isPlus,
+			subscriptionStatus: plan.subscriptionStatus,
+			productKey: plan.productKey
 		};
 	}
 });
@@ -459,8 +483,15 @@ export const createDraft = mutation({
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
 
-		const existing = await countActivePublicationsForAuthor(ctx, authUser._id);
-		if (existing >= PUBLICATION_UPLOAD_LIMIT) {
+		const plan: BillingPlan = await ctx.runQuery(internal.billing.getPlanForUser, {
+			userId: authUser._id
+		});
+		const existing = await countActivePublicationsForAuthor(
+			ctx,
+			authUser._id,
+			plan.publicationLimit
+		);
+		if (existing >= plan.publicationLimit) {
 			throw new Error(PUBLICATION_LIMIT_REACHED);
 		}
 

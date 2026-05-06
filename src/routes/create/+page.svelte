@@ -22,7 +22,9 @@
 	const profileHandle = untrack(() => data.profile.handle);
 	const initialResume = untrack(() => data.resumeDraft);
 
-	const draft = new CreateDraft(useConvexClient());
+	const draft = new CreateDraft(useConvexClient(), {
+		isPlus: untrack(() => data.shelfStatus?.isPlus ?? false)
+	});
 
 	const initialStep = initialResume ? 1 : 0;
 	let currentStep = $state(initialStep);

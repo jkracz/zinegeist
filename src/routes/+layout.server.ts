@@ -11,25 +11,30 @@ export const load = (async ({ locals }) => {
 		return {
 			authState: { isAuthenticated: false },
 			currentUser: null,
-			profile: null
+			profile: null,
+			billingPlan: null
 		};
 	}
 
 	const authState = getAuthState();
 	const token = locals.token;
 	if (!token) {
-		return { authState, currentUser: null, profile: null };
+		return { authState, currentUser: null, profile: null, billingPlan: null };
 	}
 
 	try {
 		const client = createConvexHttpClient({ token });
-		const result = await client.query(api.profiles.getMyProfile, {});
+		const [result, billingPlan] = await Promise.all([
+			client.query(api.profiles.getMyProfile, {}),
+			client.query(api.billing.getMyPlan, {})
+		]);
 		return {
 			authState,
 			currentUser: result?.authUser ?? null,
-			profile: result?.profile ?? null
+			profile: result?.profile ?? null,
+			billingPlan
 		};
 	} catch {
-		return { authState, currentUser: null, profile: null };
+		return { authState, currentUser: null, profile: null, billingPlan: null };
 	}
 }) satisfies LayoutServerLoad;

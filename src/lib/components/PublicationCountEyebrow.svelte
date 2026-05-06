@@ -1,14 +1,18 @@
 <script lang="ts">
 	import * as Tooltip from '$lib/components/ui/tooltip';
 
-	let { count, limit }: { count: number; limit: number } = $props();
+	let {
+		count,
+		limit,
+		isPlus = false
+	}: { count: number; limit: number; isPlus?: boolean } = $props();
 
 	const safeCount = $derived(Math.max(0, Math.min(count, limit)));
 	const safeLimit = $derived(Math.max(1, limit));
 	const visible = $derived(safeCount >= 3);
 	const isWarning = $derived(safeCount === safeLimit - 1);
 	const isFull = $derived(safeCount >= safeLimit);
-	const showTooltip = $derived(isWarning || isFull);
+	const showTooltip = $derived(!isPlus && (isWarning || isFull));
 
 	const label = $derived.by(() => {
 		if (!visible) return '';
@@ -32,7 +36,7 @@
 					{label}
 				</Tooltip.Trigger>
 				<Tooltip.Content sideOffset={8} class="font-mono text-[10px] tracking-[0.16em] uppercase">
-					Shelves are currently limited to {safeLimit} publications.
+					Free shelves are limited to {safeLimit} publications. Subscribe to Plus for a larger shelf.
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</Tooltip.Provider>

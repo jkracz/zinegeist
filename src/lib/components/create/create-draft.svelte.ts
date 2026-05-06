@@ -5,7 +5,8 @@ import type { Id } from '$convex/_generated/dataModel';
 import {
 	MAX_PDF_FILE_SIZE_BYTES,
 	PUBLICATION_LIMIT_REACHED,
-	SHELF_FULL_MESSAGE
+	SHELF_FULL_PLUS_MESSAGE,
+	SHELF_FULL_UPGRADE_MESSAGE
 } from '$lib/constants';
 
 export type UploadState =
@@ -17,6 +18,7 @@ export type UploadState =
 
 export class CreateDraft {
 	#client: ConvexClient;
+	#isPlus: boolean;
 
 	state: UploadState = $state('idle');
 	selectedFile: File | null = $state(null);
@@ -37,8 +39,9 @@ export class CreateDraft {
 		return null;
 	});
 
-	constructor(client: ConvexClient) {
+	constructor(client: ConvexClient, options: { isPlus?: boolean } = {}) {
 		this.#client = client;
+		this.#isPlus = options.isPlus ?? false;
 	}
 
 	#reset(options: { keepPublicationId?: boolean } = {}): void {
@@ -126,8 +129,9 @@ export class CreateDraft {
 			this.#reset();
 			const rawMessage = e instanceof Error ? e.message : 'Could not prepare this PDF.';
 			if (rawMessage.includes(PUBLICATION_LIMIT_REACHED)) {
-				toast.error(SHELF_FULL_MESSAGE);
-				this.error = SHELF_FULL_MESSAGE;
+				const message = this.#isPlus ? SHELF_FULL_PLUS_MESSAGE : SHELF_FULL_UPGRADE_MESSAGE;
+				toast.error(message);
+				this.error = message;
 			} else {
 				this.error = rawMessage;
 			}
