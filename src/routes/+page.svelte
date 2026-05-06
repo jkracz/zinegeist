@@ -3,6 +3,7 @@
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import HeroStage from '$lib/components/HeroStage.svelte';
 	import EditorialGrid from '$lib/components/EditorialGrid.svelte';
+	import EditorialGridSkeleton from '$lib/components/EditorialGridSkeleton.svelte';
 	import Seo from '$lib/components/Seo.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import type { PageProps } from './$types';
@@ -58,6 +59,10 @@
 			</h2>
 		</div>
 
-		<EditorialGrid publications={data.publications} />
+		{#await data.publications}
+			<EditorialGridSkeleton />
+		{:then publications}
+			<EditorialGrid {publications} />
+		{/await}
 	</section>
 </div>

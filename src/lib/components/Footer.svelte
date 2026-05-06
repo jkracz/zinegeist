@@ -39,7 +39,7 @@
 				aria-label="Zinegeist home"
 			>
 				<img
-					src="/zinegeistLogo.png"
+					src="/zinegeistLogo.webp"
 					alt=""
 					class="block size-7 shrink-0 object-contain"
 					width="28"

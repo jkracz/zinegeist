@@ -12,22 +12,20 @@ export const load = (async ({ locals }) => {
 			authState: { isAuthenticated: false },
 			currentUser: null,
 			profile: null,
-			billingPlan: null
+			billingPlan: Promise.resolve(null)
 		};
 	}
 
 	const authState = getAuthState();
 	const token = locals.token;
 	if (!token) {
-		return { authState, currentUser: null, profile: null, billingPlan: null };
+		return { authState, currentUser: null, profile: null, billingPlan: Promise.resolve(null) };
 	}
 
 	try {
 		const client = createConvexHttpClient({ token });
-		const [result, billingPlan] = await Promise.all([
-			client.query(api.profiles.getMyProfile, {}),
-			client.query(api.billing.getMyPlan, {})
-		]);
+		const result = await client.query(api.profiles.getMyProfile, {});
+		const billingPlan = client.query(api.billing.getMyPlan, {}).catch(() => null);
 		return {
 			authState,
 			currentUser: result?.authUser ?? null,
@@ -35,6 +33,6 @@ export const load = (async ({ locals }) => {
 			billingPlan
 		};
 	} catch {
-		return { authState, currentUser: null, profile: null, billingPlan: null };
+		return { authState, currentUser: null, profile: null, billingPlan: Promise.resolve(null) };
 	}
 }) satisfies LayoutServerLoad;

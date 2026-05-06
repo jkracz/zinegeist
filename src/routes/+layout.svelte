@@ -9,6 +9,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import PaperGrain from '$lib/components/PaperGrain.svelte';
 	import CommandPalette from '$lib/components/CommandPalette.svelte';
+	import NavProgressBar from '$lib/components/NavProgressBar.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 
 	let { children, data } = $props();
@@ -28,6 +29,8 @@
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
+
+<NavProgressBar />
 
 <Toaster position="top-center" richColors />
 

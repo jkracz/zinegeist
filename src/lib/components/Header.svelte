@@ -12,7 +12,7 @@
 		authState?: { isAuthenticated: boolean };
 		currentUser?: { name?: string | null; image?: string | null } | null;
 		profile?: { handle: string } | null;
-		billingPlan?: { isPlus: boolean } | null;
+		billingPlan?: Promise<{ isPlus: boolean; publicationLimit?: number } | null>;
 	};
 	type CurrentUser = NonNullable<HeaderData['currentUser']>;
 	type SessionData = { user?: CurrentUser | null } | null;
@@ -85,7 +85,7 @@
 			aria-label="Zinegeist home"
 		>
 			<img
-				src="/zinegeistLogo.png"
+				src="/zinegeistLogo.webp"
 				alt="Zinegeist logo"
 				class="block size-7 shrink-0 object-contain"
 				width="28"
@@ -122,7 +122,7 @@
 		</Button>
 
 		{#if isAuthenticated}
-			<UserMenu {currentUser} billingPlan={data?.billingPlan ?? null} />
+			<UserMenu {currentUser} billingPlan={data?.billingPlan} />
 		{:else}
 			<Button size="sm" variant="ghost" type="button" onclick={openSignInDialog}>Sign in</Button>
 		{/if}

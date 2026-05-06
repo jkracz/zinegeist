@@ -21,11 +21,11 @@ export const load = (async ({ params, locals }) => {
 		publicationClient = authedClient;
 	}
 
-	const publications = await publicationClient.query(api.publications.listForProfile, { handle });
+	const publications = publicationClient.query(api.publications.listForProfile, { handle });
 	const shelfStatus =
 		isOwnProfile && locals.token
-			? await publicationClient.query(api.publications.getMyShelfStatus, {})
-			: null;
+			? publicationClient.query(api.publications.getMyShelfStatus, {})
+			: Promise.resolve(null);
 
 	return { profileView, isOwnProfile, publications, shelfStatus };
 }) satisfies PageServerLoad;

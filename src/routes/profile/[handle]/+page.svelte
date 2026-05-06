@@ -5,6 +5,7 @@
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import PublicationCountEyebrow from '$lib/components/PublicationCountEyebrow.svelte';
 	import ShelfFullCard from '$lib/components/ShelfFullCard.svelte';
+	import ProfilePublicationsSkeleton from '$lib/components/ProfilePublicationsSkeleton.svelte';
 	import Seo from '$lib/components/Seo.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -76,39 +77,9 @@
 	const ownerMode = $derived(data.isOwnProfile && !previewAsVisitor);
 
 	const catalogueDateFmt = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric' });
-	const visiblePublications = $derived(
-		ownerMode ? data.publications : data.publications.filter((p) => p.status === 'published')
+	const profileDescription = $derived(
+		data.profileView.bio?.trim() || `${displayName}'s writer profile on Zinegeist.`
 	);
-	const publicPublicationCount = $derived(
-		data.publications.filter((p) => p.status === 'published').length
-	);
-	const publicationCount = $derived(visiblePublications.length);
-	const ownerShelfCount = $derived(
-		data.isOwnProfile ? (data.shelfStatus?.count ?? data.publications.length) : 0
-	);
-	const publicationLimit = $derived(data.shelfStatus?.limit ?? 5);
-	const shelfFull = $derived(ownerMode && ownerShelfCount >= publicationLimit);
-	const countLabel = $derived(
-		publicationCount === 0
-			? 'None published'
-			: `${publicationCount} ${publicationCount === 1 ? 'entry' : 'entries'}`
-	);
-	const latestPublishedLabel = $derived.by(() => {
-		if (publicationCount === 0) return null;
-		const t = visiblePublications.reduce(
-			(acc, p) => Math.max(acc, p.publishedAt ?? p.updatedAt),
-			0
-		);
-		return t > 0 ? catalogueDateFmt.format(new Date(t)) : null;
-	});
-	const profileDescription = $derived.by(() => {
-		const bio = data.profileView.bio?.trim();
-		if (bio) return bio;
-		if (publicPublicationCount === 0) return `${displayName}'s writer profile on Zinegeist.`;
-		return `${displayName}'s Zinegeist shelf with ${publicPublicationCount} ${
-			publicPublicationCount === 1 ? 'published entry' : 'published entries'
-		}.`;
-	});
 
 	function handleCardAction(
 		action: 'edit' | 'unpublish' | 'republish' | 'delete',
@@ -475,43 +446,65 @@
 			<h2 class="font-serif text-[52px] leading-[0.92] font-normal tracking-[-0.03em] text-ink">
 				Publications
 			</h2>
-			<div class="eyebrow-sm flex items-center gap-4 pb-2">
-				<span>{countLabel}</span>
-				{#if latestPublishedLabel}
-					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
-					<span>Last published <span class="text-ink">{latestPublishedLabel}</span></span>
-				{/if}
-				{#if ownerMode && ownerShelfCount >= 3}
-					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
-					<PublicationCountEyebrow
-						count={ownerShelfCount}
-						limit={publicationLimit}
-						isPlus={data.shelfStatus?.isPlus ?? false}
-					/>
-				{/if}
-				{#if data.isOwnProfile}
-					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
-					<ToggleGroup.Root
-						type="single"
-						value={previewAsVisitor ? 'visitor' : 'owner'}
-						onValueChange={(v) => {
-							if (!v) return;
-							if (v === 'visitor') {
-								previewAsVisitor = true;
-								if (editing) cancelEdit();
-								editingPubId = null;
-							} else {
-								previewAsVisitor = false;
-							}
-						}}
-						aria-label="View mode"
-						class="shadow-sm"
-					>
-						<ToggleGroup.Item value="owner">Owner</ToggleGroup.Item>
-						<ToggleGroup.Item value="visitor">Visitor</ToggleGroup.Item>
-					</ToggleGroup.Root>
-				{/if}
-			</div>
+			{#await data.publications then publications}
+				{@const visiblePublications = ownerMode
+					? publications
+					: publications.filter((p) => p.status === 'published')}
+				{@const publicationCount = visiblePublications.length}
+				{@const countLabel =
+					publicationCount === 0
+						? 'None published'
+						: `${publicationCount} ${publicationCount === 1 ? 'entry' : 'entries'}`}
+				{@const latestTs = visiblePublications.reduce(
+					(acc, p) => Math.max(acc, p.publishedAt ?? p.updatedAt),
+					0
+				)}
+				{@const latestPublishedLabel =
+					publicationCount > 0 && latestTs > 0 ? catalogueDateFmt.format(new Date(latestTs)) : null}
+				<div class="eyebrow-sm flex items-center gap-4 pb-2">
+					<span>{countLabel}</span>
+					{#if latestPublishedLabel}
+						<span aria-hidden="true" class="text-muted-foreground/50">·</span>
+						<span>Last published <span class="text-ink">{latestPublishedLabel}</span></span>
+					{/if}
+					{#await data.shelfStatus then shelfStatus}
+						{@const ownerShelfCount = data.isOwnProfile
+							? (shelfStatus?.count ?? publications.length)
+							: 0}
+						{@const publicationLimit = shelfStatus?.limit ?? 5}
+						{#if ownerMode && ownerShelfCount >= 3}
+							<span aria-hidden="true" class="text-muted-foreground/50">·</span>
+							<PublicationCountEyebrow
+								count={ownerShelfCount}
+								limit={publicationLimit}
+								isPlus={shelfStatus?.isPlus ?? false}
+							/>
+						{/if}
+					{/await}
+					{#if data.isOwnProfile}
+						<span aria-hidden="true" class="text-muted-foreground/50">·</span>
+						<ToggleGroup.Root
+							type="single"
+							value={previewAsVisitor ? 'visitor' : 'owner'}
+							onValueChange={(v) => {
+								if (!v) return;
+								if (v === 'visitor') {
+									previewAsVisitor = true;
+									if (editing) cancelEdit();
+									editingPubId = null;
+								} else {
+									previewAsVisitor = false;
+								}
+							}}
+							aria-label="View mode"
+							class="shadow-sm"
+						>
+							<ToggleGroup.Item value="owner">Owner</ToggleGroup.Item>
+							<ToggleGroup.Item value="visitor">Visitor</ToggleGroup.Item>
+						</ToggleGroup.Root>
+					{/if}
+				</div>
+			{/await}
 		</header>
 
 		{#if actionError}
@@ -520,65 +513,79 @@
 			</p>
 		{/if}
 
-		{#if publicationCount > 0 || ownerMode}
-			<div
-				class="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] items-start gap-x-8 gap-y-14"
-			>
-				{#each visiblePublications as publication (publication.id)}
-					<ProfilePublicationCard
-						{publication}
-						{ownerMode}
-						editing={ownerMode && editingPubId === publication.id}
-						saving={editPubSaving && editingPubId === publication.id}
-						editError={editingPubId === publication.id ? editPubError : null}
-						onAction={handleCardAction}
-						onSaveEdit={savePubEdit}
-						onCancelEdit={cancelPubEdit}
-					/>
-				{/each}
+		{#await Promise.all([data.publications, data.shelfStatus])}
+			<ProfilePublicationsSkeleton />
+		{:then [publications, shelfStatus]}
+			{@const visiblePublications = ownerMode
+				? publications
+				: publications.filter((p) => p.status === 'published')}
+			{@const publicationCount = visiblePublications.length}
+			{@const ownerShelfCount = data.isOwnProfile ? (shelfStatus?.count ?? publications.length) : 0}
+			{@const publicationLimit = shelfStatus?.limit ?? 5}
+			{@const shelfFull = ownerMode && ownerShelfCount >= publicationLimit}
 
-				{#if ownerMode && shelfFull}
-					<ShelfFullCard variant="compact" />
-				{:else if ownerMode}
-					<a
-						class="group flex min-w-0 flex-col gap-3.5 text-inherit no-underline"
-						href={resolve('/create')}
-						aria-label="Begin a new publication"
-					>
-						<div class="relative">
-							<div
-								class="compose-frame relative aspect-[3/4] w-full rounded-[2px] bg-paper-warm-2/30 ring-1 ring-border/60 transition-[transform,box-shadow] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] ring-inset group-hover:-translate-y-1.5"
-							>
-								<span class="crop crop-tl"></span>
-								<span class="crop crop-tr"></span>
-								<span class="crop crop-bl"></span>
-								<span class="crop crop-br"></span>
-								<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+			{#if publicationCount > 0 || ownerMode}
+				<div
+					class="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] items-start gap-x-8 gap-y-14"
+				>
+					{#each visiblePublications as publication (publication.id)}
+						<ProfilePublicationCard
+							{publication}
+							{ownerMode}
+							editing={ownerMode && editingPubId === publication.id}
+							saving={editPubSaving && editingPubId === publication.id}
+							editError={editingPubId === publication.id ? editPubError : null}
+							onAction={handleCardAction}
+							onSaveEdit={savePubEdit}
+							onCancelEdit={cancelPubEdit}
+						/>
+					{/each}
+
+					{#if ownerMode && shelfFull}
+						<ShelfFullCard variant="compact" />
+					{:else if ownerMode}
+						<a
+							class="group flex min-w-0 flex-col gap-3.5 text-inherit no-underline"
+							href={resolve('/create')}
+							aria-label="Begin a new publication"
+						>
+							<div class="relative">
+								<div
+									class="compose-frame relative aspect-[3/4] w-full rounded-[2px] bg-paper-warm-2/30 ring-1 ring-border/60 transition-[transform,box-shadow] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] ring-inset group-hover:-translate-y-1.5"
+								>
+									<span class="crop crop-tl"></span>
+									<span class="crop crop-tr"></span>
+									<span class="crop crop-bl"></span>
+									<span class="crop crop-br"></span>
 									<div
-										class="font-serif text-[64px] leading-none text-ink/55 italic transition-colors duration-500 group-hover:text-ink/85"
+										class="absolute inset-0 flex flex-col items-center justify-center text-center"
 									>
-										+
+										<div
+											class="font-serif text-[64px] leading-none text-ink/55 italic transition-colors duration-500 group-hover:text-ink/85"
+										>
+											+
+										</div>
+										<div class="eyebrow-sm mt-4">New</div>
 									</div>
-									<div class="eyebrow-sm mt-4">New</div>
 								</div>
+								<div
+									class="hover-rule pointer-events-none absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-ink/70 transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100"
+								></div>
 							</div>
-							<div
-								class="hover-rule pointer-events-none absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-ink/70 transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100"
-							></div>
-						</div>
-					</a>
-				{/if}
-			</div>
-		{:else}
-			<div class="grid place-items-center border-y border-border py-20 text-center">
-				<div>
-					<div class="eyebrow-sm">Awaiting first issue</div>
-					<p class="mt-3 font-serif text-[28px] leading-tight text-muted-foreground italic">
-						Nothing in print yet.
-					</p>
+						</a>
+					{/if}
 				</div>
-			</div>
-		{/if}
+			{:else}
+				<div class="grid place-items-center border-y border-border py-20 text-center">
+					<div>
+						<div class="eyebrow-sm">Awaiting first issue</div>
+						<p class="mt-3 font-serif text-[28px] leading-tight text-muted-foreground italic">
+							Nothing in print yet.
+						</p>
+					</div>
+				</div>
+			{/if}
+		{/await}
 	</section>
 </div>
 

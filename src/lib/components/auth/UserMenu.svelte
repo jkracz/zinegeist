@@ -8,14 +8,12 @@
 	import { useAction } from '@mmailaender/convex-svelte';
 	import { api } from '$convex/_generated/api';
 	import { toast } from 'svelte-sonner';
+	import { Skeleton } from '$lib/components/ui/skeleton';
 
 	type CurrentUser = { name?: string | null; image?: string | null } | null | undefined;
-	type BillingPlan =
-		| { isPlus: boolean; plan?: 'free' | 'plus'; publicationLimit?: number }
-		| null
-		| undefined;
+	type BillingPlan = { isPlus: boolean; plan?: 'free' | 'plus'; publicationLimit?: number } | null;
 
-	type Props = { currentUser: CurrentUser; billingPlan?: BillingPlan };
+	type Props = { currentUser: CurrentUser; billingPlan?: Promise<BillingPlan> };
 	let { currentUser, billingPlan }: Props = $props();
 
 	const PRICING = resolve('/pricing');
@@ -82,35 +80,45 @@
 		</Avatar.Root>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end" class="w-52">
-		<div class="px-1.5 pt-1 pb-2">
-			<div class="eyebrow-sm">
-				{billingPlan?.isPlus ? 'Plus shelf' : 'Free shelf'}
+		{#await billingPlan ?? Promise.resolve(null)}
+			<div class="px-1.5 pt-1 pb-2">
+				<Skeleton class="h-3 w-16" />
+				<Skeleton class="mt-2 h-4 w-28" />
 			</div>
-			<div class="mt-1 font-serif text-[15px] text-ink">
-				{billingPlan?.publicationLimit ?? 5} publications
+			<DropdownMenu.Item disabled>
+				<Skeleton class="h-4 w-24" />
+			</DropdownMenu.Item>
+		{:then plan}
+			<div class="px-1.5 pt-1 pb-2">
+				<div class="eyebrow-sm">
+					{plan?.isPlus ? 'Plus shelf' : 'Free shelf'}
+				</div>
+				<div class="mt-1 font-serif text-[15px] text-ink">
+					{plan?.publicationLimit ?? 5} publications
+				</div>
 			</div>
-		</div>
-		{#if billingPlan?.isPlus}
-			<DropdownMenu.Item
-				onSelect={openCustomerPortal}
-				closeOnSelect={false}
-				disabled={openingPortal}
-			>
-				{openingPortal ? 'Opening…' : 'Manage subscription'}
-			</DropdownMenu.Item>
-		{:else}
-			<DropdownMenu.Item>
-				{#snippet child({ props })}
-					<a
-						{...props}
-						class="relative flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm no-underline outline-hidden select-none focus:bg-accent focus:text-accent-foreground"
-						href={PRICING}
-					>
-						Plus and billing
-					</a>
-				{/snippet}
-			</DropdownMenu.Item>
-		{/if}
+			{#if plan?.isPlus}
+				<DropdownMenu.Item
+					onSelect={openCustomerPortal}
+					closeOnSelect={false}
+					disabled={openingPortal}
+				>
+					{openingPortal ? 'Opening…' : 'Manage subscription'}
+				</DropdownMenu.Item>
+			{:else}
+				<DropdownMenu.Item>
+					{#snippet child({ props })}
+						<a
+							{...props}
+							class="relative flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm no-underline outline-hidden select-none focus:bg-accent focus:text-accent-foreground"
+							href={PRICING}
+						>
+							Plus and billing
+						</a>
+					{/snippet}
+				</DropdownMenu.Item>
+			{/if}
+		{/await}
 		<DropdownMenu.Item onclick={handleSignOut} disabled={signingOut}>
 			{signingOut ? 'Signing out…' : 'Sign out'}
 		</DropdownMenu.Item>
