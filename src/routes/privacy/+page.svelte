@@ -1,10 +1,12 @@
 <script lang="ts">
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 </script>
 
-<svelte:head>
-	<title>Privacy Policy · Zinegeist</title>
-</svelte:head>
+<Seo
+	title="Privacy Policy"
+	description="Read the Zinegeist Privacy Policy to understand what information we collect, how we use it, and how public content is shared."
+/>
 
 <SectionBar crumbs={['Legal', 'Privacy Policy']} />
 

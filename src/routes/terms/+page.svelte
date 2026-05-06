@@ -1,10 +1,12 @@
 <script lang="ts">
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 </script>
 
-<svelte:head>
-	<title>Terms of Service · Zinegeist</title>
-</svelte:head>
+<Seo
+	title="Terms of Service"
+	description="Read the Zinegeist Terms of Service for publishing, sharing, user content ownership, platform use, and account responsibilities."
+/>
 
 <SectionBar crumbs={['Legal', 'Terms of Service']} />
 

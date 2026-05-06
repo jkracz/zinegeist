@@ -3,6 +3,7 @@
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import HeroStage from '$lib/components/HeroStage.svelte';
 	import EditorialGrid from '$lib/components/EditorialGrid.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -12,6 +13,8 @@
 		data.totalPublished === 1 ? '1 publication' : `${data.totalPublished} publications`
 	);
 </script>
+
+<Seo title="Zinegeist" />
 
 <SectionBar crumbs={['Discover']}>
 	{#snippet right()}

@@ -4,6 +4,7 @@
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import PublicationViewer from '$lib/components/pdf/PublicationViewer.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import { sharePublication } from '$lib/utils/share';
 	import type { PageProps } from './$types';
 
@@ -44,29 +45,19 @@
 		publication.publishedAt ? dateFormatter.format(new Date(publication.publishedAt)) : null
 	);
 
-	const pageTitle = $derived(`${publication.title} · Zinegeist`);
 	const pageDescription = $derived(
 		publication.description ?? `${publication.title} by ${authorName} on Zinegeist`
 	);
 </script>
 
-<svelte:head>
-	<title>{pageTitle}</title>
-	<meta name="description" content={pageDescription} />
-	<meta property="og:type" content="article" />
-	<meta property="og:title" content={publication.title} />
-	<meta property="og:description" content={pageDescription} />
-	{#if publication.coverUrl}
-		<meta property="og:image" content={publication.coverUrl} />
-		<meta property="og:image:alt" content="{publication.title} cover" />
-	{/if}
-	<meta name="twitter:card" content={publication.coverUrl ? 'summary_large_image' : 'summary'} />
-	<meta name="twitter:title" content={publication.title} />
-	<meta name="twitter:description" content={pageDescription} />
-	{#if publication.coverUrl}
-		<meta name="twitter:image" content={publication.coverUrl} />
-	{/if}
-</svelte:head>
+<Seo
+	title={publication.title}
+	description={pageDescription}
+	type="article"
+	image={publication.coverUrl}
+	imageAlt="{publication.title} cover"
+	noindex={publication.status !== 'published'}
+/>
 
 <SectionBar
 	crumbs={[

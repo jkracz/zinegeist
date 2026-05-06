@@ -5,6 +5,7 @@
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import PublicationCountEyebrow from '$lib/components/PublicationCountEyebrow.svelte';
 	import ShelfFullCard from '$lib/components/ShelfFullCard.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
@@ -76,6 +77,9 @@
 	const visiblePublications = $derived(
 		ownerMode ? data.publications : data.publications.filter((p) => p.status === 'published')
 	);
+	const publicPublicationCount = $derived(
+		data.publications.filter((p) => p.status === 'published').length
+	);
 	const publicationCount = $derived(visiblePublications.length);
 	const ownerShelfCount = $derived(
 		data.isOwnProfile ? (data.shelfStatus?.count ?? data.publications.length) : 0
@@ -94,6 +98,14 @@
 			0
 		);
 		return t > 0 ? catalogueDateFmt.format(new Date(t)) : null;
+	});
+	const profileDescription = $derived.by(() => {
+		const bio = data.profileView.bio?.trim();
+		if (bio) return bio;
+		if (publicPublicationCount === 0) return `${displayName}'s writer profile on Zinegeist.`;
+		return `${displayName}'s Zinegeist shelf with ${publicPublicationCount} ${
+			publicPublicationCount === 1 ? 'published entry' : 'published entries'
+		}.`;
 	});
 
 	function handleCardAction(
@@ -250,6 +262,14 @@
 		}
 	}
 </script>
+
+<Seo
+	title={displayName}
+	description={profileDescription}
+	type="profile"
+	image={data.profileView.image}
+	imageAlt={displayName}
+/>
 
 <SectionBar crumbs={['Writer', displayName]}>
 	{#snippet right()}

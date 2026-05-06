@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import PlusCheckoutButton from '$lib/components/billing/PlusCheckoutButton.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -97,6 +98,11 @@
 		26, 18, 22, 14, 28, 16, 20, 24, 14, 18, 22, 12, 26, 16, 20
 	];
 </script>
+
+<Seo
+	title="Pricing"
+	description="Simple Zinegeist pricing for independent writers. Start with a free shelf, then upgrade to Plus for more room to publish serials, archives, and back catalogs."
+/>
 
 <section class="px-6 pt-20 pb-32 md:px-12 md:pt-28">
 	<div class="mx-auto max-w-[1200px]">

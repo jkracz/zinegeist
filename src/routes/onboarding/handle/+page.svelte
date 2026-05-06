@@ -5,6 +5,7 @@
 	import { api } from '$convex/_generated/api';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import Seo from '$lib/components/Seo.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -98,6 +99,8 @@
 		submitting || availability.status !== 'available' || handle.length === 0
 	);
 </script>
+
+<Seo title="Pick your handle" description="Create your Zinegeist writer handle." noindex />
 
 <div class="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center px-6 py-16">
 	<div class="eyebrow mb-2">Welcome, {data.currentUser.name ?? 'writer'}</div>

@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 
 	const CREATE = resolve('/create');
 	const CONTACT = 'support@zinegeist.club';
 </script>
 
-<svelte:head>
-	<title>About · Zinegeist</title>
-	<meta
-		name="description"
-		content="Zinegeist is a home for independent publications. A small, calm place where finished work can live, be read, and be appreciated on its own terms."
-	/>
-</svelte:head>
+<Seo
+	title="About"
+	description="Zinegeist is a home for independent publications. A small, calm place where finished work can live, be read, and be appreciated on its own terms."
+/>
 
 <SectionBar crumbs={['About']} />
 

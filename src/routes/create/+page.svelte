@@ -13,6 +13,7 @@
 	import PreviewStep from '$lib/components/create/PreviewStep.svelte';
 	import StepNav from '$lib/components/create/StepNav.svelte';
 	import ShelfFullCard from '$lib/components/ShelfFullCard.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -94,6 +95,12 @@
 		await goto(resolve('/profile/[handle]', { handle: profileHandle }));
 	}
 </script>
+
+<Seo
+	title={initialResume ? 'Resume draft' : 'Create a publication'}
+	description="Upload and publish an independent digital zine on Zinegeist."
+	noindex
+/>
 
 <SectionBar
 	crumbs={[
