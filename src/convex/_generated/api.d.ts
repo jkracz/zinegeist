@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as billing from "../billing.js";
 import type * as http from "../http.js";
+import type * as lib_billingModel from "../lib/billingModel.js";
 import type * as polar from "../polar.js";
 import type * as profileImages from "../profileImages.js";
 import type * as profiles from "../profiles.js";
@@ -27,6 +28,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   billing: typeof billing;
   http: typeof http;
+  "lib/billingModel": typeof lib_billingModel;
   polar: typeof polar;
   profileImages: typeof profileImages;
   profiles: typeof profiles;

@@ -18,8 +18,10 @@
 				<span class="absolute top-1.5 right-1.5 size-2.5 border-t border-r border-border"></span>
 				<span class="absolute bottom-1.5 left-1.5 size-2.5 border-b border-l border-border"></span>
 				<span class="absolute right-1.5 bottom-1.5 size-2.5 border-r border-b border-border"></span>
-				<div
-					class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-5 text-center"
+				<a
+					href={PRICING}
+					aria-label="Shelf full — subscribe to Plus for more room"
+					class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-5 text-center no-underline focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 				>
 					<div class="font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
 						Shelf full
@@ -31,7 +33,7 @@
 						<span class="text-primary italic">more</span>
 						room.
 					</div>
-				</div>
+				</a>
 			</div>
 		</div>
 	</div>

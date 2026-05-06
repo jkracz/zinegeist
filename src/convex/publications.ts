@@ -1,6 +1,5 @@
 import { customAlphabet } from 'nanoid';
 import { v } from 'convex/values';
-import { makeFunctionReference, type FunctionReference } from 'convex/server';
 import { TableAggregate } from '@convex-dev/aggregate';
 import { Triggers } from 'convex-helpers/server/triggers';
 import { customCtx, customMutation } from 'convex-helpers/server/customFunctions';
@@ -10,7 +9,7 @@ import {
 	type MutationCtx,
 	type QueryCtx
 } from './_generated/server';
-import { components } from './_generated/api';
+import { components, internal } from './_generated/api';
 import { authComponent } from './auth';
 import type { BillingPlan } from './lib/billingModel';
 import { resolveProfileImageUrl } from './profileImages';
@@ -54,10 +53,6 @@ const MAX_PAGE_COUNT = 100_000;
 
 type AuthedCtx = QueryCtx | MutationCtx;
 type FileKind = 'publication_pdf' | 'publication_cover';
-
-const getPlanForUser = makeFunctionReference<'query', { userId: string }, BillingPlan>(
-	'billing:getPlanForUser'
-) as unknown as FunctionReference<'query', 'internal', { userId: string }, BillingPlan>;
 
 type UploadedFileInput = {
 	storageId: Id<'_storage'>;
@@ -330,7 +325,9 @@ export const getMyShelfStatus = query({
 	handler: async (ctx) => {
 		const authUser = await authComponent.safeGetAuthUser(ctx);
 		if (!authUser) return null;
-		const plan: BillingPlan = await ctx.runQuery(getPlanForUser, { userId: authUser._id });
+		const plan: BillingPlan = await ctx.runQuery(internal.billing.getPlanForUser, {
+			userId: authUser._id
+		});
 		const count = await countActivePublicationsForAuthor(ctx, authUser._id, plan.publicationLimit);
 		return {
 			count: Math.min(count, plan.publicationLimit),
@@ -486,7 +483,9 @@ export const createDraft = mutation({
 	handler: async (ctx, args) => {
 		const { authUser } = await requireAuthorWithProfile(ctx);
 
-		const plan: BillingPlan = await ctx.runQuery(getPlanForUser, { userId: authUser._id });
+		const plan: BillingPlan = await ctx.runQuery(internal.billing.getPlanForUser, {
+			userId: authUser._id
+		});
 		const existing = await countActivePublicationsForAuthor(
 			ctx,
 			authUser._id,

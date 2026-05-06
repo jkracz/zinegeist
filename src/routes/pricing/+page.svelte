@@ -63,9 +63,15 @@
 		return '';
 	});
 
-	const signInHref = resolve('/') + '?signin=1&redirectTo=%2Fpricing';
+	const signInHref = `${resolve('/')}?signin=1&redirectTo=${encodeURIComponent(resolve('/pricing'))}`;
 
-	// Decorative book-spine widths for the shelf comparison. Stable, hand-set.
+	const TONES = [
+		'oklch(0.6083 0.0623 44.3588)',
+		'oklch(0.4063 0.0255 40.3627)',
+		'oklch(0.7473 0.0387 80.5476)',
+		'oklch(0.7272 0.0539 52.332)'
+	];
+
 	const freeSpines = [22, 16, 28, 14, 24];
 	const plusSpines = [
 		20, 14, 26, 18, 12, 28, 16, 22, 14, 24, 18, 12, 26, 16, 20, 14, 22, 18, 28, 14, 24, 16, 20, 12,
@@ -78,7 +84,6 @@
 		<div
 			class="grid gap-x-16 gap-y-20 lg:grid-cols-[minmax(0,1fr)_minmax(420px,520px)] lg:items-start"
 		>
-			<!-- LEFT: editorial copy + shelf visual -->
 			<div>
 				<div class="eyebrow mb-8">Pricing · Zinegeist Plus</div>
 				<h1
@@ -92,20 +97,22 @@
 					for serials, archives, and the back catalog you keep meaning to put up.
 				</p>
 
-				<!-- Shelf comparison -->
 				<div class="mt-16 space-y-10">
 					<div>
 						<div class="eyebrow mb-4 flex items-baseline justify-between">
 							<span>Free shelf</span>
 							<span class="text-foreground/70">5 publications</span>
 						</div>
-						<div class="shelf">
-							<div class="shelf-spines">
+						<div class="relative overflow-hidden">
+							<div class="flex h-[88px] items-end gap-[3px] pl-[2px]">
 								{#each freeSpines as w, i (i)}
-									<span class="spine" style="width: {w}px;" data-tone={i % 4}></span>
+									<span
+										class="block h-[84px] flex-none rounded-t-[1px] border border-b-0 border-ink/15 shadow-[inset_1px_0_0_var(--background)]/60"
+										style="width: {w}px; background: {TONES[i % 4]};"
+									></span>
 								{/each}
 							</div>
-							<div class="shelf-board"></div>
+							<div class="h-[6px] rounded-[1px] bg-ink/85 shadow-[0_2px_0_0_var(--ink)]/15"></div>
 						</div>
 					</div>
 
@@ -114,41 +121,56 @@
 							<span>Plus shelf</span>
 							<span class="text-foreground/70">Up to 1,000</span>
 						</div>
-						<div class="shelf shelf-plus">
-							<div class="shelf-spines">
+						<div class="relative overflow-hidden">
+							<div class="flex h-[88px] items-end gap-[3px] overflow-hidden pl-[2px]">
 								{#each plusSpines as w, i (i)}
-									<span class="spine" style="width: {w}px;" data-tone={i % 4}></span>
+									<span
+										class="block h-[84px] flex-none rounded-t-[1px] border border-b-0 border-ink/15 shadow-[inset_1px_0_0_var(--background)]/60"
+										style="width: {w}px; background: {TONES[i % 4]};"
+									></span>
 								{/each}
 							</div>
-							<div class="shelf-board"></div>
-							<div class="shelf-fade" aria-hidden="true"></div>
+							<div class="h-[6px] rounded-[1px] bg-ink/85 shadow-[0_2px_0_0_var(--ink)]/15"></div>
+							<div
+								class="pointer-events-none absolute top-0 right-0 bottom-[6px] w-16 bg-gradient-to-r from-transparent to-background md:w-24"
+								aria-hidden="true"
+							></div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- RIGHT: pricing card -->
 			<aside class="lg:sticky lg:top-24">
 				<div class="rounded-[6px] border border-border bg-card px-7 py-7 shadow md:px-9 md:py-9">
-					<!-- Toggle -->
 					{#if availableIntervals.length > 1}
 						<div
 							class="inline-flex items-center gap-px rounded-full border border-border bg-muted p-[3px]"
-							role="tablist"
+							role="radiogroup"
 							aria-label="Billing interval"
 						>
 							{#each availableIntervals as opt (opt)}
 								<button
 									type="button"
-									role="tab"
-									aria-selected={interval === opt}
-									class="toggle-pill"
-									class:is-active={interval === opt}
+									role="radio"
+									aria-checked={interval === opt}
+									tabindex={interval === opt ? 0 : -1}
 									onclick={() => (interval = opt)}
+									class="inline-flex cursor-pointer items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-[11px] font-medium tracking-[0.16em] uppercase transition-colors duration-150"
+									class:bg-ink={interval === opt}
+									class:text-background={interval === opt}
+									class:text-foreground={interval !== opt}
+									class:hover:text-ink={interval !== opt}
 								>
 									{opt === 'monthly' ? 'Monthly' : 'Yearly'}
 									{#if opt === 'yearly' && savingsPercent > 0}
-										<span class="toggle-savings">save {savingsPercent}%</span>
+										<span
+											class="rounded-full px-1.5 py-0.5 text-[9px] tracking-[0.2em] {interval ===
+											opt
+												? 'bg-background/20 text-background'
+												: 'bg-primary/20 text-primary'}"
+										>
+											save {savingsPercent}%
+										</span>
 									{/if}
 								</button>
 							{/each}
@@ -220,120 +242,3 @@
 		</div>
 	</div>
 </section>
-
-<style>
-	/* Shelf visual: paper spines lined up on a board */
-	.shelf {
-		position: relative;
-		overflow: hidden;
-	}
-
-	.shelf-spines {
-		display: flex;
-		align-items: flex-end;
-		gap: 3px;
-		height: 88px;
-		padding-left: 2px;
-	}
-
-	.spine {
-		display: block;
-		height: 84px;
-		border-radius: 1px 1px 0 0;
-		border: 1px solid color-mix(in oklch, var(--ink) 14%, transparent);
-		border-bottom: none;
-		box-shadow: inset 1px 0 0 color-mix(in oklch, var(--background) 60%, transparent);
-		flex: 0 0 auto;
-	}
-
-	.spine[data-tone='0'] {
-		background: oklch(0.6083 0.0623 44.3588); /* Mocha Stamp */
-	}
-	.spine[data-tone='1'] {
-		background: oklch(0.4063 0.0255 40.3627); /* Faded Ink */
-	}
-	.spine[data-tone='2'] {
-		background: oklch(0.7473 0.0387 80.5476); /* Linen Sand */
-	}
-	.spine[data-tone='3'] {
-		background: oklch(0.7272 0.0539 52.332); /* Weathered Clay */
-	}
-
-	.shelf-board {
-		height: 6px;
-		background: var(--ink);
-		opacity: 0.82;
-		box-shadow: 0 2px 0 0 color-mix(in oklch, var(--ink) 18%, transparent);
-		border-radius: 1px;
-	}
-
-	.shelf-plus .shelf-spines {
-		flex-wrap: nowrap;
-		overflow: hidden;
-	}
-
-	.shelf-fade {
-		pointer-events: none;
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 6px;
-		width: 96px;
-		background: linear-gradient(
-			to right,
-			color-mix(in oklch, var(--background) 0%, transparent),
-			var(--background)
-		);
-	}
-
-	/* Segmented toggle */
-	.toggle-pill {
-		appearance: none;
-		background: transparent;
-		border: none;
-		font-family: 'JetBrains Mono', Menlo, monospace;
-		font-size: 11px;
-		font-weight: 500;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: var(--foreground);
-		padding: 7px 14px;
-		border-radius: 999px;
-		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		transition:
-			color 150ms ease,
-			background-color 150ms ease;
-	}
-
-	.toggle-pill:hover {
-		color: var(--ink);
-	}
-
-	.toggle-pill.is-active {
-		background: var(--ink);
-		color: var(--background);
-	}
-
-	.toggle-savings {
-		font-size: 9px;
-		letter-spacing: 0.2em;
-		padding: 2px 6px;
-		border-radius: 999px;
-		background: color-mix(in oklch, var(--primary) 22%, transparent);
-		color: var(--primary);
-	}
-
-	.toggle-pill.is-active .toggle-savings {
-		background: color-mix(in oklch, var(--background) 22%, transparent);
-		color: var(--background);
-	}
-
-	@media (max-width: 900px) {
-		.shelf-fade {
-			width: 64px;
-		}
-	}
-</style>

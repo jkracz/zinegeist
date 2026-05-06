@@ -53,6 +53,7 @@ export const PUBLICATION_LIMIT_REACHED = 'PUBLICATION_LIMIT_REACHED';
 export const SHELF_FULL_MESSAGE = `Shelf full. ${PUBLICATION_UPLOAD_LIMIT} of ${PUBLICATION_UPLOAD_LIMIT} published.`;
 export const SHELF_FULL_UPGRADE_MESSAGE =
 	'Your free shelf is full. Subscribe to Plus for more space.';
+export const SHELF_FULL_PLUS_MESSAGE = 'Your shelf is full. Remove a publication to add another.';
 
 // ---------------------------------------------------------------------------
 // Upload size limits

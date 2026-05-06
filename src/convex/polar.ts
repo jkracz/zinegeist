@@ -5,12 +5,6 @@ import type { DataModel } from './_generated/dataModel';
 
 type CurrentUser = { _id: string; email?: string | null } | null;
 
-function getRequiredEnv(name: string): string {
-	const value = process.env[name];
-	if (!value) throw new Error(`Missing required environment variable: ${name}`);
-	return value;
-}
-
 const getCurrentUser = makeFunctionReference<'query', Record<string, never>, CurrentUser>(
 	'auth:getCurrentUser'
 ) as FunctionReference<'query', 'public', Record<string, never>, CurrentUser>;
@@ -27,8 +21,8 @@ export const polar: Polar<DataModel> = new Polar<DataModel>(components.polar, {
 		};
 	},
 	products: {
-		plusMonthly: getRequiredEnv('POLAR_PLUS_MONTHLY_PRODUCT_ID'),
-		plusYearly: getRequiredEnv('POLAR_PLUS_YEARLY_PRODUCT_ID')
+		plusMonthly: process.env.POLAR_PLUS_MONTHLY_PRODUCT_ID!,
+		plusYearly: process.env.POLAR_PLUS_YEARLY_PRODUCT_ID!
 	}
 });
 

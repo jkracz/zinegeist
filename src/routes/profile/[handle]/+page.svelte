@@ -460,7 +460,11 @@
 				{/if}
 				{#if ownerMode && ownerShelfCount >= 3}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
-					<PublicationCountEyebrow count={ownerShelfCount} limit={publicationLimit} />
+					<PublicationCountEyebrow
+						count={ownerShelfCount}
+						limit={publicationLimit}
+						isPlus={data.shelfStatus?.isPlus ?? false}
+					/>
 				{/if}
 				{#if data.isOwnProfile}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
