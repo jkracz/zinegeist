@@ -10,8 +10,8 @@
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
 
-	type Props = { open: boolean };
-	let { open = $bindable(false) }: Props = $props();
+	type Props = { open: boolean; pendingRedirect?: string | null };
+	let { open = $bindable(false), pendingRedirect = null }: Props = $props();
 
 	type Mode = 'signin' | 'signup';
 	let mode = $state<Mode>('signin');
@@ -33,8 +33,7 @@
 	});
 
 	function getRedirectTo(): string {
-		const param = page.url.searchParams.get('redirectTo');
-		if (param && param.startsWith('/')) return param;
+		if (pendingRedirect && pendingRedirect.startsWith('/')) return pendingRedirect;
 		return page.url.pathname + page.url.search + page.url.hash;
 	}
 

@@ -17,7 +17,7 @@
 
 <Seo title="Zinegeist" />
 
-<SectionBar crumbs={['Discover']}>
+<SectionBar crumbs={[]}>
 	{#snippet right()}
 		<span class="eyebrow">{totalLabel}</span>
 	{/snippet}
