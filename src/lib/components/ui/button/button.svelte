@@ -4,32 +4,29 @@
 	import { type VariantProps, tv } from 'tailwind-variants';
 
 	export const buttonVariants = tv({
-		base: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-lg border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-3 active:not-aria-[haspopup]:translate-y-px aria-invalid:ring-3 [&_svg:not([class*='size-'])]:size-4 group/button inline-flex shrink-0 items-center justify-center whitespace-nowrap transition-all outline-none select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+		base: "group/button inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent font-sans font-medium whitespace-nowrap transition-[transform,background-color,border-color,color] duration-150 outline-none select-none active:not-aria-[haspopup]:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:border-destructive [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 		variants: {
 			variant: {
-				default: 'bg-primary text-primary-foreground [a]:hover:bg-primary/80',
+				default:
+					'bg-ink text-paper-warm-1 hover:bg-[color-mix(in_oklch,var(--ink)_88%,var(--primary)_12%)]',
 				outline:
-					'border-border bg-background hover:bg-muted hover:text-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 aria-expanded:bg-muted aria-expanded:text-foreground',
-				secondary:
-					'bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground',
+					'border-ink bg-transparent text-ink hover:bg-ink hover:text-paper-warm-1 aria-expanded:bg-ink aria-expanded:text-paper-warm-1',
 				ghost:
-					'hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 aria-expanded:bg-muted aria-expanded:text-foreground',
+					'bg-transparent text-ink hover:bg-[color-mix(in_oklch,var(--accent)_60%,transparent)] aria-expanded:bg-[color-mix(in_oklch,var(--accent)_60%,transparent)]',
+				secondary: 'bg-card text-ink hover:bg-[color-mix(in_oklch,var(--accent)_60%,transparent)]',
 				destructive:
-					'bg-destructive/10 hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/20 text-destructive focus-visible:border-destructive/40 dark:hover:bg-destructive/30',
-				link: 'text-primary underline-offset-4 hover:underline'
+					'border-[oklch(0.42_0.13_30)] bg-[oklch(0.42_0.13_30)] text-paper-warm-1 hover:border-[oklch(0.36_0.14_30)] hover:bg-[oklch(0.36_0.14_30)]',
+				link: 'text-ink underline-offset-4 hover:underline'
 			},
 			size: {
-				default:
-					'h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
-				xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-				sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-				lg: 'h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
-				icon: 'size-8',
-				'icon-xs':
-					"size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-				'icon-sm':
-					'size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg',
-				'icon-lg': 'size-9'
+				default: 'px-[18px] py-[10px] text-[14px]',
+				sm: 'px-4 py-2 text-[13px]',
+				xs: 'px-3 py-1.5 text-[12px]',
+				lg: 'px-[22px] py-3 text-[15px]',
+				icon: 'size-10 p-0',
+				'icon-xs': "size-7 p-0 [&_svg:not([class*='size-'])]:size-3.5",
+				'icon-sm': 'size-8 p-0',
+				'icon-lg': 'size-11 p-0'
 			}
 		},
 		defaultVariants: {

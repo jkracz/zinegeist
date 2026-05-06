@@ -2,6 +2,8 @@
 	import { resolve } from '$app/paths';
 	import PlusCheckoutButton from '$lib/components/billing/PlusCheckoutButton.svelte';
 	import Seo from '$lib/components/Seo.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -65,25 +67,6 @@
 	});
 
 	const signInHref = `${resolve('/pricing')}?signin=1`;
-
-	let intervalGroup = $state<HTMLDivElement | null>(null);
-
-	function handleIntervalKeydown(event: KeyboardEvent) {
-		const keys = ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'];
-		if (!keys.includes(event.key) || availableIntervals.length < 2) return;
-		event.preventDefault();
-		const dir = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
-		const idx = availableIntervals.indexOf(interval);
-		const next =
-			availableIntervals[(idx + dir + availableIntervals.length) % availableIntervals.length];
-		interval = next;
-		queueMicrotask(() => {
-			const btn = intervalGroup?.querySelector<HTMLButtonElement>(
-				`button[data-interval="${next}"]`
-			);
-			btn?.focus();
-		});
-	}
 
 	const TONES = [
 		'oklch(0.6083 0.0623 44.3588)',
@@ -168,42 +151,29 @@
 			<aside class="lg:sticky lg:top-24">
 				<div class="rounded-[6px] border border-border bg-card px-7 py-7 shadow md:px-9 md:py-9">
 					{#if availableIntervals.length > 1}
-						<div
-							bind:this={intervalGroup}
-							class="inline-flex items-center gap-px rounded-full border border-border bg-muted p-[3px]"
-							role="radiogroup"
+						<ToggleGroup.Root
+							type="single"
+							value={interval}
+							onValueChange={(v) => {
+								if (v) interval = v as Interval;
+							}}
 							aria-label="Billing interval"
-							tabindex="-1"
-							onkeydown={handleIntervalKeydown}
 						>
 							{#each availableIntervals as opt (opt)}
-								<button
-									type="button"
-									role="radio"
-									data-interval={opt}
-									aria-checked={interval === opt}
-									tabindex={interval === opt ? 0 : -1}
-									onclick={() => (interval = opt)}
-									class="inline-flex cursor-pointer items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-[11px] font-medium tracking-[0.16em] uppercase transition-colors duration-150"
-									class:bg-ink={interval === opt}
-									class:text-background={interval === opt}
-									class:text-foreground={interval !== opt}
-									class:hover:text-ink={interval !== opt}
-								>
+								<ToggleGroup.Item value={opt}>
 									{opt === 'monthly' ? 'Monthly' : 'Yearly'}
 									{#if opt === 'yearly' && savingsPercent > 0}
 										<span
-											class="rounded-full px-1.5 py-0.5 text-[9px] tracking-[0.2em] {interval ===
-											opt
-												? 'bg-background/20 text-background'
-												: 'bg-primary/20 text-primary'}"
+											class="font-mono text-[9px] tracking-[0.18em] italic {interval === opt
+												? 'text-paper-warm-1/80'
+												: 'text-primary'}"
 										>
 											save {savingsPercent}%
 										</span>
 									{/if}
-								</button>
+								</ToggleGroup.Item>
 							{/each}
-						</div>
+						</ToggleGroup.Root>
 					{/if}
 
 					<div class="eyebrow mt-7">Zinegeist Plus</div>
@@ -215,11 +185,9 @@
 							>
 								{perMonthDisplay}
 							</span>
-							<span class="font-mono text-[11px] tracking-[0.18em] text-foreground/70 uppercase">
-								/ month
-							</span>
+							<span class="eyebrow text-foreground/70">/ month</span>
 						</div>
-						<div class="mt-2 font-mono text-[11px] tracking-[0.18em] text-foreground/70 uppercase">
+						<div class="eyebrow mt-2 text-foreground/70">
 							{billingNote}
 						</div>
 					{:else}
@@ -228,40 +196,33 @@
 
 					<div class="mt-7">
 						{#if !selected}
-							<button class="zg-btn zg-btn-primary w-full" disabled>Unavailable</button>
+							<Button class="w-full" disabled>Unavailable</Button>
 						{:else if data.isAuthenticated}
 							<PlusCheckoutButton
 								productIds={[selected.id]}
 								label="Upgrade to Plus"
-								class="zg-btn zg-btn-primary w-full py-3!"
+								size="lg"
+								class="w-full"
 								metadata={{ source: 'pricing', interval }}
 							/>
 						{:else}
 							<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-							<a class="zg-btn zg-btn-primary block w-full py-3! text-center" href={signInHref}>
-								Sign in to Subscribe
-							</a>
+							<Button size="lg" class="w-full" href={signInHref}>Sign in to upgrade</Button>
 						{/if}
 					</div>
 
 					<div class="mt-8 border-t border-border pt-6">
 						<ul class="space-y-3 font-serif text-[16px] leading-[1.45] text-ink">
 							<li class="flex items-baseline gap-3">
-								<span class="font-mono text-[10px] tracking-[0.18em] text-foreground/60 uppercase"
-									>01</span
-								>
+								<span class="eyebrow-sm text-foreground/60">01</span>
 								<span><em class="text-primary not-italic">1,000</em> publications, up from 5.</span>
 							</li>
 							<li class="flex items-baseline gap-3">
-								<span class="font-mono text-[10px] tracking-[0.18em] text-foreground/60 uppercase"
-									>02</span
-								>
+								<span class="eyebrow-sm text-foreground/60">02</span>
 								<span>Room for serials, archives, and long-running work.</span>
 							</li>
 							<li class="flex items-baseline gap-3">
-								<span class="font-mono text-[10px] tracking-[0.18em] text-foreground/60 uppercase"
-									>03</span
-								>
+								<span class="eyebrow-sm text-foreground/60">03</span>
 								<span>Cancel or change plans whenever. Your shelf stays.</span>
 							</li>
 						</ul>

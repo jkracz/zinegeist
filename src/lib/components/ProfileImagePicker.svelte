@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Avatar from '$lib/components/Avatar.svelte';
+	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { Button } from '$lib/components/ui/button';
 	import { api } from '$convex/_generated/api';
 	import type { Id } from '$convex/_generated/dataModel';
 	import { invalidateAll } from '$app/navigation';
@@ -21,6 +22,16 @@
 	const PROFILE_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 	let { client, displayName, image, editable }: Props = $props();
+
+	const initials = $derived(
+		displayName
+			.split(/\s+/)
+			.map((part) => part[0])
+			.filter(Boolean)
+			.slice(0, 2)
+			.join('')
+			.toUpperCase() || '?'
+	);
 
 	let open = $state(false);
 	let fileInput: HTMLInputElement | null = $state(null);
@@ -140,20 +151,24 @@
 				<img
 					src={image}
 					alt={displayName}
-					class="size-40 rounded-full border border-border object-cover shadow-md"
+					class="size-40 rounded-full border border-border object-cover"
 				/>
 			{:else}
-				<Avatar name={displayName} />
+				<Avatar.Root class="size-40">
+					<Avatar.Fallback class="text-[64px] opacity-90">{initials}</Avatar.Fallback>
+				</Avatar.Root>
 			{/if}
 		</button>
 	{:else if image}
 		<img
 			src={image}
 			alt={displayName}
-			class="size-40 rounded-full border border-border object-cover shadow-md"
+			class="size-40 rounded-full border border-border object-cover"
 		/>
 	{:else}
-		<Avatar name={displayName} />
+		<Avatar.Root class="size-40">
+			<Avatar.Fallback class="text-[64px] opacity-90">{initials}</Avatar.Fallback>
+		</Avatar.Root>
 	{/if}
 </div>
 
@@ -166,16 +181,11 @@
 />
 
 <Dialog.Root {open} onOpenChange={handleOpenChange}>
-	<Dialog.Content
-		class="!max-w-[430px] !rounded-[2px] !border !border-border !bg-paper-warm-1 !p-0 !ring-0"
-		showCloseButton={false}
-	>
+	<Dialog.Content class="max-w-[430px] !p-0" showCloseButton={false}>
 		<div class="flex flex-col gap-6 p-6">
 			<div class="flex items-start justify-between gap-5">
 				<div class="min-w-0">
-					<div class="font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
-						Profile picture
-					</div>
+					<div class="eyebrow-sm">Profile picture</div>
 					<Dialog.Title
 						class="mt-2 font-serif text-[30px] leading-[1.05] font-normal tracking-[-0.01em] text-ink"
 					>
@@ -201,16 +211,14 @@
 					<img
 						src={previewImage}
 						alt=""
-						class="size-36 rounded-full border border-border object-cover shadow-md"
+						class="size-36 rounded-full border border-border object-cover"
 					/>
 				{:else}
-					<div class="scale-90">
-						<Avatar name={displayName} />
-					</div>
+					<Avatar.Root class="size-36">
+						<Avatar.Fallback class="text-[58px] opacity-90">{initials}</Avatar.Fallback>
+					</Avatar.Root>
 				{/if}
-				<div
-					class="text-center font-mono text-[10px] leading-relaxed tracking-[0.16em] text-muted-foreground uppercase"
-				>
+				<div class="eyebrow-sm text-center leading-relaxed">
 					{#if selectedFile}
 						Previewing selected image<br />
 						Confirm to update
@@ -236,7 +244,7 @@
 					<span>{selectedFile ? 'Choose a different image' : 'Upload from device'}</span>
 				</button>
 				{#if error}
-					<p class="font-mono text-[11px] tracking-[0.1em] text-destructive uppercase" role="alert">
+					<p class="eyebrow text-destructive" role="alert">
 						{error}
 					</p>
 				{/if}
@@ -244,25 +252,15 @@
 
 			{#if selectedFile}
 				<div class="flex items-center justify-end gap-2 pt-1">
-					<button
-						type="button"
-						class="zg-btn zg-btn-ghost"
-						disabled={uploading}
-						onclick={closeDialog}
-					>
+					<Button variant="ghost" type="button" disabled={uploading} onclick={closeDialog}>
 						Cancel
-					</button>
-					<button
-						type="button"
-						class="zg-btn zg-btn-primary"
-						disabled={uploading}
-						onclick={() => void confirmProfileImage()}
-					>
+					</Button>
+					<Button type="button" disabled={uploading} onclick={() => void confirmProfileImage()}>
 						{#if uploading}
 							<Loader2Icon class="size-4 animate-spin" aria-hidden="true" />
 						{/if}
-						<span>{uploading ? 'Updating...' : 'Use this picture'}</span>
-					</button>
+						<span>{uploading ? 'Updating…' : 'Use this picture'}</span>
+					</Button>
 				</div>
 			{/if}
 		</div>

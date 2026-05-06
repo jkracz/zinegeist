@@ -6,6 +6,7 @@
 	import { authClient } from '$lib/auth-client';
 	import SignInDialog from '$lib/components/auth/SignInDialog.svelte';
 	import UserMenu from '$lib/components/auth/UserMenu.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	type HeaderData = {
 		authState?: { isAuthenticated: boolean };
@@ -99,7 +100,7 @@
 	<div class="flex items-center gap-2.5 justify-self-end">
 		<button
 			type="button"
-			class="header-search inline-flex min-w-[200px] cursor-text items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 font-mono text-xs tracking-[0.04em] text-muted-foreground max-[900px]:hidden"
+			class="header-search inline-flex min-w-[200px] cursor-text items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 font-sans text-[13px] text-muted-foreground max-[900px]:hidden"
 			onclick={() => onOpenSearch?.()}
 			aria-label="Search zines and writers"
 		>
@@ -107,18 +108,12 @@
 			<span>Search zines &amp; writers</span>
 			<span class="kbd ml-auto">{shortcutLabel}</span>
 		</button>
-		<a class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]" href={CREATE}> ＋ Publish </a>
+		<Button size="sm" href={CREATE}>＋ Publish</Button>
 
 		{#if isAuthenticated}
 			<UserMenu {currentUser} billingPlan={data?.billingPlan ?? null} />
 		{:else}
-			<button
-				type="button"
-				class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]"
-				onclick={() => (signInDialogOpen = true)}
-			>
-				Sign in
-			</button>
+			<Button size="sm" type="button" onclick={() => (signInDialogOpen = true)}>Sign in</Button>
 		{/if}
 	</div>
 </header>

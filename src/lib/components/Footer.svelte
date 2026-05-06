@@ -58,7 +58,7 @@
 			<div class="eyebrow mb-5">Navigate</div>
 			<ul class="footer-links flex flex-col gap-3">
 				<li><a href={HOME}>Discover</a></li>
-				<li><a href={CREATE}>Start a zine</a></li>
+				<li><a href={CREATE}>Publish</a></li>
 				<li><a href={ABOUT}>About</a></li>
 				<li><a href={PRICING}>Plus</a></li>
 				{#if isAuthenticated}

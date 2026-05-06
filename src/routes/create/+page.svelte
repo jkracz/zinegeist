@@ -13,6 +13,7 @@
 	import PreviewStep from '$lib/components/create/PreviewStep.svelte';
 	import StepNav from '$lib/components/create/StepNav.svelte';
 	import ShelfFullCard from '$lib/components/ShelfFullCard.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import Seo from '$lib/components/Seo.svelte';
 	import type { PageData } from './$types';
 
@@ -115,7 +116,7 @@
 		{#if !data.shelfFull && draft.publicationId && !draft.publishedSlug}
 			<button
 				type="button"
-				class="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+				class="eyebrow-sm inline-flex items-center gap-1.5 transition-colors hover:text-ink focus-visible:text-ink focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
 				disabled={draft.busy || draft.publishing || draft.deleting}
 				onclick={() => (deleteDialogOpen = true)}
 			>
@@ -132,12 +133,13 @@
 {#if data.shelfFull}
 	<ShelfFullCard variant="page">
 		{#snippet footer()}
-			<a
-				class="zg-btn zg-btn-outline !px-5 !py-2.5 !text-[13px]"
+			<Button
+				variant="outline"
+				size="sm"
 				href={resolve('/profile/[handle]', { handle: profileHandle })}
 			>
 				Back to your shelf
-			</a>
+			</Button>
 		{/snippet}
 	</ShelfFullCard>
 {:else}

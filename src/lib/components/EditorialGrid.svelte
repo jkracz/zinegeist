@@ -3,6 +3,8 @@
 	import { api } from '$convex/_generated/api';
 	import type { FunctionReturnType } from 'convex/server';
 	import ZineCard from './ZineCard.svelte';
+	import { buttonVariants } from '$lib/components/ui/button';
+	import { cn } from '$lib/utils';
 
 	type HomePublication = FunctionReturnType<typeof api.publications.listRecentPublished>[number];
 	type Props = { publications: HomePublication[] };
@@ -26,9 +28,6 @@
 	const sideStack = $derived(publications.slice(1, 3));
 	const tail = $derived(publications.slice(3));
 
-	// Editorial pattern of column-spans for the tail row.
-	const SPANS = [6, 3, 3, 4, 4, 4];
-
 	const pubHref = (publication: HomePublication) =>
 		publication.slug ? resolve('/publication/[id]', { id: publication.slug }) : '#';
 </script>
@@ -40,7 +39,8 @@
 		</p>
 	</div>
 {:else}
-	<div class="grid auto-rows-[minmax(140px,auto)] grid-cols-12 gap-x-6 gap-y-8">
+	<!-- Editorial featured row: hero + side stack -->
+	<div class="grid grid-cols-12 gap-x-6 gap-y-8">
 		<!-- Featured wide hero card -->
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 		<a class="col-span-7 block text-inherit no-underline max-lg:col-span-12" href={featuredHref}>
@@ -58,11 +58,9 @@
 								{featured.title}
 							</div>
 						</div>
-						<div
-							class="mt-7 flex items-end justify-between gap-4 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase"
-						>
+						<div class="eyebrow mt-7 flex items-end justify-between gap-4">
 							<span class="truncate">{featuredTags}</span>
-							<span class="zg-btn zg-btn-outline shrink-0">Read</span>
+							<span class={cn(buttonVariants({ variant: 'outline' }), 'shrink-0')}>Read</span>
 						</div>
 					</div>
 					<div class="relative border-l border-border max-sm:hidden">
@@ -89,23 +87,19 @@
 				<ZineCard {publication} mini href={pubHref(publication)} />
 			{/each}
 		</div>
-
-		{#each tail as publication, i (publication.id)}
-			<div class="tail-card min-w-0" style:--span={SPANS[i] ?? 4}>
-				<ZineCard {publication} mini={(SPANS[i] ?? 4) < 5} href={pubHref(publication)} />
-			</div>
-		{/each}
 	</div>
+
+	{#if tail.length > 0}
+		<!-- Shelf tail: uniform browse grid -->
+		<div class="mt-16 border-t border-border pt-12">
+			<div class="eyebrow mb-9">More on the shelf</div>
+			<div
+				class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] items-start gap-x-8 gap-y-14"
+			>
+				{#each tail as publication (publication.id)}
+					<ZineCard {publication} mini href={pubHref(publication)} />
+				{/each}
+			</div>
+		</div>
+	{/if}
 {/if}
-
-<style>
-	.tail-card {
-		grid-column: span var(--span);
-	}
-
-	@media (max-width: 48rem) {
-		.tail-card {
-			grid-column: span 12;
-		}
-	}
-</style>

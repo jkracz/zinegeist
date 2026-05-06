@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Snippet } from 'svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	type Variant = 'compact' | 'page';
 	let { variant = 'compact', footer }: { variant?: Variant; footer?: Snippet } = $props();
@@ -23,9 +24,7 @@
 					aria-label="Shelf full — subscribe to Plus for more room"
 					class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-5 text-center no-underline focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
 				>
-					<div class="font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
-						Shelf full
-					</div>
+					<div class="eyebrow-sm">Shelf full</div>
 					<div
 						class="font-serif text-[28px] leading-[1.04] font-normal tracking-[-0.015em] text-ink"
 					>
@@ -40,9 +39,7 @@
 {:else}
 	<section class="px-6 pt-20 pb-32 md:px-12 md:pt-28">
 		<div class="mx-auto max-w-[680px] text-center">
-			<div class="mb-10 font-mono text-[11px] tracking-[0.22em] text-muted-foreground uppercase">
-				Shelf full
-			</div>
+			<div class="eyebrow mb-10">Shelf full</div>
 			<h1
 				class="font-serif text-[clamp(48px,6.2vw,84px)] leading-[0.98] font-normal tracking-tight text-ink"
 			>
@@ -53,7 +50,7 @@
 				Subscribe to Plus for more space.
 			</p>
 			<div class="mt-12 flex flex-wrap items-center justify-center gap-3">
-				<a class="zg-btn zg-btn-primary px-5! py-2.5! text-[13px]!" href={PRICING}> See Plus </a>
+				<Button size="sm" href={PRICING}>Upgrade to Plus</Button>
 				{#if footer}
 					{@render footer()}
 				{/if}

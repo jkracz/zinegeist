@@ -43,7 +43,7 @@
 
 <div class="grid grid-cols-1 items-start gap-9 md:grid-cols-[minmax(220px,340px)_1fr]">
 	<div
-		class="relative aspect-[0.72] overflow-hidden rounded-lg border border-border bg-paper-warm-1 shadow-page max-md:max-w-[320px]"
+		class="relative aspect-[0.72] overflow-hidden rounded-[2px] border border-border bg-paper-warm-1 shadow-page max-md:max-w-[320px]"
 	>
 		{#if coverPreviewUrl}
 			<img
@@ -67,7 +67,7 @@
 				id="title"
 				bind:value={title}
 				maxlength={MAX_TITLE_LENGTH}
-				placeholder="What do we call your masterpiece?"
+				placeholder="Title"
 				required
 			/>
 		</div>

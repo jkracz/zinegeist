@@ -4,6 +4,7 @@
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import PublicationViewer from '$lib/components/pdf/PublicationViewer.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import Seo from '$lib/components/Seo.svelte';
 	import { sharePublication } from '$lib/utils/share';
 	import type { PageProps } from './$types';
@@ -74,9 +75,7 @@
 		<div class="w-full md:sticky md:top-24 md:block md:w-auto md:self-start">
 			<div class="mx-auto w-fit md:mx-0">
 				{#if publication.tags.length > 0}
-					<div
-						class="mb-3 flex flex-wrap gap-x-2 gap-y-1 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase"
-					>
+					<div class="eyebrow-sm mb-3 flex flex-wrap gap-x-2 gap-y-1">
 						{#each publication.tags as tag, i (tag)}
 							<span>{tag}</span>
 							{#if i < publication.tags.length - 1}
@@ -95,9 +94,7 @@
 					<div
 						class="flex aspect-[3/4] w-[min(220px,72vw)] items-end rounded-[2px] bg-paper-warm-2 p-4 shadow-page md:w-[clamp(220px,26vw,340px)]"
 					>
-						<span class="font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
-							No cover
-						</span>
+						<span class="eyebrow-sm">No cover</span>
 					</div>
 				{/if}
 			</div>
@@ -137,37 +134,30 @@
 			{/if}
 
 			<dl
-				class="mt-7 grid grid-cols-2 gap-x-8 gap-y-[18px] border-y border-border/70 py-[20px] font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase"
+				class="eyebrow-sm mt-7 grid grid-cols-2 gap-x-8 gap-y-[18px] border-y border-border/70 py-[20px]"
 			>
 				<div>
 					<dt>Published</dt>
-					<dd class="dossier-fact">{dateLabel ?? '—'}</dd>
+					<dd class="dossier-fact">{dateLabel ?? 'Not yet'}</dd>
 				</div>
 				<div>
 					<dt>Pages</dt>
 					<dd class="dossier-fact">
-						{publication.pageCount ?? '—'}
+						{publication.pageCount ?? '·'}
 					</dd>
 				</div>
 			</dl>
 
 			<div class="mt-7 flex flex-wrap items-center gap-3">
 				{#if publication.pdfUrl}
-					<button class="zg-btn zg-btn-primary" type="button" onclick={() => (readerOpen = true)}>
-						Read now
-					</button>
+					<Button type="button" onclick={() => (readerOpen = true)}>Read now</Button>
 				{:else}
-					<button class="zg-btn zg-btn-primary" type="button" disabled>Read now</button>
+					<Button type="button" disabled>Read now</Button>
 				{/if}
-				<button
-					class="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-					type="button"
-					onclick={share}
-					aria-label="Share publication"
-				>
+				<Button variant="outline" type="button" onclick={share} aria-label="Share publication">
 					<Share2 class="size-4" />
 					Share
-				</button>
+				</Button>
 			</div>
 
 			<footer class="mt-9 border-t border-border/70 pt-7">
@@ -177,11 +167,11 @@
 						<img
 							src={publication.author.image}
 							alt={authorName}
-							class="size-12 shrink-0 rounded-full border border-border object-cover shadow-sm"
+							class="size-12 shrink-0 rounded-full border border-border object-cover"
 						/>
 					{:else}
 						<div
-							class="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-muted font-serif text-base text-ink/70 italic shadow-sm"
+							class="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-muted font-serif text-base text-ink/70 italic"
 						>
 							{authorInitials}
 						</div>
@@ -201,16 +191,12 @@
 								<span class="font-serif text-lg font-medium text-ink">{authorName}</span>
 							{/if}
 							{#if publication.author.handle}
-								<span class="font-mono text-[11px] tracking-[0.08em] text-muted-foreground"
+								<span class="font-mono text-[11px] text-muted-foreground"
 									>@{publication.author.handle}</span
 								>
 							{/if}
 							{#if publication.author.location}
-								<span
-									class="font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase"
-								>
-									· {publication.author.location}
-								</span>
+								<span class="eyebrow-sm">· {publication.author.location}</span>
 							{/if}
 						</div>
 						{#if publication.author.bio}

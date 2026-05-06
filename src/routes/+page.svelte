@@ -4,6 +4,7 @@
 	import HeroStage from '$lib/components/HeroStage.svelte';
 	import EditorialGrid from '$lib/components/EditorialGrid.svelte';
 	import Seo from '$lib/components/Seo.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -41,11 +42,9 @@
 				yellow book in the back of a shop.
 			</p>
 			<div class="flex flex-wrap items-center gap-3">
-				<a class="zg-btn zg-btn-primary" href="#discovery">Browse the shelf</a>
-				<a class="zg-btn zg-btn-outline" href={CREATE}>Publish your own</a>
-				<span class="ml-1 font-mono text-[11px] text-muted-foreground">
-					No AI · No doomscrolling · Just stories
-				</span>
+				<Button href="#discovery">Browse the shelf</Button>
+				<Button variant="outline" href={CREATE}>Publish your own</Button>
+				<span class="eyebrow ml-1">No AI · No doomscrolling · Just stories</span>
 			</div>
 		</div>
 		<HeroStage />

@@ -40,9 +40,7 @@
 				/>
 			{:else}
 				<div class="absolute inset-0 flex flex-col justify-between bg-paper-warm-2 p-4">
-					<div
-						class="flex justify-between font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase"
-					>
+					<div class="eyebrow-xs flex justify-between">
 						<span>{dateLabel}</span>
 						<span>ZG</span>
 					</div>
@@ -53,9 +51,7 @@
 							{publication.title}
 						</div>
 						{#if tagLabel}
-							<div
-								class="mt-2 truncate font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase"
-							>
+							<div class="eyebrow-xs mt-2 truncate">
 								{tagLabel}
 							</div>
 						{/if}
@@ -65,9 +61,7 @@
 			<div class="cover-edge"></div>
 		</div>
 	</div>
-	<div
-		class="flex items-center justify-between font-mono text-[11px] tracking-[0.06em] text-muted-foreground"
-	>
+	<div class="flex items-center justify-between font-mono text-[11px] text-muted-foreground">
 		<span class="truncate">{tagLabel}</span>
 		<span class="shrink-0">{dateLabel}</span>
 	</div>

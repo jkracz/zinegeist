@@ -2,6 +2,8 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$lib/components/ui/button';
+	import Loader2Icon from '@lucide/svelte/icons/loader-2';
 	import { authClient } from '$lib/auth-client';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
@@ -132,107 +134,107 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="sm:max-w-md">
-		<Dialog.Header>
-			<Dialog.Title class="font-serif text-2xl tracking-tight text-ink">
-				{mode === 'signin' ? 'Sign in to Zinegeist' : 'Create an account'}
-			</Dialog.Title>
-			<Dialog.Description>
-				{mode === 'signin' ? 'Welcome back.' : 'Stories worth keeping.'}
-			</Dialog.Description>
-		</Dialog.Header>
+	<Dialog.Content class="!gap-0 !p-0 sm:max-w-md">
+		<div class="flex flex-col gap-5 p-7">
+			<Dialog.Header class="!gap-2 !text-left">
+				<div class="eyebrow-sm">{mode === 'signin' ? 'Sign in' : 'Create an account'}</div>
+				<Dialog.Title
+					class="font-serif text-[28px] leading-[1.1] font-normal tracking-[-0.015em] text-ink"
+				>
+					{mode === 'signin' ? 'Welcome back' : 'Make a place for it'}
+				</Dialog.Title>
+				<Dialog.Description class="font-serif text-[16px] leading-[1.5] text-foreground/80 italic">
+					{mode === 'signin'
+						? 'Pick up where you left off.'
+						: 'A small, quiet shelf for your writing.'}
+				</Dialog.Description>
+			</Dialog.Header>
 
-		<button
-			type="button"
-			class="zg-btn zg-btn-outline w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
-			onclick={handleGoogle}
-			disabled={submitting}
-		>
-			Continue with Google
-		</button>
+			<Button
+				variant="outline"
+				type="button"
+				class="w-full"
+				onclick={handleGoogle}
+				disabled={submitting}
+			>
+				Continue with Google
+			</Button>
 
-		<div class="relative my-2 flex items-center">
-			<div class="flex-1 border-t border-border/60"></div>
-			<span class="px-3 text-xs text-muted-foreground">or</span>
-			<div class="flex-1 border-t border-border/60"></div>
-		</div>
+			<div class="relative flex items-center">
+				<div class="flex-1 border-t border-border/60"></div>
+				<span class="eyebrow-sm px-3">or</span>
+				<div class="flex-1 border-t border-border/60"></div>
+			</div>
 
-		<form onsubmit={handleSubmit} class="flex flex-col gap-4">
-			{#if mode === 'signup'}
+			<form onsubmit={handleSubmit} class="flex flex-col gap-4">
+				{#if mode === 'signup'}
+					<div class="flex flex-col gap-1.5">
+						<Label for="name">Name</Label>
+						<Input
+							id="name"
+							type="text"
+							autocomplete="name"
+							bind:value={name}
+							required
+							disabled={submitting}
+						/>
+					</div>
+				{/if}
+
 				<div class="flex flex-col gap-1.5">
-					<Label for="name">Name</Label>
+					<Label for="email">Email</Label>
 					<Input
-						id="name"
-						type="text"
-						autocomplete="name"
-						bind:value={name}
+						id="email"
+						type="email"
+						autocomplete="email"
+						bind:value={email}
 						required
 						disabled={submitting}
 					/>
 				</div>
-			{/if}
 
-			<div class="flex flex-col gap-1.5">
-				<Label for="email">Email</Label>
-				<Input
-					id="email"
-					type="email"
-					autocomplete="email"
-					bind:value={email}
-					required
-					disabled={submitting}
-				/>
-			</div>
+				<div class="flex flex-col gap-1.5">
+					<Label for="password">Password</Label>
+					<Input
+						id="password"
+						type="password"
+						autocomplete={mode === 'signin' ? 'current-password' : 'new-password'}
+						bind:value={password}
+						required
+						minlength={8}
+						disabled={submitting}
+					/>
+				</div>
 
-			<div class="flex flex-col gap-1.5">
-				<Label for="password">Password</Label>
-				<Input
-					id="password"
-					type="password"
-					autocomplete={mode === 'signin' ? 'current-password' : 'new-password'}
-					bind:value={password}
-					required
-					minlength={8}
-					disabled={submitting}
-				/>
-			</div>
-
-			<button
-				type="submit"
-				class="zg-btn zg-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
-				disabled={submitting}
-			>
-				{#if submitting}
-					<span class="flex items-center gap-2">
-						<span
-							class="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
-						></span>
+				<Button type="submit" class="w-full" disabled={submitting}>
+					{#if submitting}
+						<Loader2Icon class="size-4 animate-spin" aria-hidden="true" />
 						{mode === 'signin' ? 'Signing in…' : 'Creating account…'}
-					</span>
-				{:else}
-					{mode === 'signin' ? 'Sign in' : 'Create account'}
-				{/if}
-			</button>
-		</form>
+					{:else}
+						{mode === 'signin' ? 'Sign in' : 'Create account'}
+					{/if}
+				</Button>
+			</form>
 
-		<p class="mt-2 text-center text-sm text-muted-foreground">
-			{#if mode === 'signin'}
-				Don't have an account?
-				<button
-					type="button"
-					class="text-ink underline-offset-2 hover:underline"
-					onclick={toggleMode}
-					disabled={submitting}>Create one</button
-				>
-			{:else}
-				Already have an account?
-				<button
-					type="button"
-					class="text-ink underline-offset-2 hover:underline"
-					onclick={toggleMode}
-					disabled={submitting}>Sign in</button
-				>
-			{/if}
-		</p>
+			<p class="mt-1 text-center font-serif text-[15px] text-muted-foreground">
+				{#if mode === 'signin'}
+					New here?
+					<button
+						type="button"
+						class="text-ink underline-offset-2 hover:underline"
+						onclick={toggleMode}
+						disabled={submitting}>Create an account</button
+					>
+				{:else}
+					Already have an account?
+					<button
+						type="button"
+						class="text-ink underline-offset-2 hover:underline"
+						onclick={toggleMode}
+						disabled={submitting}>Sign in</button
+					>
+				{/if}
+			</p>
+		</div>
 	</Dialog.Content>
 </Dialog.Root>

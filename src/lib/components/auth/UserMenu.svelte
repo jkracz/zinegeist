@@ -78,16 +78,12 @@
 			{#if currentUser?.image}
 				<Avatar.Image src={currentUser.image} alt={currentUser.name ?? 'You'} />
 			{/if}
-			<Avatar.Fallback
-				class="bg-gradient-to-br from-[#e8d4b3] to-[#9b7a5e] font-serif text-sm text-[#3a2418] italic"
-			>
-				{initials}
-			</Avatar.Fallback>
+			<Avatar.Fallback>{initials}</Avatar.Fallback>
 		</Avatar.Root>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end" class="w-52">
 		<div class="px-1.5 pt-1 pb-2">
-			<div class="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+			<div class="eyebrow-sm">
 				{billingPlan?.isPlus ? 'Plus shelf' : 'Free shelf'}
 			</div>
 			<div class="mt-1 font-serif text-[15px] text-ink">
@@ -100,7 +96,7 @@
 				closeOnSelect={false}
 				disabled={openingPortal}
 			>
-				{openingPortal ? 'Opening...' : 'Manage subscription'}
+				{openingPortal ? 'Opening…' : 'Manage subscription'}
 			</DropdownMenu.Item>
 		{:else}
 			<DropdownMenu.Item>

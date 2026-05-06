@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import Seo from '$lib/components/Seo.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	const CREATE = resolve('/create');
 	const CONTACT = 'support@zinegeist.club';
@@ -71,7 +72,7 @@
 		</div>
 
 		<div class="mt-16">
-			<a class="zg-btn zg-btn-outline !px-4 !py-2 !text-[13px]" href={CREATE}>Start a zine</a>
+			<Button variant="outline" size="sm" href={CREATE}>Start a publication</Button>
 		</div>
 	</div>
 </div>

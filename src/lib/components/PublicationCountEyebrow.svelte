@@ -30,18 +30,18 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger
 					type="button"
-					class="font-mono text-[10px] tracking-[0.2em] uppercase {toneClass} cursor-help focus-visible:outline-none"
+					class="eyebrow-sm {toneClass} cursor-help focus-visible:outline-none"
 					aria-label="About the publication limit"
 				>
 					{label}
 				</Tooltip.Trigger>
-				<Tooltip.Content sideOffset={8} class="font-mono text-[10px] tracking-[0.16em] uppercase">
+				<Tooltip.Content sideOffset={8} class="eyebrow-sm">
 					Free shelves are limited to {safeLimit} publications. Subscribe to Plus for a larger shelf.
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</Tooltip.Provider>
 	{:else}
-		<span class="font-mono text-[10px] tracking-[0.2em] uppercase {toneClass}">
+		<span class="eyebrow-sm {toneClass}">
 			{label}
 		</span>
 	{/if}

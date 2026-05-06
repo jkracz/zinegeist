@@ -9,6 +9,8 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { Button } from '$lib/components/ui/button';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import SquarePenIcon from '@lucide/svelte/icons/square-pen';
 	import CheckIcon from '@lucide/svelte/icons/check';
@@ -360,7 +362,7 @@
 							</div>
 						</div>
 					{:else}
-						<div class="mt-3 font-mono text-xs tracking-[0.1em] text-muted-foreground">
+						<div class="mt-3 font-mono text-[12px] text-muted-foreground">
 							@{data.profileView.handle}
 						</div>
 					{/if}
@@ -409,25 +411,28 @@
 									disabled={saving}
 									class="flex-1"
 								/>
-								<button
+								<Button
+									variant="ghost"
+									size="xs"
 									type="button"
-									class="zg-btn zg-btn-ghost !px-3 !py-2 !text-xs"
 									onclick={() => removeLink(index)}
 									disabled={saving}
 									aria-label="Remove link"
 								>
 									Remove
-								</button>
+								</Button>
 							</div>
 						{/each}
-						<button
+						<Button
+							variant="outline"
+							size="xs"
 							type="button"
-							class="zg-btn zg-btn-outline self-start !px-3 !py-2 !text-xs"
+							class="self-start"
 							onclick={addLink}
 							disabled={saving}
 						>
 							＋ Add link
-						</button>
+						</Button>
 					</div>
 
 					{#if error}
@@ -441,9 +446,7 @@
 					{/if}
 
 					{#if data.profileView.location}
-						<div class="font-mono text-xs tracking-[0.1em] text-muted-foreground uppercase">
-							{data.profileView.location}
-						</div>
+						<div class="eyebrow">{data.profileView.location}</div>
 					{/if}
 
 					{#if data.profileView.links.length > 0}
@@ -472,9 +475,7 @@
 			<h2 class="font-serif text-[52px] leading-[0.92] font-normal tracking-[-0.03em] text-ink">
 				Publications
 			</h2>
-			<div
-				class="flex items-center gap-4 pb-2 font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase"
-			>
+			<div class="eyebrow-sm flex items-center gap-4 pb-2">
 				<span>{countLabel}</span>
 				{#if latestPublishedLabel}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
@@ -490,43 +491,31 @@
 				{/if}
 				{#if data.isOwnProfile}
 					<span aria-hidden="true" class="text-muted-foreground/50">·</span>
-					<div
-						class="inline-flex items-center rounded-full border border-border bg-card p-[3px] tracking-[0.16em] uppercase shadow-[2px_2px_0_0_hsl(20_18%_51%/0.1)]"
-						role="group"
-						aria-label="View mode"
-					>
-						<button
-							type="button"
-							class="view-toggle-btn"
-							class:active={!previewAsVisitor}
-							aria-pressed={!previewAsVisitor}
-							onclick={() => (previewAsVisitor = false)}
-						>
-							Owner
-						</button>
-						<button
-							type="button"
-							class="view-toggle-btn"
-							class:active={previewAsVisitor}
-							aria-pressed={previewAsVisitor}
-							onclick={() => {
+					<ToggleGroup.Root
+						type="single"
+						value={previewAsVisitor ? 'visitor' : 'owner'}
+						onValueChange={(v) => {
+							if (!v) return;
+							if (v === 'visitor') {
 								previewAsVisitor = true;
 								if (editing) cancelEdit();
 								editingPubId = null;
-							}}
-						>
-							Visitor
-						</button>
-					</div>
+							} else {
+								previewAsVisitor = false;
+							}
+						}}
+						aria-label="View mode"
+						class="shadow-sm"
+					>
+						<ToggleGroup.Item value="owner">Owner</ToggleGroup.Item>
+						<ToggleGroup.Item value="visitor">Visitor</ToggleGroup.Item>
+					</ToggleGroup.Root>
 				{/if}
 			</div>
 		</header>
 
 		{#if actionError}
-			<p
-				class="mb-6 font-mono text-[11px] tracking-[0.1em] text-destructive uppercase"
-				role="alert"
-			>
+			<p class="eyebrow mb-6 text-destructive" role="alert">
 				{actionError}
 			</p>
 		{/if}
@@ -558,7 +547,7 @@
 					>
 						<div class="relative">
 							<div
-								class="compose-frame relative aspect-[3/4] w-full rounded-[2px] bg-paper-warm-2/30 shadow-page ring-1 ring-border/60 transition-[transform,box-shadow] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] ring-inset group-hover:-translate-y-1.5"
+								class="compose-frame relative aspect-[3/4] w-full rounded-[2px] bg-paper-warm-2/30 ring-1 ring-border/60 transition-[transform,box-shadow] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] ring-inset group-hover:-translate-y-1.5"
 							>
 								<span class="crop crop-tl"></span>
 								<span class="crop crop-tr"></span>
@@ -570,11 +559,7 @@
 									>
 										+
 									</div>
-									<div
-										class="mt-4 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase"
-									>
-										New
-									</div>
+									<div class="eyebrow-sm mt-4">New</div>
 								</div>
 							</div>
 							<div
@@ -587,9 +572,7 @@
 		{:else}
 			<div class="grid place-items-center border-y border-border py-20 text-center">
 				<div>
-					<div class="font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
-						Awaiting first issue
-					</div>
+					<div class="eyebrow-sm">Awaiting first issue</div>
 					<p class="mt-3 font-serif text-[28px] leading-tight text-muted-foreground italic">
 						Nothing in print yet.
 					</p>
@@ -616,35 +599,8 @@
 {/if}
 
 <style>
-	.view-toggle-btn {
-		padding: 4px 10px;
-		border-radius: 999px;
-		color: var(--muted-foreground);
-		font: inherit;
-		letter-spacing: inherit;
-		text-transform: inherit;
-		background: transparent;
-		transition:
-			background 150ms ease,
-			color 150ms ease;
-	}
-	.view-toggle-btn:hover:not(.active) {
-		color: var(--ink);
-	}
-	.view-toggle-btn.active {
-		background: var(--ink);
-		color: var(--paper-warm-1);
-	}
-	.view-toggle-btn:focus-visible {
-		outline: 2px solid var(--ring);
-		outline-offset: 2px;
-	}
-
 	.group:hover .compose-frame {
-		box-shadow:
-			0 1px 0 hsl(20 18% 35% / 0.14),
-			0 16px 28px -10px hsl(20 18% 30% / 0.26),
-			0 36px 60px -22px hsl(20 18% 25% / 0.3);
+		box-shadow: 2px 4px 0 0 hsl(20 18% 51% / 0.14);
 	}
 	.crop {
 		position: absolute;
