@@ -77,7 +77,9 @@
 		ownerMode ? data.publications : data.publications.filter((p) => p.status === 'published')
 	);
 	const publicationCount = $derived(visiblePublications.length);
-	const ownerShelfCount = $derived(data.isOwnProfile ? data.publications.length : 0);
+	const ownerShelfCount = $derived(
+		data.isOwnProfile ? (data.shelfStatus?.count ?? data.publications.length) : 0
+	);
 	const publicationLimit = $derived(data.shelfStatus?.limit ?? 5);
 	const shelfFull = $derived(ownerMode && ownerShelfCount >= publicationLimit);
 	const countLabel = $derived(

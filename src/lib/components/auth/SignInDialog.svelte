@@ -33,7 +33,7 @@
 	function getRedirectTo(): string {
 		const param = page.url.searchParams.get('redirectTo');
 		if (param && param.startsWith('/')) return param;
-		return '/';
+		return page.url.pathname + page.url.search + page.url.hash;
 	}
 
 	type AuthError = { code?: string; message?: string; status?: number };

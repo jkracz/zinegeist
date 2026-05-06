@@ -5,7 +5,7 @@ import { getSessionCookie } from 'better-auth/cookies';
 import { getToken } from '@mmailaender/convex-better-auth-svelte/sveltekit';
 import { withServerConvexToken } from '@mmailaender/convex-svelte/sveltekit/server';
 
-const PUBLIC_EXACT = new Set<string>(['/']);
+const PUBLIC_EXACT = new Set<string>(['/', '/pricing']);
 const PUBLIC_PREFIXES = ['/api/auth', '/publication/'];
 
 const isPublic = (pathname: string): boolean => {

@@ -51,10 +51,17 @@
 	async function openCustomerPortal(): Promise<void> {
 		if (!browser || openingPortal) return;
 		openingPortal = true;
+		const portalWin = window.open('', '_blank');
 		try {
 			const { url } = await generateCustomerPortalUrl({ returnUrl: window.location.href });
-			window.open(url, '_blank', 'noopener,noreferrer');
+			if (portalWin) {
+				portalWin.opener = null;
+				portalWin.location.href = url;
+			} else {
+				toast.error('Could not open billing. Please try again.');
+			}
 		} catch {
+			portalWin?.close();
 			toast.error('Could not open billing. Please try again.');
 		} finally {
 			openingPortal = false;

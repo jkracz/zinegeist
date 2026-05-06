@@ -63,7 +63,26 @@
 		return '';
 	});
 
-	const signInHref = `${resolve('/')}?signin=1&redirectTo=${encodeURIComponent(resolve('/pricing'))}`;
+	const signInHref = `${resolve('/pricing')}?signin=1`;
+
+	let intervalGroup = $state<HTMLDivElement | null>(null);
+
+	function handleIntervalKeydown(event: KeyboardEvent) {
+		const keys = ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'];
+		if (!keys.includes(event.key) || availableIntervals.length < 2) return;
+		event.preventDefault();
+		const dir = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
+		const idx = availableIntervals.indexOf(interval);
+		const next =
+			availableIntervals[(idx + dir + availableIntervals.length) % availableIntervals.length];
+		interval = next;
+		queueMicrotask(() => {
+			const btn = intervalGroup?.querySelector<HTMLButtonElement>(
+				`button[data-interval="${next}"]`
+			);
+			btn?.focus();
+		});
+	}
 
 	const TONES = [
 		'oklch(0.6083 0.0623 44.3588)',
@@ -144,14 +163,18 @@
 				<div class="rounded-[6px] border border-border bg-card px-7 py-7 shadow md:px-9 md:py-9">
 					{#if availableIntervals.length > 1}
 						<div
+							bind:this={intervalGroup}
 							class="inline-flex items-center gap-px rounded-full border border-border bg-muted p-[3px]"
 							role="radiogroup"
 							aria-label="Billing interval"
+							tabindex="-1"
+							onkeydown={handleIntervalKeydown}
 						>
 							{#each availableIntervals as opt (opt)}
 								<button
 									type="button"
 									role="radio"
+									data-interval={opt}
 									aria-checked={interval === opt}
 									tabindex={interval === opt ? 0 : -1}
 									onclick={() => (interval = opt)}
@@ -204,13 +227,13 @@
 							<PlusCheckoutButton
 								productIds={[selected.id]}
 								label="Upgrade to Plus"
-								class="zg-btn zg-btn-primary w-full !py-3"
+								class="zg-btn zg-btn-primary w-full py-3!"
 								metadata={{ source: 'pricing', interval }}
 							/>
 						{:else}
 							<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-							<a class="zg-btn zg-btn-primary block w-full !py-3 text-center" href={signInHref}>
-								Sign in to upgrade
+							<a class="zg-btn zg-btn-primary block w-full py-3! text-center" href={signInHref}>
+								Sign in to Subscribe
 							</a>
 						{/if}
 					</div>

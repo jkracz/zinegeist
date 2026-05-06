@@ -9,6 +9,16 @@ const getCurrentUser = makeFunctionReference<'query', Record<string, never>, Cur
 	'auth:getCurrentUser'
 ) as FunctionReference<'query', 'public', Record<string, never>, CurrentUser>;
 
+function requireProductId(name: string): string {
+	const value = process.env[name];
+	if (!value) {
+		throw new Error(
+			`Missing required environment variable ${name}. Set it in your Convex deployment to enable Polar billing.`
+		);
+	}
+	return value;
+}
+
 export const polar: Polar<DataModel> = new Polar<DataModel>(components.polar, {
 	getUserInfo: async (ctx): Promise<{ userId: string; email: string }> => {
 		const user = await ctx.runQuery(getCurrentUser, {});
@@ -21,8 +31,8 @@ export const polar: Polar<DataModel> = new Polar<DataModel>(components.polar, {
 		};
 	},
 	products: {
-		plusMonthly: process.env.POLAR_PLUS_MONTHLY_PRODUCT_ID!,
-		plusYearly: process.env.POLAR_PLUS_YEARLY_PRODUCT_ID!
+		plusMonthly: requireProductId('POLAR_PLUS_MONTHLY_PRODUCT_ID'),
+		plusYearly: requireProductId('POLAR_PLUS_YEARLY_PRODUCT_ID')
 	}
 });
 

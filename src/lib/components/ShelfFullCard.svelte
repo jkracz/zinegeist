@@ -53,7 +53,7 @@
 				Subscribe to Plus for more space.
 			</p>
 			<div class="mt-12 flex flex-wrap items-center justify-center gap-3">
-				<a class="zg-btn zg-btn-primary !px-5 !py-2.5 !text-[13px]" href={PRICING}> See Plus </a>
+				<a class="zg-btn zg-btn-primary px-5! py-2.5! text-[13px]!" href={PRICING}> See Plus </a>
 				{#if footer}
 					{@render footer()}
 				{/if}
