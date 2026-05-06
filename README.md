@@ -69,7 +69,7 @@ This starts Vite on port 5296 and the Convex dev server concurrently.
 
 ## Project layout
 
-```
+```text
 src/
   routes/    SvelteKit pages
   lib/       Components, hooks, utilities, PDF

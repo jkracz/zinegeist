@@ -24,8 +24,8 @@ export const load = (async ({ locals }) => {
 
 	try {
 		const client = createConvexHttpClient({ token });
-		const result = await client.query(api.profiles.getMyProfile, {});
 		const billingPlan = client.query(api.billing.getMyPlan, {}).catch(() => null);
+		const result = await client.query(api.profiles.getMyProfile, {});
 		return {
 			authState,
 			currentUser: result?.authUser ?? null,

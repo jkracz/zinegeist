@@ -69,6 +69,15 @@
 		{:then serverPublications}
 			{@const publications = livePublications.data ?? serverPublications}
 			<EditorialGrid {publications} />
+		{:catch}
+			{@const publications = livePublications.data ?? []}
+			{#if publications.length > 0}
+				<EditorialGrid {publications} />
+			{:else}
+				<p class="font-serif text-[17px] text-muted-foreground">
+					Couldn't load the latest shelf. Please refresh to try again.
+				</p>
+			{/if}
 		{/await}
 	</section>
 </div>

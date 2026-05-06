@@ -33,7 +33,7 @@
 	});
 
 	function getRedirectTo(): string {
-		if (pendingRedirect && pendingRedirect.startsWith('/')) return pendingRedirect;
+		if (pendingRedirect && /^\/(?!\/)/.test(pendingRedirect)) return pendingRedirect;
 		return page.url.pathname + page.url.search + page.url.hash;
 	}
 

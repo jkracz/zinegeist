@@ -456,13 +456,14 @@
 				{@const visiblePublications = ownerMode
 					? publications
 					: publications.filter((p) => p.status === 'published')}
+				{@const publishedPublications = publications.filter((p) => p.status === 'published')}
 				{@const publicationCount = visiblePublications.length}
 				{@const countLabel =
 					publicationCount === 0
 						? 'None published'
 						: `${publicationCount} ${publicationCount === 1 ? 'entry' : 'entries'}`}
-				{@const latestTs = visiblePublications.reduce(
-					(acc, p) => Math.max(acc, p.publishedAt ?? p.updatedAt),
+				{@const latestTs = publishedPublications.reduce(
+					(acc, p) => Math.max(acc, p.publishedAt ?? 0),
 					0
 				)}
 				{@const latestPublishedLabel =

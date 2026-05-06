@@ -30,7 +30,7 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger
 					type="button"
-					class="eyebrow-sm {toneClass} cursor-help focus-visible:outline-none"
+					class="eyebrow-sm {toneClass} cursor-help rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
 					aria-label="About the publication limit"
 				>
 					{label}

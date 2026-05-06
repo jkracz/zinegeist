@@ -94,7 +94,7 @@
 	>
 		{#each modes as mode (mode.value)}
 			{@const Icon = mode.icon}
-			<ToggleGroup.Item value={mode.value}>
+			<ToggleGroup.Item value={mode.value} aria-label={mode.label}>
 				<Icon class="size-3.5" />
 				<span class="hidden sm:inline">{mode.label}</span>
 			</ToggleGroup.Item>

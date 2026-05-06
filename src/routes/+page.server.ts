@@ -4,8 +4,8 @@ import { api } from '$convex/_generated/api';
 
 export const load = (async () => {
 	const client = createConvexHttpClient();
-	const totalPublished = await client.query(api.publications.countPublished, {});
 	const publications = client.query(api.publications.listRecentPublished, {});
+	const totalPublished = await client.query(api.publications.countPublished, {});
 
 	return { publications, totalPublished };
 }) satisfies PageServerLoad;

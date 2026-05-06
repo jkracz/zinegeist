@@ -21,7 +21,18 @@ function urlEntry(path: string, updatedAt?: number | null): string {
 
 export const GET: RequestHandler = async () => {
 	const client = createConvexHttpClient();
-	const entries = await client.query(api.publications.listSitemapEntries, {});
+	let entries: {
+		profiles: { handle: string; updatedAt: number | null }[];
+		publications: { slug: string; updatedAt: number }[];
+	} = {
+		profiles: [],
+		publications: []
+	};
+	try {
+		entries = await client.query(api.publications.listSitemapEntries, {});
+	} catch (error) {
+		console.error('sitemap: failed to load dynamic entries, falling back to static routes', error);
+	}
 
 	const urls = [
 		...STATIC_ROUTES.map((path) => urlEntry(path)),

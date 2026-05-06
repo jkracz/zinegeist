@@ -170,6 +170,7 @@
 					variant="serif"
 					bind:value={editTitle}
 					placeholder="Title"
+					aria-label="Edit title"
 					maxlength={140}
 					required
 					disabled={saving}
@@ -179,11 +180,17 @@
 					variant="serif"
 					bind:value={editDescription}
 					placeholder="A short note for readers."
+					aria-label="Edit description"
 					maxlength={1200}
 					rows={4}
 					disabled={saving}
 				/>
-				<TagInput bind:this={tagInput} bind:tags={editTags} id="edit-tags-{publication.id}" />
+				<TagInput
+					bind:this={tagInput}
+					bind:tags={editTags}
+					id="edit-tags-{publication.id}"
+					aria-label="Edit tags"
+				/>
 				{#if editError}
 					<p class="text-xs text-destructive" role="alert">{editError}</p>
 				{/if}

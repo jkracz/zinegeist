@@ -5,9 +5,15 @@
 		tags: string[];
 		id?: string;
 		max?: number;
+		'aria-label'?: string;
 	};
 
-	let { tags = $bindable([]), id = 'tags', max = MAX_TAGS }: Props = $props();
+	let {
+		tags = $bindable([]),
+		id = 'tags',
+		max = MAX_TAGS,
+		'aria-label': ariaLabel
+	}: Props = $props();
 
 	let entry = $state('');
 
@@ -54,6 +60,7 @@
 		type="text"
 		maxlength={MAX_TAG_LENGTH}
 		placeholder={tags.length ? '' : 'essay, art, poetry'}
+		aria-label={ariaLabel}
 		onblur={commit}
 		onkeydown={onKeydown}
 	/>

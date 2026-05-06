@@ -55,7 +55,7 @@
 	$effect(() => {
 		if (page.url.searchParams.get('signin') === '1' && !isAuthenticated) {
 			const redirectParam = page.url.searchParams.get('redirectTo');
-			pendingRedirect = redirectParam && redirectParam.startsWith('/') ? redirectParam : null;
+			pendingRedirect = redirectParam && /^\/(?!\/)/.test(redirectParam) ? redirectParam : null;
 			signInDialogOpen = true;
 			const url = new URL(page.url);
 			url.searchParams.delete('signin');
