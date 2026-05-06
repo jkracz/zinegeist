@@ -5,18 +5,23 @@
 	import { PolarEmbedCheckout } from '@polar-sh/checkout/embed';
 	import { api } from '$convex/_generated/api';
 	import { toast } from 'svelte-sonner';
+	import { Button, type ButtonSize, type ButtonVariant } from '$lib/components/ui/button';
 
 	type Props = {
 		productIds: string[];
 		class?: string;
 		label?: string;
+		variant?: ButtonVariant;
+		size?: ButtonSize;
 		metadata?: Record<string, string>;
 	};
 
 	let {
 		productIds,
-		class: className = 'zg-btn zg-btn-primary',
-		label = 'Subscribe to Plus',
+		class: className,
+		label = 'Upgrade to Plus',
+		variant = 'default',
+		size = 'default',
 		metadata
 	}: Props = $props();
 
@@ -50,6 +55,6 @@
 	}
 </script>
 
-<button type="button" class={className} disabled={loading} onclick={openCheckout}>
-	{loading ? 'Opening checkout...' : label}
-</button>
+<Button type="button" {variant} {size} class={className} disabled={loading} onclick={openCheckout}>
+	{loading ? 'Opening checkout…' : label}
+</Button>

@@ -15,7 +15,7 @@
 		{@const enabled = i !== current && (canSelect?.(i) ?? Boolean(onSelect))}
 		<button
 			type="button"
-			class="step flex flex-1 items-center gap-2.5 border-r border-border px-4 py-[18px] text-left font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase transition-colors last:border-r-0 enabled:hover:bg-[color-mix(in_oklch,var(--accent)_18%,transparent)] disabled:cursor-default"
+			class="step eyebrow flex flex-1 items-center gap-2.5 border-r border-border px-4 py-[18px] text-left transition-colors last:border-r-0 enabled:hover:bg-[color-mix(in_oklch,var(--accent)_18%,transparent)] disabled:cursor-default"
 			class:active={i === current}
 			class:done={i < current}
 			disabled={!enabled}

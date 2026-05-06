@@ -32,9 +32,9 @@
 		border: 1px solid var(--border);
 		background: var(--card);
 		font-family: var(--font-mono);
-		font-size: 10.5px;
+		font-size: 10px;
 		line-height: 1;
-		letter-spacing: 0.14em;
+		letter-spacing: 0.18em;
 		text-transform: uppercase;
 		color: var(--muted-foreground);
 		box-shadow: 2px 2px 0 0 hsl(20 18% 51% / 0.12);
@@ -47,8 +47,7 @@
 
 	.label {
 		color: var(--label-color, var(--ink));
-		font-weight: 600;
-		letter-spacing: 0.16em;
+		letter-spacing: 0.18em;
 	}
 
 	.dot {

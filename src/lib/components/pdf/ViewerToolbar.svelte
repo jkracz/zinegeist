@@ -6,7 +6,7 @@
 	import { useScroll } from '@embedpdf/plugin-scroll/svelte';
 	import { useZoom } from '@embedpdf/plugin-zoom/svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { cn } from '$lib/utils.js';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import ZoomIn from '@lucide/svelte/icons/zoom-in';
@@ -71,7 +71,7 @@
 			<ChevronLeft />
 		</Button>
 		<span class="font-mono text-[11px] tracking-wide text-muted-foreground tabular-nums">
-			{scroll.state.currentPage} / {scroll.state.totalPages || '—'}
+			{scroll.state.currentPage} / {scroll.state.totalPages || '…'}
 		</span>
 		<Button
 			variant="ghost"
@@ -84,27 +84,22 @@
 		</Button>
 	</div>
 
-	<div role="radiogroup" class="inline-flex rounded-lg border border-border bg-background p-0.5">
+	<ToggleGroup.Root
+		type="single"
+		value={viewMode}
+		onValueChange={(v) => {
+			if (v) setViewMode(v as ViewMode);
+		}}
+		aria-label="View mode"
+	>
 		{#each modes as mode (mode.value)}
 			{@const Icon = mode.icon}
-			{@const active = viewMode === mode.value}
-			<button
-				type="button"
-				role="radio"
-				aria-checked={active}
-				onclick={() => setViewMode(mode.value)}
-				class={cn(
-					'inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors',
-					active
-						? 'bg-primary text-primary-foreground shadow-sm'
-						: 'text-muted-foreground hover:bg-muted hover:text-foreground'
-				)}
-			>
+			<ToggleGroup.Item value={mode.value} aria-label={mode.label}>
 				<Icon class="size-3.5" />
 				<span class="hidden sm:inline">{mode.label}</span>
-			</button>
+			</ToggleGroup.Item>
 		{/each}
-	</div>
+	</ToggleGroup.Root>
 
 	<div class="flex items-center gap-1">
 		<Button

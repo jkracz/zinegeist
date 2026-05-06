@@ -41,6 +41,11 @@ html {
 	--paper-warm-2: oklch(0.918 0.022 80);
 	--paper-warm-3: oklch(0.88 0.026 70);
 
+	/* Avatar gradient (warm linen) */
+	--avatar-grad-from: oklch(0.86 0.05 84);
+	--avatar-grad-to: oklch(0.56 0.05 60);
+	--avatar-grad-ink: oklch(0.25 0.04 50);
+
 	--chart-1: oklch(0.6083 0.0623 44.3588);
 	--chart-2: oklch(0.5416 0.0512 37.2132);
 	--chart-3: oklch(0.7272 0.0539 52.332);
@@ -189,6 +194,20 @@ html {
 		text-transform: uppercase;
 		color: var(--muted-foreground);
 	}
+	.eyebrow-sm {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--muted-foreground);
+	}
+	.eyebrow-xs {
+		font-family: var(--font-mono);
+		font-size: 9px;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--muted-foreground);
+	}
 
 	/* Paper grain overlay */
 	.paper-grain {
@@ -216,49 +235,6 @@ html {
 		opacity: calc(var(--texture-opacity) * 0.6);
 	}
 
-	/* Buttons (custom editorial variants) */
-	.zg-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		padding: 10px 18px;
-		border-radius: var(--radius);
-		font-size: 14px;
-		font-weight: 500;
-		border: 1px solid transparent;
-		transition:
-			transform 0.08s,
-			background 0.15s,
-			border-color 0.15s;
-		white-space: nowrap;
-		cursor: pointer;
-	}
-	.zg-btn:active {
-		transform: translateY(1px);
-	}
-	.zg-btn-primary {
-		background: var(--ink);
-		color: var(--paper-warm-1);
-	}
-	.zg-btn-primary:hover {
-		background: color-mix(in oklch, var(--ink) 88%, var(--primary) 12%);
-	}
-	.zg-btn-ghost {
-		color: var(--ink);
-	}
-	.zg-btn-ghost:hover {
-		background: color-mix(in oklch, var(--accent) 60%, transparent);
-	}
-	.zg-btn-outline {
-		border-color: var(--ink);
-		color: var(--ink);
-		background: transparent;
-	}
-	.zg-btn-outline:hover {
-		background: var(--ink);
-		color: var(--paper-warm-1);
-	}
-
 	/* Cover (procedural zine cover container) */
 	.cover-edge {
 		position: absolute;
@@ -268,32 +244,6 @@ html {
 		width: 3px;
 		background: repeating-linear-gradient(0deg, #ede1cc 0 1px, #cdb997 1px 2px);
 		opacity: 0.85;
-	}
-
-	/* Layout switcher (segmented control) */
-	.layout-switch {
-		display: inline-flex;
-		align-items: center;
-		border: 1px solid var(--border);
-		border-radius: 999px;
-		padding: 3px;
-		background: var(--card);
-		gap: 2px;
-	}
-	.layout-switch button {
-		padding: 7px 14px;
-		border-radius: 999px;
-		font-size: 12px;
-		font-family: var(--font-mono);
-		letter-spacing: 0.06em;
-		color: var(--muted-foreground);
-		cursor: pointer;
-		background: transparent;
-		border: 0;
-	}
-	.layout-switch button.active {
-		background: var(--ink);
-		color: var(--paper-warm-1);
 	}
 
 	/* Divider with center mark */
@@ -314,6 +264,14 @@ html {
 		font-family: var(--font-serif);
 		color: var(--muted-foreground);
 		letter-spacing: 0.4em;
+	}
+
+	/* Long-form prose: inline emphasis quietly via italic + medium-weight ink,
+	   so legal/about pages can use <strong> semantically without shouting. */
+	.zg-prose strong {
+		font-weight: 500;
+		font-style: italic;
+		color: var(--ink);
 	}
 
 	/* Keyboard pill */

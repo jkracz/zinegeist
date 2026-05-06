@@ -100,9 +100,7 @@
 				/>
 			{:else}
 				<div class="absolute inset-0 flex flex-col justify-between bg-paper-warm-2 p-4">
-					<div
-						class="flex justify-between font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase"
-					>
+					<div class="eyebrow-xs flex justify-between">
 						<span>{dateLabel}</span>
 						<span>ZG</span>
 					</div>
@@ -113,9 +111,7 @@
 							{publication.title}
 						</div>
 						{#if tagLabel}
-							<div
-								class="mt-2 truncate font-mono text-[9px] tracking-[0.18em] text-muted-foreground uppercase"
-							>
+							<div class="eyebrow-xs mt-2 truncate">
 								{tagLabel}
 							</div>
 						{/if}
@@ -139,7 +135,7 @@
 		{:else}
 			<span></span>
 		{/if}
-		<span class="shrink-0 font-mono text-[11px] tracking-[0.06em] text-muted-foreground">
+		<span class="shrink-0 font-mono text-[11px] text-muted-foreground">
 			{dateLabel}
 		</span>
 	</div>
@@ -149,7 +145,7 @@
 		{publication.title}
 	</h3>
 	{#if tagLabel}
-		<div class="truncate font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase">
+		<div class="eyebrow-sm truncate">
 			{tagLabel}
 		</div>
 	{/if}
@@ -168,28 +164,33 @@
 			{@render coverFrame()}
 
 			<form class="flex flex-col gap-3" onsubmit={handleSave}>
-				<div class="font-mono text-[10px] tracking-[0.18em] text-muted-foreground/80 uppercase">
-					Editing
-				</div>
+				<div class="eyebrow-sm text-muted-foreground/80">Editing</div>
 				<Input
 					id="edit-title-{publication.id}"
+					variant="serif"
 					bind:value={editTitle}
 					placeholder="Title"
+					aria-label="Edit title"
 					maxlength={140}
 					required
 					disabled={saving}
-					class="!h-auto !rounded-[2px] !border-border !bg-background !px-2 !py-1.5 font-serif !text-[20px] !leading-[1.15] font-medium tracking-[-0.01em]"
 				/>
 				<Textarea
 					id="edit-description-{publication.id}"
+					variant="serif"
 					bind:value={editDescription}
 					placeholder="A short note for readers."
+					aria-label="Edit description"
 					maxlength={1200}
 					rows={4}
 					disabled={saving}
-					class="!rounded-[2px] !border-border !bg-background font-serif !text-sm !leading-[1.5]"
 				/>
-				<TagInput bind:this={tagInput} bind:tags={editTags} id="edit-tags-{publication.id}" />
+				<TagInput
+					bind:this={tagInput}
+					bind:tags={editTags}
+					id="edit-tags-{publication.id}"
+					aria-label="Edit tags"
+				/>
 				{#if editError}
 					<p class="text-xs text-destructive" role="alert">{editError}</p>
 				{/if}
@@ -231,7 +232,7 @@
 
 	{#if ownerMode && !editing}
 		<div
-			class="flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border/70 pt-3 font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase"
+			class="eyebrow-sm flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border/70 pt-3"
 		>
 			{#if publication.status === 'draft'}
 				<a

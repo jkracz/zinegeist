@@ -1,10 +1,12 @@
 <script lang="ts">
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 </script>
 
-<svelte:head>
-	<title>Terms of Service · Zinegeist</title>
-</svelte:head>
+<Seo
+	title="Terms of Service"
+	description="Read the Zinegeist Terms of Service for publishing, sharing, user content ownership, platform use, and account responsibilities."
+/>
 
 <SectionBar crumbs={['Legal', 'Terms of Service']} />
 
@@ -13,12 +15,10 @@
 		<h1 class="mb-3 font-serif text-[44px] leading-[1.05] font-normal tracking-[-0.015em] text-ink">
 			Zinegeist <em class="text-primary italic">Terms of Service</em>
 		</h1>
-		<p class="mb-9 font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-			Last updated: April 29, 2026
-		</p>
+		<p class="eyebrow mb-9">Last updated: April 29, 2026</p>
 
 		<article
-			class="prose max-w-none font-serif text-[17px] leading-[1.65] prose-stone prose-headings:font-serif prose-headings:font-normal prose-headings:text-ink prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-[22px] prose-h2:tracking-[-0.005em] prose-p:text-foreground prose-a:text-primary prose-strong:text-ink"
+			class="zg-prose prose max-w-none font-serif text-[17px] leading-[1.65] prose-stone prose-headings:font-serif prose-headings:font-normal prose-headings:text-ink prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-[22px] prose-h2:tracking-[-0.005em] prose-p:text-foreground prose-a:text-primary"
 		>
 			<h2>1. Overview</h2>
 			<p>

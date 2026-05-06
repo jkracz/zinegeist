@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { Button } from '$lib/components/ui/button';
 	import Loader2Icon from '@lucide/svelte/icons/loader-2';
 
 	type Props = {
@@ -35,15 +36,10 @@
 </script>
 
 <Dialog.Root {open} onOpenChange={handleOpenChange}>
-	<Dialog.Content
-		class="!max-w-[420px] !rounded-[2px] !border !border-border !bg-paper-warm-1 !p-0 !ring-0"
-		showCloseButton={false}
-	>
+	<Dialog.Content class="max-w-[420px] !p-0" showCloseButton={false}>
 		<div class="flex flex-col gap-5 p-6">
 			<div class="flex flex-col gap-3">
-				<div class="font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
-					Confirm
-				</div>
+				<div class="eyebrow-sm">Confirm</div>
 				<Dialog.Title
 					class="font-serif text-[26px] leading-[1.1] font-normal tracking-[-0.01em] text-ink"
 				>
@@ -54,9 +50,9 @@
 				</Dialog.Description>
 			</div>
 			<div class="flex items-center justify-end gap-2 pt-1">
-				<button
+				<Button
+					variant="ghost"
 					type="button"
-					class="zg-btn zg-btn-ghost"
 					disabled={busy}
 					onclick={() => {
 						open = false;
@@ -64,12 +60,10 @@
 					}}
 				>
 					{cancelLabel}
-				</button>
-				<button
+				</Button>
+				<Button
+					variant={destructive ? 'destructive' : 'default'}
 					type="button"
-					class="zg-btn"
-					class:zg-btn-primary={!destructive}
-					class:destructive
 					disabled={busy}
 					onclick={() => {
 						void onConfirm();
@@ -79,27 +73,8 @@
 						<Loader2Icon class="size-4 animate-spin" aria-hidden="true" />
 					{/if}
 					<span>{confirmLabel}</span>
-				</button>
+				</Button>
 			</div>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
-
-<style>
-	.destructive {
-		background: oklch(0.42 0.13 30);
-		color: var(--paper-warm-1);
-		border: 1px solid oklch(0.42 0.13 30);
-	}
-	.destructive:hover:not(:disabled) {
-		background: oklch(0.36 0.14 30);
-		border-color: oklch(0.36 0.14 30);
-	}
-	.destructive:disabled {
-		opacity: 0.55;
-		cursor: not-allowed;
-	}
-	.zg-btn :global(svg) {
-		margin-right: 6px;
-	}
-</style>

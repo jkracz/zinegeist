@@ -19,11 +19,11 @@
 </script>
 
 <div class="flex h-12 items-center justify-between border-b border-border bg-background px-12">
-	<div class="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
+	<div class="eyebrow">
 		{#each crumbs as crumb, i (i)}
 			{#if i > 0}<span class="mx-2.5">/</span>{/if}
 			{#if i === crumbs.length - 1}
-				<strong class="font-medium text-ink">{labelOf(crumb)}</strong>
+				<span class="font-medium text-ink">{labelOf(crumb)}</span>
 			{:else if hrefOf(crumb)}
 				<!-- eslint-disable svelte/no-navigation-without-resolve -->
 				<a

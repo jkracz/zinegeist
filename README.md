@@ -1,42 +1,85 @@
-# sv
+# Zinegeist
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A publishing home for independent writers. Permanent URLs, shelf-shaped discovery, no algorithmic feed.
 
-## Creating a project
+See [PRODUCT.md](./PRODUCT.md) for product vision and [DESIGN.md](./DESIGN.md) for the design system.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Tech stack
 
-```sh
-# create a new project
-npx sv create my-app
-```
+- [SvelteKit](https://svelte.dev) (Svelte 5) + TypeScript
+- [Convex](https://convex.dev) backend with [Better Auth](https://www.better-auth.com/)
+- Tailwind CSS 4, [shadcn-svelte](https://www.shadcn-svelte.com/), Bits UI
+- [EmbedPDF](https://www.embedpdf.com/) for PDF rendering
+- [Polar](https://polar.sh/) for subscriptions
+- Deployed to Vercel
 
-To recreate this project with the same configuration:
+## Getting started
 
-```sh
-# recreate this project
-bun x sv@0.15.1 create --template minimal --types ts --add prettier eslint tailwindcss="plugins:typography,forms" --install bun zinegeist
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Requires [Bun](https://bun.sh/).
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun install
 ```
 
-## Building
+Run `bunx convex dev` once to provision a deployment if you don't have one — it will populate `CONVEX_DEPLOYMENT` and `PUBLIC_CONVEX_URL` in `.env.local`.
 
-To create a production version of your app:
+### Frontend env (`.env.local`)
 
 ```sh
-npm run build
+CONVEX_DEPLOYMENT=<set by convex dev>
+PUBLIC_CONVEX_URL=<set by convex dev>
+PUBLIC_CONVEX_SITE_URL=<your-convex-site-url>   # e.g. https://<slug>.convex.site
+PUBLIC_SITE_URL=http://localhost:5296
 ```
 
-You can preview the production build with `npm run preview`.
+### Convex deployment env
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Set on the Convex deployment with `bunx convex env set <KEY> <VALUE>`:
+
+| Variable                        | Purpose                                                   |
+| ------------------------------- | --------------------------------------------------------- |
+| `SITE_URL`                      | Public site URL (used as auth fallback)                   |
+| `BETTER_AUTH_URL`               | Better Auth base URL (optional; falls back to `SITE_URL`) |
+| `BETTER_AUTH_FALLBACK_URL`      | Better Auth fallback URL (optional)                       |
+| `GOOGLE_CLIENT_ID`              | Google OAuth client ID                                    |
+| `GOOGLE_CLIENT_SECRET`          | Google OAuth client secret                                |
+| `POLAR_PLUS_MONTHLY_PRODUCT_ID` | Polar product ID for monthly Plus plan                    |
+| `POLAR_PLUS_YEARLY_PRODUCT_ID`  | Polar product ID for yearly Plus plan                     |
+
+Polar and Better Auth components may prompt for additional secrets the first time you run `bunx convex dev` — follow the prompts.
+
+```sh
+bun run dev
+```
+
+This starts Vite on port 5296 and the Convex dev server concurrently.
+
+## Scripts
+
+| Command                    | Purpose                  |
+| -------------------------- | ------------------------ |
+| `bun run dev`              | Web + Convex dev servers |
+| `bun run dev:web`          | Web only                 |
+| `bun run build`            | Production build         |
+| `bun run preview`          | Preview production build |
+| `bun run lint`             | Prettier + ESLint check  |
+| `bun run format`           | Prettier write           |
+| `bun run typecheck`        | svelte-check             |
+| `bun run typecheck:convex` | Convex typecheck         |
+
+## Project layout
+
+```text
+src/
+  routes/    SvelteKit pages
+  lib/       Components, hooks, utilities, PDF
+  convex/    Backend functions, schema, auth
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## License
+
+[Apache 2.0](./LICENSE)

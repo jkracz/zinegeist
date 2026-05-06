@@ -36,6 +36,7 @@ const ROUTE_SUFFIX_ALPHABET = '23456789abcdefghijkmnopqrstuvwxyz';
 const makeRouteSuffix = customAlphabet(ROUTE_SUFFIX_ALPHABET, 6);
 const PROFILE_PUBLICATIONS_LIMIT = 10;
 const HOME_PUBLICATIONS_LIMIT = 8;
+const SITEMAP_PUBLICATIONS_LIMIT = 500;
 // Keep in sync with src/lib/constants.ts (client mirror).
 // Convex's bundler does not reach outside src/convex, so duplicate the
 // values here. PUBLICATION_LIMIT_REACHED is the error string thrown by
@@ -452,6 +453,50 @@ export const listRecentPublished = query({
 				.filter((publication) => publication.slug && publication.publishedAt)
 				.map((publication) => presentHomePublication(ctx, publication))
 		);
+	}
+});
+
+export const listSitemapEntries = query({
+	args: {},
+	handler: async (ctx) => {
+		const publications = await ctx.db
+			.query('publications')
+			.withIndex('by_status_and_publishedAt', (q) => q.eq('status', 'published'))
+			.order('desc')
+			.take(SITEMAP_PUBLICATIONS_LIMIT);
+
+		const authorIds = new Set(publications.map((publication) => publication.authorId));
+		const profiles = await Promise.all(
+			[...authorIds].map((authorId) =>
+				ctx.db
+					.query('profiles')
+					.withIndex('by_userId', (q) => q.eq('userId', authorId))
+					.unique()
+			)
+		);
+		const handlesByUserId = new Map(
+			profiles
+				.filter((profile) => profile !== null)
+				.map((profile) => [profile.userId, profile.handle])
+		);
+
+		return {
+			publications: publications
+				.filter((publication) => publication.slug && publication.publishedAt)
+				.map((publication) => ({
+					slug: publication.slug as string,
+					updatedAt: publication.updatedAt
+				})),
+			profiles: [...handlesByUserId.entries()].map(([userId, handle]) => {
+				const latestPublication = publications.find(
+					(publication) => publication.authorId === userId
+				);
+				return {
+					handle,
+					updatedAt: latestPublication?.updatedAt ?? null
+				};
+			})
+		};
 	}
 });
 

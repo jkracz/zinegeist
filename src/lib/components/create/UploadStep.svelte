@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button';
+
 	type Props = {
 		busy: boolean;
 		statusLabel: string | null;
@@ -60,14 +62,9 @@
 		{fileName ?? 'Drag a PDF here'}
 	</h3>
 	<p class="m-0 text-sm text-muted-foreground">{statusLabel ?? 'or'}</p>
-	<button
-		class="zg-btn zg-btn-outline disabled:cursor-not-allowed disabled:opacity-50"
-		type="button"
-		disabled={busy}
-		onclick={() => fileInput?.click()}
-	>
+	<Button variant="outline" type="button" disabled={busy} onclick={() => fileInput?.click()}>
 		Choose a file
-	</button>
+	</Button>
 	<p class="m-0 mt-3.5 text-xs text-muted-foreground">Up to 100 MB · single file · PDF only</p>
 </div>
 

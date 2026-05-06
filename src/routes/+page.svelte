@@ -3,17 +3,27 @@
 	import SectionBar from '$lib/components/SectionBar.svelte';
 	import HeroStage from '$lib/components/HeroStage.svelte';
 	import EditorialGrid from '$lib/components/EditorialGrid.svelte';
+	import EditorialGridSkeleton from '$lib/components/EditorialGridSkeleton.svelte';
+	import Seo from '$lib/components/Seo.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { useQuery } from '@mmailaender/convex-svelte';
+	import { api } from '$convex/_generated/api';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const CREATE = resolve('/create');
+	const liveTotalPublished = useQuery(api.publications.countPublished);
+	const livePublications = useQuery(api.publications.listRecentPublished);
+	const totalPublished = $derived(liveTotalPublished.data ?? data.totalPublished);
 	const totalLabel = $derived(
-		data.totalPublished === 1 ? '1 publication' : `${data.totalPublished} publications`
+		totalPublished === 1 ? '1 publication' : `${totalPublished} publications`
 	);
 </script>
 
-<SectionBar crumbs={['Discover']}>
+<Seo title="Zinegeist" />
+
+<SectionBar crumbs={[]}>
 	{#snippet right()}
 		<span class="eyebrow">{totalLabel}</span>
 	{/snippet}
@@ -38,11 +48,9 @@
 				yellow book in the back of a shop.
 			</p>
 			<div class="flex flex-wrap items-center gap-3">
-				<a class="zg-btn zg-btn-primary" href="#discovery">Browse the shelf</a>
-				<a class="zg-btn zg-btn-outline" href={CREATE}>Publish your own</a>
-				<span class="ml-1 font-mono text-[11px] text-muted-foreground">
-					No AI · No doomscrolling · Just stories
-				</span>
+				<Button href="#discovery">Browse the shelf</Button>
+				<Button variant="outline" href={CREATE}>Publish your own</Button>
+				<span class="eyebrow ml-1">No AI · No doomscrolling · Just stories</span>
 			</div>
 		</div>
 		<HeroStage />
@@ -56,6 +64,20 @@
 			</h2>
 		</div>
 
-		<EditorialGrid publications={data.publications} />
+		{#await data.publications}
+			<EditorialGridSkeleton />
+		{:then serverPublications}
+			{@const publications = livePublications.data ?? serverPublications}
+			<EditorialGrid {publications} />
+		{:catch}
+			{@const publications = livePublications.data ?? []}
+			{#if publications.length > 0}
+				<EditorialGrid {publications} />
+			{:else}
+				<p class="font-serif text-[17px] text-muted-foreground">
+					Couldn't load the latest shelf. Please refresh to try again.
+				</p>
+			{/if}
+		{/await}
 	</section>
 </div>

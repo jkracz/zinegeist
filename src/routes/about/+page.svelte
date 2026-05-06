@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import SectionBar from '$lib/components/SectionBar.svelte';
+	import Seo from '$lib/components/Seo.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	const CREATE = resolve('/create');
 	const CONTACT = 'support@zinegeist.club';
 </script>
 
-<svelte:head>
-	<title>About · Zinegeist</title>
-	<meta
-		name="description"
-		content="Zinegeist is a home for independent publications. A small, calm place where finished work can live, be read, and be appreciated on its own terms."
-	/>
-</svelte:head>
+<Seo
+	title="About"
+	description="Zinegeist is a home for independent publications. A small, calm place where finished work can live, be read, and be appreciated on its own terms."
+/>
 
 <SectionBar crumbs={['About']} />
 
@@ -73,7 +72,7 @@
 		</div>
 
 		<div class="mt-16">
-			<a class="zg-btn zg-btn-outline !px-4 !py-2 !text-[13px]" href={CREATE}>Start a zine</a>
+			<Button variant="outline" size="sm" href={CREATE}>Start a publication</Button>
 		</div>
 	</div>
 </div>

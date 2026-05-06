@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 
-	const heroSrc = `${base}/zinegeistHero.png`;
+	const heroSrc = `${base}/zinegeistHero.webp`;
 </script>
 
 <div class="hero-stage relative flex h-full min-h-[600px] w-full items-center justify-center">

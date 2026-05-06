@@ -5,6 +5,7 @@
 	import { api } from '$convex/_generated/api';
 	import * as Command from '$lib/components/ui/command';
 	import * as Avatar from '$lib/components/ui/avatar';
+	import { Skeleton } from '$lib/components/ui/skeleton';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 
 	let { open = $bindable(false) }: { open?: boolean } = $props();
@@ -32,6 +33,9 @@
 
 	const showEmpty = $derived(
 		hasQuery && !isLoading && publicationResults.length === 0 && profileResults.length === 0
+	);
+	const showSkeleton = $derived(
+		isLoading && publicationResults.length === 0 && profileResults.length === 0
 	);
 
 	function selectPublication(slug: string) {
@@ -62,6 +66,20 @@
 	<Command.List>
 		{#if showEmpty}
 			<Command.Empty>No results found.</Command.Empty>
+		{/if}
+
+		{#if showSkeleton}
+			<div class="overflow-hidden p-1" role="presentation" aria-hidden="true">
+				{#each Array.from({ length: 4 }), i (i)}
+					<div class="flex items-center gap-2 px-2 py-1.5">
+						<Skeleton class="size-8 shrink-0 rounded-sm" />
+						<div class="flex min-w-0 flex-1 flex-col gap-1.5">
+							<Skeleton class="h-3 w-3/5" />
+							<Skeleton class="h-2.5 w-2/5" />
+						</div>
+					</div>
+				{/each}
+			</div>
 		{/if}
 
 		{#if publicationResults.length > 0}

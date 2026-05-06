@@ -5,6 +5,8 @@
 	import { api } from '$convex/_generated/api';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { Button } from '$lib/components/ui/button';
+	import Seo from '$lib/components/Seo.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -99,10 +101,14 @@
 	);
 </script>
 
+<Seo title="Pick your handle" description="Create your Zinegeist writer handle." noindex />
+
 <div class="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center px-6 py-16">
-	<div class="eyebrow mb-2">Welcome, {data.currentUser.name ?? 'writer'}</div>
-	<h1 class="font-serif text-4xl font-medium tracking-tight text-ink">Pick your handle</h1>
-	<p class="mt-2 text-sm text-muted-foreground">
+	<div class="eyebrow mb-3">Welcome, {data.currentUser.name ?? 'writer'}</div>
+	<h1 class="font-serif text-[44px] leading-[1.05] font-normal tracking-[-0.015em] text-ink">
+		Pick your handle
+	</h1>
+	<p class="mt-4 max-w-[44ch] font-serif text-[17px] leading-[1.55] text-foreground">
 		This is how readers will find you on Zinegeist. You can change it later.
 	</p>
 
@@ -142,12 +148,8 @@
 			<p class="text-sm text-destructive" role="alert">{error}</p>
 		{/if}
 
-		<button
-			type="submit"
-			class="zg-btn zg-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
-			disabled={submitDisabled}
-		>
+		<Button type="submit" class="w-full" disabled={submitDisabled}>
 			{submitting ? 'Creating…' : 'Continue'}
-		</button>
+		</Button>
 	</form>
 </div>

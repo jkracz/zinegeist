@@ -6,12 +6,13 @@
 	import { authClient } from '$lib/auth-client';
 	import SignInDialog from '$lib/components/auth/SignInDialog.svelte';
 	import UserMenu from '$lib/components/auth/UserMenu.svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	type HeaderData = {
 		authState?: { isAuthenticated: boolean };
 		currentUser?: { name?: string | null; image?: string | null } | null;
 		profile?: { handle: string } | null;
-		billingPlan?: { isPlus: boolean } | null;
+		billingPlan?: Promise<{ isPlus: boolean; publicationLimit?: number } | null>;
 	};
 	type CurrentUser = NonNullable<HeaderData['currentUser']>;
 	type SessionData = { user?: CurrentUser | null } | null;
@@ -40,6 +41,7 @@
 	};
 
 	let signInDialogOpen = $state(false);
+	let pendingRedirect = $state<string | null>(null);
 
 	onMount(() => {
 		const unsubscribe = authClient.useSession().subscribe((session) => {
@@ -52,9 +54,12 @@
 
 	$effect(() => {
 		if (page.url.searchParams.get('signin') === '1' && !isAuthenticated) {
+			const redirectParam = page.url.searchParams.get('redirectTo');
+			pendingRedirect = redirectParam && /^\/(?!\/)/.test(redirectParam) ? redirectParam : null;
 			signInDialogOpen = true;
 			const url = new URL(page.url);
 			url.searchParams.delete('signin');
+			url.searchParams.delete('redirectTo');
 			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			void goto(url.pathname + url.search + url.hash, {
 				replaceState: true,
@@ -63,6 +68,11 @@
 			});
 		}
 	});
+
+	function openSignInDialog() {
+		pendingRedirect = null;
+		signInDialogOpen = true;
+	}
 </script>
 
 <header
@@ -75,7 +85,7 @@
 			aria-label="Zinegeist home"
 		>
 			<img
-				src="/zinegeistLogo.png"
+				src="/zinegeistLogo.webp"
 				alt="Zinegeist logo"
 				class="block size-7 shrink-0 object-contain"
 				width="28"
@@ -99,7 +109,7 @@
 	<div class="flex items-center gap-2.5 justify-self-end">
 		<button
 			type="button"
-			class="header-search inline-flex min-w-[200px] cursor-text items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 font-mono text-xs tracking-[0.04em] text-muted-foreground max-[900px]:hidden"
+			class="header-search inline-flex min-w-[200px] cursor-text items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 font-sans text-[13px] text-muted-foreground max-[900px]:hidden"
 			onclick={() => onOpenSearch?.()}
 			aria-label="Search zines and writers"
 		>
@@ -107,23 +117,19 @@
 			<span>Search zines &amp; writers</span>
 			<span class="kbd ml-auto">{shortcutLabel}</span>
 		</button>
-		<a class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]" href={CREATE}> ＋ Publish </a>
+		<Button size="sm" variant={isAuthenticated ? 'default' : 'outline'} href={CREATE}>
+			＋ Publish
+		</Button>
 
 		{#if isAuthenticated}
-			<UserMenu {currentUser} billingPlan={data?.billingPlan ?? null} />
+			<UserMenu {currentUser} billingPlan={data?.billingPlan} />
 		{:else}
-			<button
-				type="button"
-				class="zg-btn zg-btn-primary !px-4 !py-2 !text-[13px]"
-				onclick={() => (signInDialogOpen = true)}
-			>
-				Sign in
-			</button>
+			<Button size="sm" variant="ghost" type="button" onclick={openSignInDialog}>Sign in</Button>
 		{/if}
 	</div>
 </header>
 
-<SignInDialog bind:open={signInDialogOpen} />
+<SignInDialog bind:open={signInDialogOpen} {pendingRedirect} />
 
 <style>
 	.header {
@@ -131,24 +137,34 @@
 		backdrop-filter: blur(12px) saturate(140%);
 	}
 	.header-nav a {
+		position: relative;
 		padding: 8px 14px;
-		border-radius: 999px;
 		font-family: var(--font-sans);
 		font-size: 14px;
 		color: var(--foreground);
-		transition:
-			background 0.15s,
-			color 0.15s;
+		transition: color 0.15s;
 		cursor: pointer;
 		text-decoration: none;
 	}
-	.header-nav a:hover {
-		background: color-mix(in oklch, var(--accent) 50%, transparent);
+	.header-nav a::after {
+		content: '';
+		position: absolute;
+		left: 14px;
+		right: 14px;
+		bottom: 4px;
+		height: 1px;
+		background: var(--ink);
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+	.header-nav a:hover,
+	.header-nav a.active {
 		color: var(--ink);
 	}
-	.header-nav a.active {
-		background: var(--ink);
-		color: var(--paper-warm-1);
+	.header-nav a:hover::after,
+	.header-nav a.active::after {
+		transform: scaleX(1);
 	}
 	.header-search {
 		transition:
