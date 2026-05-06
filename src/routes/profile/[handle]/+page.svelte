@@ -17,7 +17,7 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import XIcon from '@lucide/svelte/icons/x';
 	import Loader2Icon from '@lucide/svelte/icons/loader-2';
-	import { useConvexClient } from '@mmailaender/convex-svelte';
+	import { useConvexClient, useQuery } from '@mmailaender/convex-svelte';
 	import { api } from '$convex/_generated/api';
 	import type { Id } from '$convex/_generated/dataModel';
 	import { goto, invalidateAll } from '$app/navigation';
@@ -73,6 +73,12 @@
 	let actionError: string | null = $state(null);
 
 	const client = useConvexClient();
+	const livePublications = useQuery(api.publications.listForProfile, () => ({
+		handle: data.profileView.handle
+	}));
+	const liveShelfStatus = useQuery(api.publications.getMyShelfStatus, () =>
+		data.isOwnProfile ? {} : 'skip'
+	);
 	const displayName = $derived(data.profileView.name?.trim() || 'Writer');
 	const ownerMode = $derived(data.isOwnProfile && !previewAsVisitor);
 
@@ -119,7 +125,6 @@
 				description: payload.description,
 				tags: payload.tags
 			});
-			await invalidateAll();
 			editingPubId = null;
 		} catch (e) {
 			editPubError = e instanceof Error ? e.message : 'Could not save these changes.';
@@ -141,7 +146,7 @@
 			} else if (confirmKind === 'delete') {
 				await client.mutation(api.publications.deletePublication, { publicationId: id });
 			}
-			await invalidateAll();
+			if (editingPubId === confirmTarget.id) editingPubId = null;
 			confirmKind = null;
 			confirmTarget = null;
 		} catch (e) {
@@ -446,7 +451,8 @@
 			<h2 class="font-serif text-[52px] leading-[0.92] font-normal tracking-[-0.03em] text-ink">
 				Publications
 			</h2>
-			{#await data.publications then publications}
+			{#await data.publications then serverPublications}
+				{@const publications = livePublications.data ?? serverPublications}
 				{@const visiblePublications = ownerMode
 					? publications
 					: publications.filter((p) => p.status === 'published')}
@@ -467,7 +473,8 @@
 						<span aria-hidden="true" class="text-muted-foreground/50">·</span>
 						<span>Last published <span class="text-ink">{latestPublishedLabel}</span></span>
 					{/if}
-					{#await data.shelfStatus then shelfStatus}
+					{#await data.shelfStatus then serverShelfStatus}
+						{@const shelfStatus = liveShelfStatus.data ?? serverShelfStatus}
 						{@const ownerShelfCount = data.isOwnProfile
 							? (shelfStatus?.count ?? publications.length)
 							: 0}
@@ -515,7 +522,9 @@
 
 		{#await Promise.all([data.publications, data.shelfStatus])}
 			<ProfilePublicationsSkeleton />
-		{:then [publications, shelfStatus]}
+		{:then [serverPublications, serverShelfStatus]}
+			{@const publications = livePublications.data ?? serverPublications}
+			{@const shelfStatus = liveShelfStatus.data ?? serverShelfStatus}
 			{@const visiblePublications = ownerMode
 				? publications
 				: publications.filter((p) => p.status === 'published')}

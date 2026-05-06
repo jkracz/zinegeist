@@ -6,13 +6,18 @@
 	import EditorialGridSkeleton from '$lib/components/EditorialGridSkeleton.svelte';
 	import Seo from '$lib/components/Seo.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { useQuery } from '@mmailaender/convex-svelte';
+	import { api } from '$convex/_generated/api';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const CREATE = resolve('/create');
+	const liveTotalPublished = useQuery(api.publications.countPublished);
+	const livePublications = useQuery(api.publications.listRecentPublished);
+	const totalPublished = $derived(liveTotalPublished.data ?? data.totalPublished);
 	const totalLabel = $derived(
-		data.totalPublished === 1 ? '1 publication' : `${data.totalPublished} publications`
+		totalPublished === 1 ? '1 publication' : `${totalPublished} publications`
 	);
 </script>
 
@@ -61,7 +66,8 @@
 
 		{#await data.publications}
 			<EditorialGridSkeleton />
-		{:then publications}
+		{:then serverPublications}
+			{@const publications = livePublications.data ?? serverPublications}
 			<EditorialGrid {publications} />
 		{/await}
 	</section>
