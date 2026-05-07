@@ -27,6 +27,8 @@ Required environment variables:
 - `PUBLIC_POSTHOG_PROJECT_TOKEN`
 - `PUBLIC_POSTHOG_HOST`
 
+PostHog is disabled when `PUBLIC_POSTHOG_PROJECT_TOKEN` is missing.
+
 `svelte.config.js` sets `paths.relative: false`, which PostHog recommends for session replay with SvelteKit SSR.
 
 ## Identity

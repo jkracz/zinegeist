@@ -72,14 +72,16 @@ export const handle = sequence(posthogProxy, requireAuth, setTokenFromCookies);
 
 export const handleError: HandleServerError = async ({ error, status, message }) => {
 	const posthog = getPostHogClient();
-	posthog.capture({
-		distinctId: 'server',
-		event: 'server_error',
-		properties: {
-			error: error instanceof Error ? error.message : String(error),
-			status,
-			message
-		}
-	});
+	if (posthog) {
+		posthog.capture({
+			distinctId: 'server',
+			event: 'server_error',
+			properties: {
+				error: error instanceof Error ? error.message : String(error),
+				status,
+				message
+			}
+		});
+	}
 	return { message, status };
 };
