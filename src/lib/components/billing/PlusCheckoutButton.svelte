@@ -40,8 +40,8 @@
 				successUrl: window.location.href,
 				metadata
 			});
-			posthog.capture('checkout_opened', { source: metadata?.source, product_ids: productIds });
 			const checkout = await PolarEmbedCheckout.create(url, { theme: 'light' });
+			posthog.capture('checkout_opened', { source: metadata?.source, product_ids: productIds });
 			checkout.addEventListener(
 				'success',
 				() => {

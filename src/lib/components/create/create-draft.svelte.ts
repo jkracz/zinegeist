@@ -126,7 +126,6 @@ export class CreateDraft {
 			this.coverPreviewUrl = URL.createObjectURL(coverBlob);
 			this.state = 'ready';
 			posthog.capture('publication_draft_uploaded', {
-				file_name: file.name,
 				file_size_bytes: file.size,
 				page_count: pageCount
 			});
