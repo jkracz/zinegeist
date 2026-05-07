@@ -5,6 +5,7 @@
 	import { PolarEmbedCheckout } from '@polar-sh/checkout/embed';
 	import { api } from '$convex/_generated/api';
 	import { toast } from 'svelte-sonner';
+	import posthog from 'posthog-js';
 	import { Button, type ButtonSize, type ButtonVariant } from '$lib/components/ui/button';
 
 	type Props = {
@@ -40,9 +41,14 @@
 				metadata
 			});
 			const checkout = await PolarEmbedCheckout.create(url, { theme: 'light' });
+			posthog.capture('checkout_opened', { source: metadata?.source, product_ids: productIds });
 			checkout.addEventListener(
 				'success',
 				() => {
+					posthog.capture('checkout_completed', {
+						source: metadata?.source,
+						product_ids: productIds
+					});
 					void invalidateAll();
 				},
 				{ once: true }

@@ -10,7 +10,12 @@
 
 	type HeaderData = {
 		authState?: { isAuthenticated: boolean };
-		currentUser?: { name?: string | null; image?: string | null } | null;
+		currentUser?: {
+			id: string;
+			name?: string | null;
+			email?: string | null;
+			image?: string | null;
+		} | null;
 		profile?: { handle: string } | null;
 		billingPlan?: Promise<{ isPlus: boolean; publicationLimit?: number } | null>;
 	};

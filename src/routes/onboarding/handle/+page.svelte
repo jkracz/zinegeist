@@ -7,6 +7,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
 	import Seo from '$lib/components/Seo.svelte';
+	import posthog from 'posthog-js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -88,6 +89,7 @@
 
 		try {
 			const result = await client.mutation(api.profiles.createProfile, { handle });
+			posthog.capture('profile_created', { handle: result.handle });
 			await invalidateAll();
 			await goto(resolve('/profile/[handle]', { handle: result.handle }), { invalidateAll: true });
 		} catch (e) {

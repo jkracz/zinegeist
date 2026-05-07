@@ -14,6 +14,9 @@ const config = {
 		alias: {
 			'@/*': './src/*',
 			$convex: './src/convex'
+		},
+		paths: {
+			relative: false
 		}
 	}
 };

@@ -22,6 +22,7 @@
 	import type { Id } from '$convex/_generated/dataModel';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import posthog from 'posthog-js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -139,12 +140,19 @@
 		actionError = null;
 		try {
 			const id = confirmTarget.id as Id<'publications'>;
+			const targetTitle = confirmTarget.title;
+			const targetStatus = confirmTarget.status;
 			if (confirmKind === 'unpublish') {
 				await client.mutation(api.publications.unpublish, { publicationId: id });
+				posthog.capture('publication_unpublished', { publication_title: targetTitle });
 			} else if (confirmKind === 'republish') {
 				await client.mutation(api.publications.republish, { publicationId: id });
 			} else if (confirmKind === 'delete') {
 				await client.mutation(api.publications.deletePublication, { publicationId: id });
+				posthog.capture('publication_deleted', {
+					publication_title: targetTitle,
+					previous_status: targetStatus
+				});
 			}
 			if (editingPubId === confirmTarget.id) editingPubId = null;
 			confirmKind = null;
@@ -226,6 +234,7 @@
 				links: cleanedLinks
 			});
 
+			posthog.capture('profile_updated', { handle: result.handle });
 			await invalidateAll();
 			editing = false;
 			if (result.handle !== data.profileView.handle) {

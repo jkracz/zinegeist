@@ -43,6 +43,12 @@
       "skillPath": ".agents/skills/impeccable/SKILL.md",
       "computedHash": "de38608ceb9573c3142306babd9057a240791c4e4d6647f874a4650c996cb37e"
     },
+    "integration-sveltekit": {
+      "source": "posthog/skills",
+      "sourceType": "github",
+      "skillPath": "skills/posthog/all/skills/integration-sveltekit/SKILL.md",
+      "computedHash": "5aa763ff88cc8588b7165beed9a17caaff7912306666a634e37e0dd642931023"
+    },
     "svelte-code-writer": {
       "source": "sveltejs/ai-tools",
       "sourceType": "github",

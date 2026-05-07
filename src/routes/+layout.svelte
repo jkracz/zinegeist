@@ -11,6 +11,7 @@
 	import CommandPalette from '$lib/components/CommandPalette.svelte';
 	import NavProgressBar from '$lib/components/NavProgressBar.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
+	import posthog from 'posthog-js';
 
 	let { children, data } = $props();
 	const convexClient = setupConvex(PUBLIC_CONVEX_URL);
@@ -19,6 +20,25 @@
 	}
 
 	let commandOpen = $state(false);
+	let identifiedUserId: string | null = null;
+
+	$effect(() => {
+		if (!browser) return;
+
+		const user = data.currentUser;
+		if (!user?.id) {
+			identifiedUserId = null;
+			return;
+		}
+
+		if (identifiedUserId === user.id) return;
+
+		posthog.identify(user.id, {
+			email: user.email ?? undefined,
+			name: user.name ?? undefined
+		});
+		identifiedUserId = user.id;
+	});
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {

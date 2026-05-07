@@ -7,6 +7,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import Seo from '$lib/components/Seo.svelte';
 	import { sharePublication } from '$lib/utils/share';
+	import posthog from 'posthog-js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -17,6 +18,10 @@
 
 	function share() {
 		if (!browser) return;
+		posthog.capture('publication_shared', {
+			publication_title: publication.title,
+			author_handle: publication.author.handle
+		});
 		sharePublication({
 			title: publication.title,
 			url: window.location.href
@@ -49,6 +54,14 @@
 	const pageDescription = $derived(
 		publication.description ?? `${publication.title} by ${authorName} on Zinegeist`
 	);
+
+	function openReader() {
+		readerOpen = true;
+		posthog.capture('publication_read_opened', {
+			publication_title: publication.title,
+			author_handle: publication.author.handle
+		});
+	}
 </script>
 
 <Seo
@@ -150,7 +163,7 @@
 
 			<div class="mt-7 flex flex-wrap items-center gap-3">
 				{#if publication.pdfUrl}
-					<Button type="button" onclick={() => (readerOpen = true)}>Read now</Button>
+					<Button type="button" onclick={openReader}>Read now</Button>
 				{:else}
 					<Button type="button" disabled>Read now</Button>
 				{/if}

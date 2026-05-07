@@ -70,6 +70,8 @@
 		"better-auth": "1.6.9",
 		"convex": "^1.37.0",
 		"convex-helpers": "^0.1.115",
-		"nanoid": "^5.1.11"
+		"nanoid": "^5.1.11",
+		"posthog-js": "^1.372.9",
+		"posthog-node": "^5.33.3"
 	}
 }

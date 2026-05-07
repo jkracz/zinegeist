@@ -9,6 +9,7 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
+	import posthog from 'posthog-js';
 
 	type Props = { open: boolean; pendingRedirect?: string | null };
 	let { open = $bindable(false), pendingRedirect = null }: Props = $props();
@@ -97,6 +98,7 @@
 					toast.error(friendlySignInError(err));
 					return;
 				}
+				posthog.capture('sign_in', { method: 'email' });
 				open = false;
 				await invalidateAll();
 				const target = getRedirectTo();
@@ -110,6 +112,7 @@
 					toast.error(friendlySignUpError(err));
 					return;
 				}
+				posthog.capture('sign_up', { method: 'email' });
 				open = false;
 				await invalidateAll();
 				await goto(resolve('/onboarding/handle'), { invalidateAll: true });
