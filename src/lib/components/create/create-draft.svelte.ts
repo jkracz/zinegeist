@@ -1,4 +1,5 @@
 import type { ConvexClient } from 'convex/browser';
+import posthog from 'posthog-js';
 import { toast } from 'svelte-sonner';
 import { api } from '$convex/_generated/api';
 import type { Id } from '$convex/_generated/dataModel';
@@ -124,6 +125,11 @@ export class CreateDraft {
 			this.publicationId = draft.publicationId;
 			this.coverPreviewUrl = URL.createObjectURL(coverBlob);
 			this.state = 'ready';
+			posthog.capture('publication_draft_uploaded', {
+				file_name: file.name,
+				file_size_bytes: file.size,
+				page_count: pageCount
+			});
 			return true;
 		} catch (e) {
 			this.#reset();
@@ -189,6 +195,11 @@ export class CreateDraft {
 				rightsAccepted: input.rightsAccepted
 			});
 			this.publishedSlug = result.slug;
+			posthog.capture('publication_published', {
+				slug: result.slug,
+				title: input.title,
+				tag_count: input.tags.length
+			});
 			return result.slug;
 		} catch (e) {
 			this.error = e instanceof Error ? e.message : 'Could not publish this draft.';

@@ -9,8 +9,12 @@
 	import { api } from '$convex/_generated/api';
 	import { toast } from 'svelte-sonner';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+	import posthog from 'posthog-js';
 
-	type CurrentUser = { name?: string | null; image?: string | null } | null | undefined;
+	type CurrentUser =
+		| { id?: string; name?: string | null; email?: string | null; image?: string | null }
+		| null
+		| undefined;
 	type BillingPlan = { isPlus: boolean; plan?: 'free' | 'plus'; publicationLimit?: number } | null;
 
 	type Props = { currentUser: CurrentUser; billingPlan?: Promise<BillingPlan> };
@@ -37,6 +41,7 @@
 		signingOut = true;
 		try {
 			await authClient.signOut();
+			if (browser) posthog.reset();
 			await invalidateAll();
 		} finally {
 			signingOut = false;
