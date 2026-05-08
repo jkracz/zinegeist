@@ -595,10 +595,10 @@
 					{/if}
 				</div>
 			{:else}
-				<div class="grid place-items-center border-y border-border py-20 text-center">
-					<div>
-						<div class="eyebrow-sm">Awaiting first issue</div>
-						<p class="mt-3 font-serif text-[28px] leading-tight text-muted-foreground italic">
+				<div class="grid place-items-center py-24 text-center">
+					<div class="flex flex-col items-center gap-5">
+						<div class="eyebrow-sm text-muted-foreground/80">Awaiting first issue</div>
+						<p class="font-serif text-[32px] leading-tight text-ink/55 italic">
 							Nothing in print yet.
 						</p>
 					</div>

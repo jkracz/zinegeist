@@ -40,9 +40,12 @@
 	const HOME = resolve('/');
 	const CREATE = resolve('/create');
 
+	const pathMatches = (href: string) =>
+		page.url.pathname === href || page.url.pathname.startsWith(`${href}/`);
+
 	const isActive = (href: string) => {
 		if (href === HOME) return page.url.pathname === HOME;
-		return page.url.pathname.startsWith(href);
+		return pathMatches(href);
 	};
 
 	let signInDialogOpen = $state(false);
@@ -107,7 +110,7 @@
 		<a class:active={isActive(HOME)} href={HOME}>Discover</a>
 		{#if isAuthenticated}
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			<a class:active={page.url.pathname.startsWith('/profile')} href={profileHref}>My shelf</a>
+			<a class:active={pathMatches(profileHref)} href={profileHref}>My shelf</a>
 		{/if}
 	</nav>
 
