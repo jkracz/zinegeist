@@ -105,7 +105,7 @@
 				</svg>
 				Open source
 			</a>
-			<p class="eyebrow !text-muted-foreground/70 inline-flex items-center gap-1.5">
+			<p class="eyebrow inline-flex items-center gap-1.5 !text-muted-foreground/70">
 				Made with <HeartIcon class="size-3.5 fill-primary text-primary" aria-hidden="true" /> by
 				<a
 					href="https://joekracz.com"
