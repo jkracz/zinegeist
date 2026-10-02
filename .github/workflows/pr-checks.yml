@@ -23,6 +23,9 @@ jobs:
       - name: Run lint
         run: bun run lint
 
+      - name: Check Polar API version pin
+        run: bun run test:polar
+
       - name: Run type check
         env:
           PUBLIC_CONVEX_URL: http://localhost:3210

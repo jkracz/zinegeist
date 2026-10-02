@@ -1,0 +1,64 @@
+diff --git a/dist/commonjs/hooks/registration.js b/dist/commonjs/hooks/registration.js
+index cf4b812cc74fdc05e4e291adabb0b67fa3aeafe2..e3b7a6923232537b84e95b886172fa405331f814 100644
+--- a/dist/commonjs/hooks/registration.js
++++ b/dist/commonjs/hooks/registration.js
+@@ -6,10 +6,13 @@ exports.initHooks = initHooks;
+  * Any hooks you wish to add should be registered in the initHooks function. Feel free to define them
+  * in this file or in separate files in the hooks folder.
+  */
+-// @ts-expect-error remove this line when you add your first hook and hooks is used
+ function initHooks(hooks) {
+-    // Add hooks by calling hooks.register{ClientInit/BeforeCreateRequest/BeforeRequest/AfterSuccess/AfterError}Hook
+-    // with an instance of a hook that implements that specific Hook interface
+-    // Hooks are registered per SDK instance, and are valid for the lifetime of the SDK instance
++    // Pin all clients, including the separate Convex product-sync action.
++    hooks.registerBeforeRequestHook({
++        beforeRequest(_context, request) {
++            request.headers.set("Polar-Version", "2026-10");
++            return request;
++        },
++    });
+ }
+ //# sourceMappingURL=registration.js.map
+\ No newline at end of file
+diff --git a/dist/esm/hooks/registration.js b/dist/esm/hooks/registration.js
+index 4eb6d6ad8705e7c315610c52863325525c7d136d..8396a8f5e1878c5690e88c8c582258b433a7b305 100644
+--- a/dist/esm/hooks/registration.js
++++ b/dist/esm/hooks/registration.js
+@@ -3,10 +3,13 @@
+  * Any hooks you wish to add should be registered in the initHooks function. Feel free to define them
+  * in this file or in separate files in the hooks folder.
+  */
+-// @ts-expect-error remove this line when you add your first hook and hooks is used
+ export function initHooks(hooks) {
+-    // Add hooks by calling hooks.register{ClientInit/BeforeCreateRequest/BeforeRequest/AfterSuccess/AfterError}Hook
+-    // with an instance of a hook that implements that specific Hook interface
+-    // Hooks are registered per SDK instance, and are valid for the lifetime of the SDK instance
++    // Pin all clients, including the separate Convex product-sync action.
++    hooks.registerBeforeRequestHook({
++        beforeRequest(_context, request) {
++            request.headers.set("Polar-Version", "2026-10");
++            return request;
++        },
++    });
+ }
+ //# sourceMappingURL=registration.js.map
+\ No newline at end of file
+diff --git a/src/hooks/registration.ts b/src/hooks/registration.ts
+index 598a6dfa2617fee8c3628751e6968b946e14c9d5..322d6f163f9d425e430248a0a7a49b0e207992ae 100644
+--- a/src/hooks/registration.ts
++++ b/src/hooks/registration.ts
+@@ -9,6 +9,9 @@ import { Hooks } from "./types.js";
+-// @ts-expect-error remove this line when you add your first hook and hooks is used
+ export function initHooks(hooks: Hooks) {
+-    // Add hooks by calling hooks.register{ClientInit/BeforeCreateRequest/BeforeRequest/AfterSuccess/AfterError}Hook
+-    // with an instance of a hook that implements that specific Hook interface
+-    // Hooks are registered per SDK instance, and are valid for the lifetime of the SDK instance
++    // Pin all clients, including the separate Convex product-sync action.
++    hooks.registerBeforeRequestHook({
++        beforeRequest(_context, request) {
++            request.headers.set("Polar-Version", "2026-10");
++            return request;
++        },
++    });
+ }

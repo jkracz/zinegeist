@@ -19,6 +19,8 @@ function requireProductId(name: string): string {
 	return value;
 }
 
+// The Bun SDK patch pins all Polar requests to 2026-10, including the
+// component's separate product-sync client. See README's Polar billing section.
 export const polar: Polar<DataModel> = new Polar<DataModel>(components.polar, {
 	getUserInfo: async (ctx): Promise<{ userId: string; email: string }> => {
 		const user = await ctx.runQuery(getCurrentUser, {});
